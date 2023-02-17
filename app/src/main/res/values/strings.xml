@@ -4,4 +4,9 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="fragment_1_text">a platform to create events, such as parties, reunions, and gatherings!</string>
+    <string name="fragment_2_text">Bringing your family and friends together has never been so easy!</string>
+    <string name="fragment_3_text">Invite guests and manage the event details!</string>
+    <string name="signIn_button_text">Sign In</string>
+    <string name="signUp_button_text">Sign Up</string>
 </resources>
