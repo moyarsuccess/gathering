@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/d79c5f932f523014a004cf06a010e372"
+    android:background="#F0BE9B"
     tools:context=".IntroActivity">
 
 <androidx.viewpager2.widget.ViewPager2
+    app:layout_constraintTop_toTopOf="parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 </androidx.viewpager2.widget.ViewPager2>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
