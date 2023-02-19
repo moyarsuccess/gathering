@@ -14,5 +14,25 @@
 
 </androidx.viewpager2.widget.ViewPager2>
 
+    <Button
+        android:id="@+id/signupBtn"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:text="signup"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        tools:layout_editor_absoluteX="111dp"
+        tools:layout_editor_absoluteY="563dp" />
+
+    <Button
+        android:id="@+id/signinBtn"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:text="signin"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        tools:layout_editor_absoluteX="113dp"
+        tools:layout_editor_absoluteY="632dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
