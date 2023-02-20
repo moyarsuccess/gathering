@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0BE9B"
+    android:background="#EEE5E0"
     tools:context=".IntroActivity">
 
     <androidx.core.widget.NestedScrollView
@@ -16,6 +16,7 @@
         android:layout_height="wrap_content">
 
     <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
