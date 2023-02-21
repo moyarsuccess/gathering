@@ -2,14 +2,19 @@ package com.gathering.android
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.viewpager2.widget.ViewPager2
+import com.gathering.android.databinding.IntroActivityBinding
 
 
 class IntroActivity : AppCompatActivity() {
+    private lateinit var binding: IntroActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.intro_avtivity)
-        val viewPager: ViewPager2 = findViewById(R.id.viewpager)
+
+        binding = IntroActivityBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        binding.viewpager
     }
 
 }
