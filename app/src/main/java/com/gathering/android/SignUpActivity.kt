@@ -1,6 +1,5 @@
 package com.gathering.android
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -17,7 +16,7 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
 
-        auth.createUserWithEmailAndPassword("animansoubi@gmail.com", "12345")
+        auth.createUserWithEmailAndPassword("animansoubi@gmail.com", "@nahidM107894")
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
@@ -26,7 +25,7 @@ class SignUpActivity : AppCompatActivity() {
                     updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Log.d(TAG, "createUserWithEmail:failure", task.exception)
                     Toast.makeText(
                         baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT
@@ -34,9 +33,16 @@ class SignUpActivity : AppCompatActivity() {
                     updateUI(null)
                 }
             }
+            .addOnFailureListener {
+                Log.d(TAG, it.message, it.cause)
+            }
     }
 
     private fun updateUI(user: FirebaseUser?) {
         //TODO Navigate to appropriate UI
+    }
+
+    companion object {
+        private const val TAG = "RRRR"
     }
 }
