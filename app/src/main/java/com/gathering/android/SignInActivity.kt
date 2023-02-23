@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -33,21 +32,25 @@ class SignInActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         Log.d(TAG, "signInWithEmail:success")
                         val user = auth.currentUser
-                        updateUI(user)
+                        goToMain()
                     } else {
                         Log.w(TAG, "signInWithEmail:failure", task.exception)
                         Toast.makeText(
                             baseContext, "Authentication failed.",
                             Toast.LENGTH_SHORT
                         ).show()
-                        updateUI(null)
                     }
+                }
+                .addOnFailureListener {
+                    Log.d(TAG, it.message, it.cause)
                 }
         }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
-        //TODO Navigate to appropriate UI
+    private fun goToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     companion object {

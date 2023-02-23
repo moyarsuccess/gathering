@@ -1,11 +1,11 @@
 package com.gathering.android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -22,7 +22,7 @@ class SignUpActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
                     val user = auth.currentUser
-                    updateUI(user)
+                    goToMain()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "createUserWithEmail:failure", task.exception)
@@ -30,7 +30,6 @@ class SignUpActivity : AppCompatActivity() {
                         baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    updateUI(null)
                 }
             }
             .addOnFailureListener {
@@ -38,8 +37,10 @@ class SignUpActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
-        //TODO Navigate to appropriate UI
+    private fun goToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     companion object {
