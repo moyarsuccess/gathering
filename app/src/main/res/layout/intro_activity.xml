@@ -7,21 +7,44 @@
     android:background="#EEE5E0"
     tools:context=".IntroActivity">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewpager"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/signupBtn"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/signupBtn">
 
-    </androidx.viewpager2.widget.ViewPager2>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/dotsIndicator"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+            android:id="@+id/dotsIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            app:dotsColor="#E5793E"
+            app:dotsCornerRadius="3dp"
+            app:dotsSize="10dp"
+            app:dotsSpacing="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/signupBtn"
         android:layout_width="170dp"
         android:layout_height="50dp"
         android:backgroundTint="#C58787"
-        android:text="signup"
+        tools:text="@string/signUp_button_text"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -35,7 +58,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
         android:backgroundTint="#C58787"
-        android:text="signin"
+        tools:text="@string/signIn_button_text"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
