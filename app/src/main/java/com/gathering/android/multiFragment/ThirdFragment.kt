@@ -1,11 +1,11 @@
-package com.gathering.android
+package com.gathering.android.multiFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
-import com.gathering.android.databinding.FragmentFirstBinding
+import com.gathering.android.R
 import com.gathering.android.databinding.FragmentThirdBinding
 
 class ThirdFragment : Fragment() {
@@ -28,8 +28,4 @@ class ThirdFragment : Fragment() {
         binding.description3.text = getString(R.string.fragment_3_text)
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
 }

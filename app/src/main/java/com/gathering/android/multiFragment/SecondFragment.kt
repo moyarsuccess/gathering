@@ -1,10 +1,11 @@
-package com.gathering.android
+package com.gathering.android.multiFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import com.gathering.android.R
 import com.gathering.android.databinding.FragmentSecondBinding
 
 class SecondFragment : Fragment() {
@@ -27,8 +28,5 @@ class SecondFragment : Fragment() {
         binding.description2.text = getString(R.string.fragment_2_text)
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
+
 }
