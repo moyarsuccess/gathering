@@ -1,4 +1,5 @@
-package com.gathering.android.singleFragment
+package com.gathering.android.intro
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.gathering.android.R
 
-class PageFragment : Fragment() {
+class IntroPageFragment : Fragment() {
 
     private var imageResource: Int = 0
     private var title: String = ""
@@ -26,11 +27,13 @@ class PageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_page, container, false)
+        val view = inflater.inflate(R.layout.fragment_intro_page, container, false)
         view.findViewById<ImageView>(R.id.imageView).setImageResource(imageResource)
         view.findViewById<TextView>(R.id.textViewTitle).text = title
         return view
     }
+
+    data class AppIntro(var imageId: Int, var description: String)
 
     companion object {
 
@@ -38,7 +41,7 @@ class PageFragment : Fragment() {
         private const val ARG_TITLE = "title"
 
         fun newInstance(imageResource: Int, title: String) =
-            PageFragment().apply {
+            IntroPageFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_IMAGE_RESOURCE, imageResource)
                     putString(ARG_TITLE, title)
