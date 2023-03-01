@@ -1,5 +1,6 @@
 package com.gathering.android.intro
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.gathering.android.R
@@ -15,6 +16,7 @@ class IntroActivity : AppCompatActivity() {
         binding = IntroActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val IntroActivityViewModel = IntroActivityViewModel()
 
         val list = listOf(
             IntroPageFragment.AppIntro(
@@ -37,13 +39,20 @@ class IntroActivity : AppCompatActivity() {
         binding.dotsIndicator.setViewPager2(binding.viewPager)
 
 
+
         binding.signinBtn.setOnClickListener {
+            val signInIntent = Intent(this, SignInActivity::class.java)
+            startActivity(signInIntent)
         }
 
         binding.signupBtn.setOnClickListener {
+            val signUpIntent = Intent(this, SignUpActivity::class.java)
+            startActivity(signUpIntent)
         }
     }
 }
+
+
 
 
 
