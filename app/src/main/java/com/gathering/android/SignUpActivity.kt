@@ -6,7 +6,7 @@ import com.gathering.android.databinding.ActivitySignUpBinding
 
 class SignUpActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivitySignUpBinding
+    private lateinit var binding: ActivitySignUpBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
