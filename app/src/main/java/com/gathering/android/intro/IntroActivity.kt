@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.gathering.android.R
+import com.gathering.android.SignInActivity
 import com.gathering.android.SignUpActivity
 import com.gathering.android.databinding.IntroActivityBinding
 
