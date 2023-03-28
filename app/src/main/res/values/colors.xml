@@ -4,8 +4,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="icon_color">#D8A7B1</color>
-    <color name="button_color">#EF7C8E</color>
-    <color name="button_color_pressed">#974E59</color>
+    <color name="button_color">#F39085</color>
+    <color name="button_color_pressed">#B36D65</color>
     <color name="gray">#B3AFAF</color>
     <color name="red">#D65353</color>
     <color name="color_light_gray">#EEE5E0</color>
