@@ -2,14 +2,16 @@ package com.gathering.android
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.gathering.android.databinding.ActivitySignUpBinding
+import com.gathering.android.databinding.ActivityEventBinding
 
-class SignUpActivity : AppCompatActivity() {
+class EventActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySignUpBinding
+    private lateinit var binding: ActivityEventBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySignUpBinding.inflate(layoutInflater)
+        binding = ActivityEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
+
 }
