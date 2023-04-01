@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.gathering.android.databinding.FragmentIntroPageBinding
+import com.gathering.android.databinding.FrgIntroPageBinding
 
 class IntroPageFragment : Fragment() {
 
     private var imageResource: Int = 0
     private var title: String = ""
-    private lateinit var binding: FragmentIntroPageBinding
+    private lateinit var binding: FrgIntroPageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class IntroPageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentIntroPageBinding.inflate(inflater, container, false)
+        binding = FrgIntroPageBinding.inflate(inflater, container, false)
         binding.imgView.setImageResource(imageResource)
         binding.tvTitle.text = title
         return binding.root

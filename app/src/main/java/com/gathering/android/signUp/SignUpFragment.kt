@@ -1,28 +1,37 @@
 package com.gathering.android.signUp
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
-import com.gathering.android.EventActivity
-import com.gathering.android.databinding.ActivitySignUpBinding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.gathering.android.R
+import com.gathering.android.databinding.FrgSignUpBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.Serializable
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class SignUpActivity : AppCompatActivity() {
+class SignUpFragment : Fragment() {
 
-    private lateinit var binding: ActivitySignUpBinding
+    private lateinit var binding: FrgSignUpBinding
 
     @Inject
     lateinit var viewModel: SignUpViewModel
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySignUpBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FrgSignUpBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.etMail.doOnTextChanged { text, _, _, _ ->
             viewModel.onEmailAddressChanged(text.toString())
@@ -44,7 +53,7 @@ class SignUpActivity : AppCompatActivity() {
             viewModel.onSignUpButtonClicked(email, pass)
         }
 
-        viewModel.viewState.observe(this) { state ->
+        viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SignUpScreenViewState.Error.ShowEmptyEmailError -> {
                     binding.etMail.error = state.errorMessage
@@ -68,9 +77,16 @@ class SignUpActivity : AppCompatActivity() {
                     showToast(state.errorMessage)
                 }
                 is SignUpScreenViewState.NavigateToEventScreen -> {
-                    val intent = Intent(this, EventActivity::class.java)
-                    intent.putExtra("extra_object", state.user as Serializable)
-                    startActivity(intent)
+                    val bundle = Bundle()
+                    bundle.putString("uId", state.user.uId.toString())
+                    bundle.putString("displayName", state.user.displayName.toString())
+                    bundle.putString("phoneNumber", state.user.phoneNumber.toString())
+                    bundle.putString("photoUrl", state.user.photoUrl.toString())
+                    state.user.isEmailVerified?.let { bundle.putBoolean("isEmailVerified", it) }
+                    findNavController().navigate(
+                        R.id.action_signUpFragment_to_eventFragment,
+                        bundle
+                    )
                 }
                 is SignUpScreenViewState.SignUpButtonVisibility -> {
                     binding.btnSignUp.isEnabled = state.isSignUpButtonEnabled
@@ -83,6 +99,6 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun showToast(errorMessage: String?) {
-        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 }
