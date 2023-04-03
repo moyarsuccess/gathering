@@ -1,6 +1,6 @@
 package com.gathering.android.signUp
 
-import android.util.Patterns
+import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +8,7 @@ import com.gathering.android.signUp.model.AuthRepository
 import com.gathering.android.signUp.model.ResponseState
 import java.util.regex.Pattern
 import javax.inject.Inject
+
 
 class SignUpViewModel @Inject constructor(
     private val repository: AuthRepository
@@ -59,7 +60,8 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun isEmailValid(email: String): Boolean {
-        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        return !(TextUtils.isEmpty(email)) && android.util.Patterns.EMAIL_ADDRESS.matcher(email)
+            .matches()
     }
 
     private fun isPassValid(pass: String): Boolean {
@@ -87,6 +89,6 @@ class SignUpViewModel @Inject constructor(
             "Please enter matched Password"
 
         private const val PASSWORD_REGEX =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$";
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
     }
 }
