@@ -1,4 +1,4 @@
-package com.gathering.android.signUp
+package com.gathering.android.signup
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,26 +6,33 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import com.gathering.android.R
 import com.gathering.android.databinding.FrgSignUpBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignUpFragment : Fragment() {
+class SignUpFragment : DialogFragment() {
 
     private lateinit var binding: FrgSignUpBinding
 
     @Inject
     lateinit var viewModel: SignUpViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(
+            STYLE_NORMAL,
+            android.R.style.Theme_Light_NoTitleBar_Fullscreen
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FrgSignUpBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -76,17 +83,9 @@ class SignUpFragment : Fragment() {
                 is SignUpScreenViewState.Error.ShowGeneralError -> {
                     showToast(state.errorMessage)
                 }
-                is SignUpScreenViewState.NavigateToEventScreen -> {
-                    val bundle = Bundle()
-                    bundle.putString("uId", state.user.uId.toString())
-                    bundle.putString("displayName", state.user.displayName.toString())
-                    bundle.putString("phoneNumber", state.user.phoneNumber.toString())
-                    bundle.putString("photoUrl", state.user.photoUrl.toString())
-                    state.user.isEmailVerified?.let { bundle.putBoolean("isEmailVerified", it) }
-                    findNavController().navigate(
-                        R.id.action_signUpFragment_to_eventFragment,
-                        bundle
-                    )
+                is SignUpScreenViewState.NavigateToHomeScreen -> {
+                    findNavController().popBackStack()
+                    findNavController().popBackStack()
                 }
                 is SignUpScreenViewState.SignUpButtonVisibility -> {
                     binding.btnSignUp.isEnabled = state.isSignUpButtonEnabled

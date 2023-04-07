@@ -1,10 +1,8 @@
-package com.gathering.android.signUp
-
-import com.gathering.android.signUp.model.User
+package com.gathering.android.signup
 
 sealed interface SignUpScreenViewState {
 
-    class NavigateToEventScreen(val user: User) : SignUpScreenViewState
+    object NavigateToHomeScreen : SignUpScreenViewState
 
     class SignUpButtonVisibility(val isSignUpButtonEnabled: Boolean) : SignUpScreenViewState
 

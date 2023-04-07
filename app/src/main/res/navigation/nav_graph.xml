@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/introFragment">
-    <fragment
+    app:startDestination="@id/navigation_home">
+    <dialog
         android:id="@+id/introFragment"
         android:name="com.gathering.android.intro.IntroFragment"
         android:label="IntroFragment"
@@ -15,45 +15,42 @@
         <action
             android:id="@+id/action_introFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
-    </fragment>
-    <fragment
+    </dialog>
+    <dialog
         android:id="@+id/signUpFragment"
-        android:name="com.gathering.android.signUp.SignUpFragment"
+        android:name="com.gathering.android.signup.SignUpFragment"
         android:label="SignUpFragment"
-        tools:layout="@layout/frg_sign_up">
+        tools:layout="@layout/frg_sign_up" >
         <action
-            android:id="@+id/action_signUpFragment_to_eventFragment"
-            app:destination="@id/eventFragment" />
-    </fragment>
-    <fragment
+            android:id="@+id/action_signUpFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
+    <dialog
         android:id="@+id/signInFragment"
         android:name="com.gathering.android.signin.SignInFragment"
         android:label="SignInFragment"
-        tools:layout="@layout/frg_sign_in" />
+        tools:layout="@layout/frg_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
     <fragment
-        android:id="@+id/eventFragment"
-        android:name="com.gathering.android.event.EventFragment"
-        android:label="EventFragment"
-        tools:layout="@layout/frg_event">
-        <argument
-            android:name="uId"
-            android:defaultValue='""'
-            app:argType="string" />
-        <argument
-            android:name="displayName"
-            android:defaultValue='""'
-            app:argType="string" />
-        <argument
-            android:name="phoneNumber"
-            android:defaultValue='""'
-            app:argType="string" />
-        <argument
-            android:name="photoUrl"
-            android:defaultValue='""'
-            app:argType="string" />
-        <argument
-            android:name="isEmailVerified"
-            android:defaultValue="false"
-            app:argType="boolean" />
+        android:id="@+id/navigation_home"
+        android:name="com.gathering.android.event.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/frg_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_introFragment"
+            app:destination="@id/introFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/navigation_event"
+        android:name="com.gathering.android.event.myevent.MyEventFragment"
+        android:label="MyEventFragment"
+        tools:layout="@layout/frg_my_event" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.gathering.android.event.profile.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/frg_profile" />
 </navigation>

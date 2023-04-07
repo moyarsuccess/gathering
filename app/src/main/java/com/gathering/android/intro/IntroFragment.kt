@@ -1,27 +1,40 @@
 package com.gathering.android.intro
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgIntroBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class IntroFragment : Fragment() {
+class IntroFragment : DialogFragment() {
 
     private lateinit var binding: FrgIntroBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(
+            STYLE_NORMAL,
+            android.R.style.Theme_Light_NoTitleBar_Fullscreen
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FrgIntroBinding.inflate(layoutInflater)
         return binding.root
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
