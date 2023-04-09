@@ -1,4 +1,4 @@
-package com.gathering.android.signUp.model
+package com.gathering.android.signup.model
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -24,6 +24,10 @@ class AuthRepository @Inject constructor() {
             .addOnFailureListener { error ->
                 onResponseReady(ResponseState.Failure(error.toString()))
             }
+    }
+
+    fun isSignedIn(): Boolean {
+        return Firebase.auth.currentUser != null
     }
 
     private fun FirebaseUser?.toUser(): User {

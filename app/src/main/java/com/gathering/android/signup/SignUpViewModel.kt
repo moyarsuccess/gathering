@@ -1,11 +1,11 @@
-package com.gathering.android.signUp
+package com.gathering.android.signup
 
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.signUp.model.AuthRepository
-import com.gathering.android.signUp.model.ResponseState
+import com.gathering.android.signup.model.AuthRepository
+import com.gathering.android.signup.model.ResponseState
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -50,7 +50,7 @@ class SignUpViewModel @Inject constructor(
                 is ResponseState.Failure -> _viewState.value =
                     SignUpScreenViewState.Error.ShowAuthenticationFailedError(state.Error)
                 is ResponseState.Success -> _viewState.value =
-                    SignUpScreenViewState.NavigateToEventScreen(state.user)
+                    SignUpScreenViewState.NavigateToHomeScreen
             }
         })
     }
