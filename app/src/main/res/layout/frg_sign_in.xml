@@ -55,11 +55,12 @@
         app:layout_constraintGuide_begin="250dp" />
 
     <Button
-        android:id="@+id/signIn_btn"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_sign_in"
+        style="@style/buttonStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="25dp"
         android:background="@drawable/custom_button"
+        android:padding="15dp"
         android:text="@string/signIn_button_text"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"

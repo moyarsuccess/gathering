@@ -1,4 +1,4 @@
-package com.gathering.android.auth.signIn
+package com.gathering.android.auth.signin
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgSignInBinding
@@ -14,18 +14,26 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignInFragment : Fragment() {
+class SignInFragment : DialogFragment() {
 
     private lateinit var binding: FrgSignInBinding
 
     @Inject
     lateinit var viewModel: SignInViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(
+            STYLE_NORMAL,
+            android.R.style.Theme_Light_NoTitleBar_Fullscreen
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FrgSignInBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -41,7 +49,7 @@ class SignInFragment : Fragment() {
             viewModel.onPasswordChanged(text.toString())
         }
 
-        binding.signInBtn.setOnClickListener {
+        binding.btnSignIn.setOnClickListener {
             val email = binding.etMail.text.toString()
             val pass = binding.etPass.text.toString()
             viewModel.onSignInButtonClicked(email, pass)
@@ -65,20 +73,13 @@ class SignInFragment : Fragment() {
                 is SignInViewState.Error.ShowGeneralError -> {
                     showToast(state.errorMessage)
                 }
-                is SignInViewState.NavigateToEventScreen -> {
-                    val bundle = Bundle()
-                    bundle.putString("uId", state.user.uId.toString())
-                    bundle.putString("displayName", state.user.displayName.toString())
-                    bundle.putString("phoneNumber", state.user.phoneNumber.toString())
-                    bundle.putString("photoUrl", state.user.photoUrl.toString())
-                    state.user.isEmailVerified?.let { bundle.putBoolean("isEmailVerified", it) }
+                is SignInViewState.NavigateToHome -> {
                     findNavController().navigate(
-                        R.id.action_signUpFragment_to_eventFragment,
-                        bundle
+                        R.id.action_signInFragment_to_navigation_home
                     )
                 }
                 is SignInViewState.SignInButtonVisibility -> {
-                    binding.signInBtn.isEnabled = state.isSignInButtonEnabled
+                    binding.btnSignIn.isEnabled = state.isSignInButtonEnabled
                 }
                 is SignInViewState.Error.ShowAuthenticationFailedError -> {
                     showToast(state.errorMessage)

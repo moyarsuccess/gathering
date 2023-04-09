@@ -1,11 +1,9 @@
-package com.gathering.android.auth.signIn
-
-import com.gathering.android.auth.signUp.model.User
+package com.gathering.android.auth.signin
 
 
 sealed interface SignInViewState {
 
-    class NavigateToEventScreen(val user: User) : SignInViewState
+    object NavigateToHome : SignInViewState
     class SignInButtonVisibility(val isSignInButtonEnabled: Boolean) : SignInViewState
 
 

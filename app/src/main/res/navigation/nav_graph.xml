@@ -18,7 +18,7 @@
     </dialog>
     <dialog
         android:id="@+id/signUpFragment"
-        android:name="com.gathering.android.signup.SignUpFragment"
+        android:name="com.gathering.android.auth.signup.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/frg_sign_up" >
         <action
@@ -27,7 +27,7 @@
     </dialog>
     <dialog
         android:id="@+id/signInFragment"
-        android:name="com.gathering.android.signin.SignInFragment"
+        android:name="com.gathering.android.auth.signin.SignInFragment"
         android:label="SignInFragment"
         tools:layout="@layout/frg_sign_in" >
         <action
