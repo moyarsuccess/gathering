@@ -1,4 +1,4 @@
-package com.gathering.android.signup
+package com.gathering.android.auth.signup
 
 import android.os.Bundle
 import android.view.LayoutInflater

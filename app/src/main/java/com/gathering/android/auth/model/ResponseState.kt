@@ -1,4 +1,4 @@
-package com.gathering.android.signup.model
+package com.gathering.android.auth.model
 
 sealed interface ResponseState {
 

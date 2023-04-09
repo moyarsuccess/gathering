@@ -1,5 +1,7 @@
-package com.gathering.android.signup.model
+package com.gathering.android.auth
 
+import com.gathering.android.auth.model.ResponseState
+import com.gathering.android.auth.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -10,6 +12,21 @@ class AuthRepository @Inject constructor() {
 
     private lateinit var auth: FirebaseAuth
 
+    fun signInUser(email: String, pass: String, onResponseReady: (ResponseState) -> Unit) {
+        auth = Firebase.auth
+        auth.signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user: FirebaseUser? = auth.currentUser
+                    onResponseReady(ResponseState.Success(user.toUser()))
+                } else {
+                    onResponseReady(ResponseState.Failure("Authentication failed"))
+                }
+            }
+            .addOnFailureListener { error ->
+                onResponseReady(ResponseState.Failure(error.toString()))
+            }
+    }
     fun signUpUser(email: String, pass: String, onResponseReady: (ResponseState) -> Unit) {
         auth = Firebase.auth
         auth.createUserWithEmailAndPassword(email, pass)

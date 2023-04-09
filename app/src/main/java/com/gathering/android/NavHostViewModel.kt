@@ -3,7 +3,7 @@ package com.gathering.android
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.signup.model.AuthRepository
+import com.gathering.android.auth.AuthRepository
 import javax.inject.Inject
 
 class NavHostViewModel @Inject constructor(

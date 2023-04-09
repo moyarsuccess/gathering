@@ -1,4 +1,4 @@
-package com.gathering.android.signup
+package com.gathering.android.auth.signup
 
 sealed interface SignUpScreenViewState {
 
