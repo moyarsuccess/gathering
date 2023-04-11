@@ -1,12 +1,12 @@
 package com.gathering.android.auth.signup
 
-sealed interface SignUpScreenViewState {
+sealed interface SignUpViewState {
 
-    object NavigateToHomeScreen : SignUpScreenViewState
+    object NavigateToHomeScreen : SignUpViewState
 
-    class SignUpButtonVisibility(val isSignUpButtonEnabled: Boolean) : SignUpScreenViewState
+    class SignUpButtonVisibility(val isSignUpButtonEnabled: Boolean) : SignUpViewState
 
-    sealed class Error(val errorMessage: String?) : SignUpScreenViewState {
+    sealed class Error(val errorMessage: String?) : SignUpViewState {
         class ShowGeneralError(errorMessage: String?) : Error(errorMessage)
         class ShowAuthenticationFailedError(errorMessage: String?) : Error(errorMessage)
         class ShowInvalidEmailError(errorMessage: String?) : Error(errorMessage)

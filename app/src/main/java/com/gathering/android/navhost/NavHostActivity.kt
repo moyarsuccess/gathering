@@ -1,10 +1,11 @@
-package com.gathering.android
+package com.gathering.android.navhost
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.gathering.android.R
 import com.gathering.android.databinding.ActNavHostBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

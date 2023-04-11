@@ -62,35 +62,35 @@ class SignUpFragment : DialogFragment() {
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is SignUpScreenViewState.Error.ShowEmptyEmailError -> {
+                is SignUpViewState.Error.ShowEmptyEmailError -> {
                     binding.etMail.error = state.errorMessage
                 }
-                is SignUpScreenViewState.Error.ShowInvalidEmailError -> {
+                is SignUpViewState.Error.ShowInvalidEmailError -> {
                     binding.etMail.error = state.errorMessage
                 }
-                is SignUpScreenViewState.Error.ShowEmptyPassError -> {
+                is SignUpViewState.Error.ShowEmptyPassError -> {
                     binding.etPass.error = state.errorMessage
                 }
-                is SignUpScreenViewState.Error.ShowInvalidPassError -> {
+                is SignUpViewState.Error.ShowInvalidPassError -> {
                     binding.etPass.error = state.errorMessage
                 }
-                is SignUpScreenViewState.Error.ShowEmptyConfirmedPassError -> {
+                is SignUpViewState.Error.ShowEmptyConfirmedPassError -> {
                     binding.etVerifyPass.error = state.errorMessage
                 }
-                is SignUpScreenViewState.Error.ShowInvalidConfirmedPassError -> {
+                is SignUpViewState.Error.ShowInvalidConfirmedPassError -> {
                     binding.etVerifyPass.error = state.errorMessage
                 }
-                is SignUpScreenViewState.Error.ShowGeneralError -> {
+                is SignUpViewState.Error.ShowGeneralError -> {
                     showToast(state.errorMessage)
                 }
-                is SignUpScreenViewState.NavigateToHomeScreen -> {
+                is SignUpViewState.NavigateToHomeScreen -> {
                     findNavController().popBackStack()
                     findNavController().popBackStack()
                 }
-                is SignUpScreenViewState.SignUpButtonVisibility -> {
+                is SignUpViewState.SignUpButtonVisibility -> {
                     binding.btnSignUp.isEnabled = state.isSignUpButtonEnabled
                 }
-                is SignUpScreenViewState.Error.ShowAuthenticationFailedError -> {
+                is SignUpViewState.Error.ShowAuthenticationFailedError -> {
                     showToast(state.errorMessage)
                 }
             }
