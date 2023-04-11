@@ -1,4 +1,4 @@
-package com.gathering.android
+package com.gathering.android.navhost
 
 sealed interface NavHostViewState {
 

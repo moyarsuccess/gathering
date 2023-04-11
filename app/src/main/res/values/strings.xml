@@ -15,4 +15,10 @@
     <string name="my_event">MyEvent</string>
     <string name="profile">Profile</string>
     <string name="home">Home</string>
+    <string name="event_title">Title</string>
+    <string name="event_host">Host</string>
+    <string name="event_description">Description</string>
+    <string name="no_data_to_show">No event yet</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
 </resources>

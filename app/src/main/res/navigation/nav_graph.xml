@@ -50,7 +50,7 @@
         tools:layout="@layout/frg_my_event" />
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.gathering.android.event.profile.ProfileFragment"
+        android:name="com.gathering.profile.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/frg_profile" />
 </navigation>
