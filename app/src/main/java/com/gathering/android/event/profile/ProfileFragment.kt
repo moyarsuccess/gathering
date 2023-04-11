@@ -1,4 +1,4 @@
-package com.gathering.profile
+package com.gathering.android.event.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater

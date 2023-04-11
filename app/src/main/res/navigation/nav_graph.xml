@@ -20,7 +20,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.gathering.android.auth.signup.SignUpFragment"
         android:label="SignUpFragment"
-        tools:layout="@layout/frg_sign_up" >
+        tools:layout="@layout/frg_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
@@ -29,7 +29,7 @@
         android:id="@+id/signInFragment"
         android:name="com.gathering.android.auth.signin.SignInFragment"
         android:label="SignInFragment"
-        tools:layout="@layout/frg_sign_in" >
+        tools:layout="@layout/frg_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
@@ -38,10 +38,16 @@
         android:id="@+id/navigation_home"
         android:name="com.gathering.android.event.home.HomeFragment"
         android:label="HomeFragment"
-        tools:layout="@layout/frg_home" >
+        tools:layout="@layout/frg_home">
         <action
             android:id="@+id/action_homeFragment_to_introFragment"
             app:destination="@id/introFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+        <argument
+            android:name="Event"
+            app:argType="com.gathering.android.event.home.model.Event" />
     </fragment>
     <fragment
         android:id="@+id/navigation_event"
@@ -50,7 +56,16 @@
         tools:layout="@layout/frg_my_event" />
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.gathering.profile.ProfileFragment"
+        android:name="com.gathering.android.event.profile.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/frg_profile" />
+    <fragment
+        android:id="@+id/eventDetailFragment"
+        android:name="com.gathering.android.event.eventdetail.EventDetailFragment"
+        android:label="EventDetailFragment"
+        tools:layout="@layout/frg_event_detail">
+        <argument
+            android:name="Event"
+            app:argType="com.gathering.android.event.home.model.Event" />
+    </fragment>
 </navigation>

@@ -1,5 +1,6 @@
 package com.gathering.android.event.home.model
 
+import java.io.Serializable
 import java.util.*
 
 data class Event(
@@ -16,6 +17,7 @@ data class Event(
     val isMyEvent: Boolean = false,
     //We can set list of activity or define different activities
     val activities: List<String> = listOf(),
+    //We should have attendee object and set list of attendee instead of String
+    val attendees: List<String> = listOf(),
     val eventCost: Int = 0
-
-)
+) : Serializable

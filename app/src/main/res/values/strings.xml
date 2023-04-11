@@ -31,5 +31,8 @@
     <string name="filter_by">Filter by</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
-
+    <string name="accept">I\'m in</string>
+    <string name="decline">I\'m out</string>
+    <string name="date">Date</string>
+    <string name="address">address</string>
 </resources>
