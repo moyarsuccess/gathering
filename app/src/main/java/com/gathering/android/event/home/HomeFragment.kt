@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.databinding.FrgHomeBinding
+import com.gathering.android.event.home.FilterDialogFragment.Companion.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -57,6 +58,11 @@ class HomeFragment : Fragment() {
             )
         )
         viewModel.onViewCreated()
+
+        binding.filterButton.setOnClickListener {
+            val dialog = FilterDialogFragment(viewModel)
+            dialog.show(parentFragmentManager,TAG)
+        }
     }
 
     private fun showToast(text: String) {

@@ -20,5 +20,16 @@
     <string name="event_description">Description</string>
     <string name="no_data_to_show">No event yet</string>
     <string name="filter">Filter</string>
-    <string name="sort">Sort</string>
+    <string name="refine">Refine</string>
+    <string name="sort_by">Sort By</string>
+    <string name="my_contacts">My contacts</string>
+    <string name="my_events">My events</string>
+    <string name="closest_to_me">Closest to me</string>
+    <string name="happening_next">Happening next</string>
+    <string name="sort">sort</string>
+    <string name="today_events">Today\'s Events</string>
+    <string name="filter_by">Filter by</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+
 </resources>
