@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_filter_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_filter_by"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/tv_filter_margin"
+        android:text="@string/filter_by"
+        android:textSize="@dimen/tv_size" />
+
+    <CheckBox
+        android:id="@+id/my_contact_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/my_contacts" />
+
+    <CheckBox
+        android:id="@+id/my_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/my_events" />
+
+    <CheckBox
+        android:id="@+id/today_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/today_events" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_filter_apply"
+            style="@style/buttonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btn_margin"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:text="@string/apply" />
+
+        <Button
+            android:id="@+id/btn_filter_cancel"
+            style="@style/buttonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btn_margin"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:text="@string/cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>
