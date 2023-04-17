@@ -6,26 +6,40 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.event.home.model.Event
-import java.util.*
 import javax.inject.Inject
 
-class EventListViewModel @Inject constructor() : ViewModel() {
+class EventListViewModel @Inject constructor(
+    private val eventRepository: EventsRepository,
+    private val eventLocationComparator: EventLocationComparator
+) :
+    ViewModel() {
 
     private val _viewState = ActiveMutableLiveData<EventViewState>()
     val viewState: LiveData<EventViewState> by ::_viewState
 
+    private var lastSortType = SortType.SORT_BY_DATE
+    private var lastFilter = Filter()
     fun onViewCreated() {
-        loadEventList()
+        loadEventList(lastFilter, lastSortType)
+    }
+
+    fun onSortChanged(sortType: SortType) {
+        loadEventList(sortType = sortType, filter = lastFilter)
+        lastSortType = sortType
     }
 
     fun onFilterChanged(filter: Filter) {
-        loadEventList(filter)
+        loadEventList(filter = filter, lastSortType)
+        lastFilter = filter
     }
 
-    private fun loadEventList(filter: Filter = Filter()) {
+    private fun loadEventList(
+        filter: Filter,
+        sortType: SortType
+    ) {
         _viewState.setValue(EventViewState.ShowProgress)
         val filteredEventList = getRefinedEventList(
-            filter
+            filter, sortType
         )
         _viewState.setValue(EventViewState.ShowEventList(filteredEventList))
 
@@ -43,9 +57,9 @@ class EventListViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun getRefinedEventList(
-        filter: Filter
+        filter: Filter, sortType: SortType
     ): List<Event> {
-        val eventList = provideEventListMock()
+        val eventList = eventRepository.provideEventListMock()
         var filteredEventList: List<Event> = eventList
 
         if (filter.isContactsFilterOn) {
@@ -66,73 +80,13 @@ class EventListViewModel @Inject constructor() : ViewModel() {
 
             }
         }
+
+        filteredEventList = if (sortType == SortType.SORT_BY_DATE) {
+            filteredEventList.sortedBy { it.date }
+        } else {
+            filteredEventList.sortedWith(eventLocationComparator)
+        }
         return filteredEventList
-    }
-
-    private fun provideEventListMock(): List<Event> {
-        return mutableListOf(
-
-            Event(
-                eventId = "1",
-                eventName = "anahid's Party",
-                hostName = "Anahid",
-                description = "Dinner and game is waiting for you",
-                photoUrl = "",
-                location = "Anahid's Home",
-                startTime = "7:00",
-                endTime = "midnight",
-                date = Calendar.getInstance().time,
-                isContactEvent = false,
-                activities = listOf("Game", "Dinner", "Tea Time"),
-                eventCost = 10
-            ),
-            Event(
-                eventId = "2",
-                eventName = "Ida's Party",
-                hostName = "Ida",
-                description = "Dinner and game and swimming pool is waiting for you",
-                photoUrl = "",
-                location = "Ida's Home",
-                startTime = "8:00",
-                endTime = "12:00",
-                date = Calendar.getInstance().time,
-                isContactEvent = true,
-                isMyEvent = true,
-                activities = listOf("Game", "Dinner", "Tea Time"),
-                eventCost = 10
-            ),
-            Event(
-                eventId = "3",
-                eventName = "Amir's Party",
-                hostName = "Amir",
-                description = "Dinner and game and swimming pool is waiting for you",
-                photoUrl = "",
-                location = "Amir's Home",
-                startTime = "8:00",
-                endTime = "12:00",
-                date = Calendar.getInstance().time,
-                isContactEvent = true,
-                activities = listOf("Game", "Dinner", "Tea Time"),
-                eventCost = 10
-            ),
-            Event(
-                eventId = "4",
-                eventName = "Mo's Party",
-                hostName = "Mo",
-                description = "Dinner and game and swimming pool is waiting for you",
-                photoUrl = "",
-                location = "Mo's Home",
-                startTime = "8:00",
-                endTime = "12:00",
-                date = Calendar.getInstance().run {
-                    add(Calendar.DAY_OF_YEAR, 1)
-                    time
-                },
-                isContactEvent = true,
-                activities = listOf("Game", "Dinner", "Tea Time"),
-                eventCost = 10
-            )
-        )
     }
 }
 

@@ -1,5 +1,6 @@
 package com.gathering.android.event.home.model
 
+import android.location.Location
 import java.io.Serializable
 import java.util.*
 
@@ -9,7 +10,8 @@ data class Event(
     val hostName: String = "",
     val description: String = "",
     val photoUrl: String = "",
-    val location: String = "",
+    val locationName: String = "",
+    val location: Location? = null,
     val startTime: String = "",
     val endTime: String = "",
     val date: Date = Calendar.getInstance().time,

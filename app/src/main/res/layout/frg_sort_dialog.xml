@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_sort_by"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/tv_filter_margin"
+        android:text="@string/sort_by"
+        android:textSize="@dimen/tv_size" />
+
+    <RadioGroup
+        android:id="@+id/sortRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/radioGroup_padding">
+
+
+        <RadioButton
+            android:id="@+id/sort_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/closest_to_me" />
+
+        <RadioButton
+            android:id="@+id/sort_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/happening_next" />
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_sort_apply"
+            style="@style/buttonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btn_margin"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:text="@string/apply" />
+
+        <Button
+            android:id="@+id/btn_sort_cancel"
+            style="@style/buttonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btn_margin"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:text="@string/cancel" />
+
+    </LinearLayout>
+</LinearLayout>

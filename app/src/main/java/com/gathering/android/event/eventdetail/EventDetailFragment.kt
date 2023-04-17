@@ -50,7 +50,7 @@ class EventDetailFragment : Fragment() {
                     binding.tvEventTitle.text = state.event.eventName
                     binding.tvEventHost.text = state.event.hostName
                     binding.tvEventDescription.text = state.event.description
-                    binding.tvEventAddress.text = state.event.location
+                    binding.tvEventAddress.text = state.event.locationName
                     binding.tvEventDate.text = state.event.date.toString()
                 }
             }
