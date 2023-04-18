@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/tv_filter_margin"
         android:text="@string/filter_by"
-        android:textSize="@dimen/tv_size" />
+        android:textSize="@dimen/tv_size_medium" />
 
     <CheckBox
         android:id="@+id/my_contact_events"

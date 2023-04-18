@@ -39,7 +39,7 @@ class EventListViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onEventItemClicked(event: Event) {
-        EventViewState.NavigateToEventDetail(event)
+        _viewState.setValue(EventViewState.NavigateToEventDetail(event))
     }
 
     private fun getRefinedEventList(

@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.gathering.android.R
 import com.gathering.android.databinding.FrgHomeBinding
 import com.gathering.android.event.home.FilterDialogFragment.Companion.TAG
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +39,12 @@ class HomeFragment : Fragment() {
             when (state) {
                 EventViewState.HideNoData -> binding.tvNoData.isVisible = false
                 EventViewState.HideProgress -> binding.prg.isVisible = false
-                is EventViewState.NavigateToEventDetail -> TODO() //navigate to event detail
+                is EventViewState.NavigateToEventDetail -> {
+                    val bundle = bundleOf("event" to state.event)
+                    findNavController().navigate(
+                        R.id.action_navigation_home_to_eventDetailFragment, bundle
+                    )
+                }
                 is EventViewState.ShowError -> showToast(state.errorMessage)
                 is EventViewState.ShowEventList -> {
                     adapter.setEventItem(state.eventList.toMutableList())
