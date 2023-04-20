@@ -25,9 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:gravity="center_horizontal"
-            android:padding="16dp"
+            android:padding="@dimen/btn_padding"
             android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            android:textSize="@dimen/tv_text_size_medium" />
     </FrameLayout>
 
 </androidx.cardview.widget.CardView>

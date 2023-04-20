@@ -8,7 +8,7 @@
         android:id="@+id/tv_filter_by"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/tv_filter_margin"
+        android:layout_margin="@dimen/margin"
         android:text="@string/filter_by"
         android:textSize="@dimen/tv_text_size_medium" />
 

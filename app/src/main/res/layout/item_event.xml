@@ -7,7 +7,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="@dimen/cardView_height"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,11 +20,11 @@
 
             <ImageView
                 android:id="@+id/img_event"
-                android:layout_width="120dp"
-                android:layout_height="76dp"
+                android:layout_width="@dimen/imageView_width"
+                android:layout_height="@dimen/imageView_height"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/tv_margin_start"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_launcher_foreground" />
 
@@ -32,8 +32,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginStart="@dimen/tv_margin_start"
+                android:layout_marginTop="@dimen/tv_margin"
                 android:layout_toEndOf="@id/img_event"
                 android:orientation="vertical">
 
@@ -41,25 +41,25 @@
                     android:id="@+id/tv_event_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
+                    android:padding="@dimen/tv_padding"
                     android:text="@string/event_title"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/tv_text_size_small" />
 
                 <TextView
                     android:id="@+id/tv_event_host"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
+                    android:padding="@dimen/tv_padding"
                     android:text="@string/event_host"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/tv_text_size_small" />
 
                 <TextView
                     android:id="@+id/tv_event_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
+                    android:padding="@dimen/tv_padding"
                     android:text="@string/event_description"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/tv_text_size_small" />
 
             </LinearLayout>
         </RelativeLayout>
