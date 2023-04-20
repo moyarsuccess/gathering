@@ -7,7 +7,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.gathering.android.databinding.FrgFilterDialogBinding
 
-
+//TODO: this class does not keep the state of filtered options. it will be fixed in T28
 class FilterDialogFragment(private val eventListViewModel: EventListViewModel) : DialogFragment() {
 
     private lateinit var binding: FrgFilterDialogBinding

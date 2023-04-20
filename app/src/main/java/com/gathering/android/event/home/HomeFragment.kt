@@ -67,6 +67,12 @@ class HomeFragment : Fragment() {
         )
         viewModel.onViewCreated()
 
+
+        binding.sortButton.setOnClickListener{
+            val dialog = SortDialogFragment(viewModel)
+            dialog.show(parentFragmentManager,TAG)
+        }
+
         binding.filterButton.setOnClickListener {
             val dialog = FilterDialogFragment(viewModel)
             dialog.show(parentFragmentManager,TAG)
