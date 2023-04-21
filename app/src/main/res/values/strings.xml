@@ -34,5 +34,15 @@
     <string name="accept">I\'m in</string>
     <string name="decline">I\'m out</string>
     <string name="date">Date</string>
-    <string name="address">address</string>
+    <string name="address">Address</string>
+    <string name="location">Location</string>
+    <string name="event_min_attendee">Minimum attendee</string>
+    <string name="event_max_attendee">Maximum attendee</string>
+    <string name="event_cost">Event cost</string>
+    <string name="add_event">Add event</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="pick_picture">Pick Picture</string>
+    <string name="location_screen">Location Screen</string>
+    <string name="take_pick_pic">Take / Pick pic</string>
+    <string name="invite_friends">Invite Friend</string>
 </resources>

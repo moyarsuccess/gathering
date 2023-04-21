@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/img_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/img_view_margin_start"
+            android:layout_marginTop="@dimen/img_view_margin_top"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+
+        <Button
+            android:id="@+id/btn_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/btn_location_margin_start"
+            android:layout_marginTop="@dimen/btn_location_margin_top"
+            android:background="@drawable/custom_button"
+            android:ems="10"
+            android:text="@string/location"
+            android:textSize="@dimen/btn_text_size_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_event"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/custom_edit_text"
+            android:ems="10"
+            android:padding="@dimen/et_padding"
+            android:text="@string/address"
+            app:layout_constraintStart_toEndOf="@+id/img_event"
+            app:layout_constraintTop_toBottomOf="@+id/btn_location" />
+
+        <EditText
+            android:id="@+id/et_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:background="@drawable/custom_edit_text"
+            android:ems="10"
+            android:padding="@dimen/et_padding"
+            android:text="@string/event_description"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_event" />
+
+        <EditText
+            android:id="@+id/et_min_attendee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:background="@drawable/custom_edit_text"
+            android:ems="10"
+            android:padding="@dimen/et_padding"
+            android:text="@string/event_min_attendee"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_description" />
+
+        <EditText
+            android:id="@+id/et_max_attendee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:background="@drawable/custom_edit_text"
+            android:ems="10"
+            android:text="@string/event_max_attendee"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_min_attendee" />
+
+        <EditText
+            android:id="@+id/et_event_cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:background="@drawable/custom_edit_text"
+            android:ems="10"
+            android:padding="@dimen/et_padding"
+            android:text="@string/event_cost"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_max_attendee" />
+
+        <Button
+            android:id="@+id/btn_add_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/btn_margin_top"
+            android:layout_marginBottom="@dimen/btn_margin_bottom"
+            android:background="@drawable/custom_button"
+            android:padding="@dimen/btn_padding"
+            android:text="@string/add_event"
+            android:textSize="@dimen/btn_text_size_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_event_cost" />
+
+        <ImageButton
+            android:id="@+id/img_invitation"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="@dimen/btn_invite_margin_top"
+            android:background="@drawable/custom_button"
+            android:src="@drawable/ic_add_person"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_event_cost"
+            app:layout_constraintTop_toBottomOf="@id/et_address" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
