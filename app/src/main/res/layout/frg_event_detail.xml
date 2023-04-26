@@ -21,7 +21,7 @@
         android:layout_marginStart="@dimen/tv_margin_start"
         android:layout_marginTop="@dimen/tv_margin_top"
         android:text="@string/event_title"
-        android:textSize="@dimen/tv_size_medium"
+        android:textSize="@dimen/tv_text_size_medium"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_event" />
@@ -33,7 +33,7 @@
         android:layout_marginStart="@dimen/tv_margin_start"
         android:layout_marginTop="@dimen/tv_margin_top"
         android:text="@string/event_host"
-        android:textSize="@dimen/tv_size_small"
+        android:textSize="@dimen/tv_text_size_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_event_title" />
 
@@ -44,7 +44,7 @@
         android:layout_marginStart="@dimen/tv_margin_start"
         android:layout_marginTop="@dimen/tv_margin_top"
         android:text="@string/event_description"
-        android:textSize="@dimen/tv_size_small"
+        android:textSize="@dimen/tv_text_size_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_event_host" />
 
@@ -55,7 +55,7 @@
         android:layout_marginStart="@dimen/tv_margin_start"
         android:layout_marginTop="@dimen/tv_margin_top"
         android:text="@string/address"
-        android:textSize="@dimen/tv_size_small"
+        android:textSize="@dimen/tv_text_size_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_event_description" />
 
@@ -66,7 +66,7 @@
         android:layout_marginStart="@dimen/tv_margin_start"
         android:layout_marginTop="@dimen/tv_margin_top"
         android:text="@string/date"
-        android:textSize="@dimen/tv_size_small"
+        android:textSize="@dimen/tv_text_size_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_event_address" />
 
