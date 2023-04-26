@@ -26,7 +26,7 @@
                 android:background="@drawable/custom_edit_text"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
-                android:padding="15dp" />
+                android:padding="@dimen/padding" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -47,7 +47,7 @@
                 android:background="@drawable/custom_edit_text"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:padding="15dp" />
+                android:padding="@dimen/padding" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_button"
-            android:padding="15dp"
+            android:padding="@dimen/padding"
             android:text="@string/signIn_button_text"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
@@ -73,8 +73,8 @@
 
         <ImageView
             android:id="@+id/img_logo"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             app:layout_constraintBottom_toTopOf="@+id/guideline_start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

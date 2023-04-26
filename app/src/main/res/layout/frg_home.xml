@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
+        android:elevation="@dimen/elevation"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
         <LinearLayout
@@ -21,10 +21,10 @@
 
             <ImageButton
                 android:id="@+id/sort_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="@dimen/btn_img_size"
+                android:layout_height="@dimen/btn_img_size"
+                android:layout_marginTop="@dimen/img_margin"
+                android:layout_marginEnd="@dimen/btn_margin_intro"
                 android:layout_weight="1"
                 android:background="@drawable/ic_sort"
                 android:text="@string/sort"
@@ -32,9 +32,9 @@
 
             <ImageButton
                 android:id="@+id/filter_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="@dimen/btn_img_size"
+                android:layout_height="@dimen/btn_img_size"
+                android:layout_marginTop="@dimen/img_margin"
                 android:layout_weight="1"
                 android:background="@drawable/ic_filter"
                 android:text="@string/filter"
@@ -50,7 +50,7 @@
         android:id="@+id/rvEvent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="50dp"
+        android:paddingTop="@dimen/btn_height"
         app:layoutManager="LinearLayoutManager" />
 
     <ProgressBar
@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:padding="24dp"
+        android:padding="@dimen/home_padding"
         android:text="@string/no_data_to_show"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
