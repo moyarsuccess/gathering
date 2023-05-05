@@ -47,4 +47,10 @@
     <string name="invite_friends">Invite Friend</string>
     <string name="ok">ok</string>
     <string name="you_are_here">You are here</string>
+    <string name="open_gallery">open gallery</string>
+    <string name="open_camera">open camera</string>
+    <string name="rotate_right">rotate right</string>
+    <string name="rotate_left">rotate left</string>
+    <string name="contact">contact</string>
+    <string name="delete">delete</string>
 </resources>

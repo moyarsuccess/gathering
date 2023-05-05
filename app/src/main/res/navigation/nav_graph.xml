@@ -99,7 +99,11 @@
         android:id="@+id/addPicBottomSheet"
         android:name="com.gathering.android.event.myevent.addevent.pic.AddPicBottomSheet"
         android:label="AddPicBottomSheet"
-        tools:layout="@layout/bottom_sheet_add_pic" />
+        tools:layout="@layout/bottom_sheet_add_pic">
+        <action
+            android:id="@+id/action_back_to_add_event"
+            app:destination="@id/addEventBottomSheetFragment" />
+    </dialog>
     <dialog
         android:id="@+id/inviteFriendBottomSheet"
         android:name="com.gathering.android.event.myevent.addevent.invitation.InviteFriendBottomSheet"
