@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.BottomSheetAddEventBinding
 import com.gathering.android.event.home.model.Event
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -31,8 +32,13 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = BottomSheetAddEventBinding.inflate(LayoutInflater.from(requireContext()))
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -51,13 +57,9 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                     findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_navigation_event)
                 }
                 is AddEventViewState.ShowError -> showToast(state.errorMessage)
+                is AddEventViewState.SetAddress -> binding.tvAddress.setText(state.address)
             }
         }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         binding.btnLocation.setOnClickListener {
             viewModel.onLocationButtonClicked()
@@ -73,6 +75,10 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
         binding.btnAddEvent.setOnClickListener {
             viewModel.onAddEventButtonClicked(provideEvent())
+        }
+
+        getNavigationResultLiveData<String>()?.observe(viewLifecycleOwner) {
+            viewModel.onAddressChanged(it)
         }
     }
 

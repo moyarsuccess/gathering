@@ -28,7 +28,7 @@ class EventDetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FrgEventDetailBinding.inflate(layoutInflater)
         return binding.root
     }

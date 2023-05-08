@@ -31,12 +31,24 @@
     </style>
 
     //Custom bottom sheet style
+
     <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="behavior_peekHeight">800dp</item>
+        <item name="behavior_hideable">true</item>
+    </style>
+
+    <style name="Theme.MyApp.BottomSheetDialog" parent="Theme.Design.BottomSheetDialog">
+        <item name="colorAccent">@color/black</item>
+    </style>
+
+    <style name="FullScreenCustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="behavior_skipCollapsed">true</item>
+        <item name="behavior_fitToContents">true</item>
+        <item name="behavior_peekHeight">1000dp</item>
         <item name="behavior_hideable">true</item>
     </style>
 </resources>
