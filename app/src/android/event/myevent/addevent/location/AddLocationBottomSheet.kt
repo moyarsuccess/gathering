@@ -130,6 +130,7 @@ class AddLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback {
         }
     }
 
+
     private fun View.hideKeyboard() {
         val inputSystemService = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
         val imm = inputSystemService as? InputMethodManager
