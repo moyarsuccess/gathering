@@ -32,8 +32,8 @@
             app:layout_constraintStart_toEndOf="@+id/img_event"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/et_address"
+        <TextView
+            android:id="@+id/tv_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -124,7 +124,7 @@
             android:src="@drawable/ic_add_person"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/et_event_cost"
-            app:layout_constraintTop_toBottomOf="@id/et_address" />
+            app:layout_constraintTop_toBottomOf="@id/tv_address" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 
