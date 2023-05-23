@@ -29,6 +29,7 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onAddressChanged(address: String) {
+        _viewState.setValue(AddEventViewState.SetAddress(address))
         checkAllFieldsReady()
     }
 

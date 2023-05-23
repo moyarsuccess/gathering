@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.util.Locale
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -14,5 +15,10 @@ class ApplicationModule {
     @Provides
     fun provideImageLoader(): ImageLoader {
         return ImageLoaderImp()
+    }
+
+    @Provides
+    fun provideLocale(): Locale {
+        return Locale.getDefault()
     }
 }
