@@ -1,15 +1,18 @@
 package com.gathering.android.event.myevent.addevent
 
-import android.provider.CalendarContract.Attendees
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import javax.inject.Inject
 
 class AddEventViewModel @Inject constructor() : ViewModel() {
 
     private val _viewState = ActiveMutableLiveData<AddEventViewState>()
     val viewState: ActiveMutableLiveData<AddEventViewState> by ::_viewState
+
+    private val contactList = mutableListOf<Contact>()
 
     fun onImageButtonClicked() {
         _viewState.setValue(AddEventViewState.NavigateToAddPic)
@@ -21,7 +24,7 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onInvitationButtonClicked() {
-        _viewState.setValue(AddEventViewState.NavigateToInviteFriend)
+        _viewState.setValue(AddEventViewState.NavigateToInviteFriend(contactList))
     }
 
     fun onAddEventButtonClicked(event: Event) {
@@ -41,7 +44,13 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
         checkAllFieldsReady()
     }
 
-    fun onMaxAttendeeChanged(maxAttendees: Attendees) {
+    fun onAttendeeListChanged(contacts: List<Contact>) {
+        Log.i("WTF2", contacts.toString())
+        contactList.clear()
+        contactList.addAll(contacts)
+        val attendee = contacts.joinToString(",")
+        Log.i("WTF2", attendee)
+        _viewState.setValue(AddEventViewState.SetAttendeeList(attendee))
         checkAllFieldsReady()
     }
 

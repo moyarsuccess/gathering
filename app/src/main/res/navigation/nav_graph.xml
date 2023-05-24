@@ -104,5 +104,9 @@
         android:id="@+id/inviteFriendBottomSheet"
         android:name="com.gathering.android.event.myevent.addevent.invitation.InviteFriendBottomSheet"
         android:label="InviteFriendBottomSheet"
-        tools:layout="@layout/bottom_sheet_invitation" />
+        tools:layout="@layout/bottom_sheet_invitation">
+        <argument
+            android:name="Contact"
+            app:argType="com.gathering.android.event.myevent.addevent.invitation.model.Contact" />
+    </dialog>
 </navigation>
