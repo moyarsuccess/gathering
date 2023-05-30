@@ -10,8 +10,9 @@
 
         <ImageButton
             android:id="@+id/img_event"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:scaleType="fitXY"
             android:layout_marginStart="@dimen/img_view_margin_start"
             android:layout_marginTop="@dimen/img_view_margin_top"
             app:layout_constraintStart_toStartOf="parent"

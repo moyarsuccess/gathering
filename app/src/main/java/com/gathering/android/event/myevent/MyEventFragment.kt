@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgMyEventBinding
+import com.gathering.android.event.home.model.Event
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

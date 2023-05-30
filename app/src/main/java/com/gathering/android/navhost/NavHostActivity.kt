@@ -28,8 +28,7 @@ class NavHostActivity : AppCompatActivity() {
 
         viewModel.viewState.observe(this) { state ->
             when (state) {
-                NavHostViewState.NavigateToIntroScreen ->
-                    findNavController().navigate(R.id.action_homeFragment_to_introFragment)
+                NavHostViewState.NavigateToIntroScreen -> findNavController().navigate(R.id.action_homeFragment_to_introFragment)
             }
         }
     }

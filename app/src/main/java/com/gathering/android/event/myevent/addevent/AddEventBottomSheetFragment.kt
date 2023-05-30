@@ -2,6 +2,7 @@ package com.gathering.android.event.myevent.addevent
 
 import android.content.Context
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -40,6 +42,13 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = BottomSheetAddEventBinding.inflate(LayoutInflater.from(requireContext()))
+
+        val selectedImagePath = arguments?.getString(KEY_ARGUMENT_SELECTED_IMAGE)
+
+
+        if(selectedImagePath != null) {
+            binding.imgEvent.setImageURI(Uri.parse(selectedImagePath))
+        }
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -89,6 +98,9 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnAddEvent.setOnClickListener {
+            //TODO:
+            //1- upload the image
+            //2- save the image url
             viewModel.onAddEventButtonClicked(provideEvent())
         }
 
@@ -124,5 +136,9 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             isMyEvent = true,
             activities = listOf("party", "dinner", "drink", "cake", "tea")
         )
+    }
+
+    companion object {
+        const val KEY_ARGUMENT_SELECTED_IMAGE = "selectedImagePath"
     }
 }
