@@ -22,7 +22,7 @@
     <string name="filter">Filter</string>
     <string name="refine">Refine</string>
     <string name="sort_by">Sort By</string>
-    <string name="my_contacts">My contacts</string>
+    <string name="my_contacts">my contacts</string>
     <string name="my_events">My events</string>
     <string name="closest_to_me">Closest to me</string>
     <string name="happening_next">Happening next</string>
@@ -37,7 +37,7 @@
     <string name="address">Address</string>
     <string name="location">Location</string>
     <string name="event_min_attendee">Minimum attendee</string>
-    <string name="event_max_attendee">Maximum attendee</string>
+    <string name="attendee_list">Attendee list</string>
     <string name="event_cost">Event cost</string>
     <string name="add_event">Add event</string>
     <string name="take_picture">Take Picture</string>
@@ -51,6 +51,6 @@
     <string name="open_camera">open camera</string>
     <string name="rotate_right">rotate right</string>
     <string name="rotate_left">rotate left</string>
-    <string name="contact">contact</string>
     <string name="delete">delete</string>
+    <string name="contact">contact</string>
 </resources>

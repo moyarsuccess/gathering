@@ -42,6 +42,7 @@
             android:background="@drawable/custom_edit_text"
             android:ems="10"
             android:padding="@dimen/et_padding"
+            android:backgroundTint="@color/black"
             android:text="@string/address"
             app:layout_constraintStart_toEndOf="@+id/img_event"
             app:layout_constraintTop_toBottomOf="@+id/btn_location" />
@@ -54,6 +55,7 @@
             android:layout_marginTop="@dimen/et_margin_top"
             android:background="@drawable/custom_edit_text"
             android:ems="10"
+            android:backgroundTint="@color/black"
             android:padding="@dimen/et_padding"
             android:text="@string/event_description"
             android:textSize="@dimen/et_text_size_medium"
@@ -69,20 +71,22 @@
             android:background="@drawable/custom_edit_text"
             android:ems="10"
             android:padding="@dimen/et_padding"
+            android:backgroundTint="@color/black"
             android:text="@string/event_min_attendee"
             android:textSize="@dimen/et_text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_description" />
 
         <EditText
-            android:id="@+id/et_max_attendee"
+            android:id="@+id/et_attendee_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/et_margin_start"
             android:layout_marginTop="@dimen/et_margin_top"
             android:background="@drawable/custom_edit_text"
             android:ems="10"
-            android:text="@string/event_max_attendee"
+            android:backgroundTint="@color/black"
+            android:text="@string/attendee_list"
             android:textSize="@dimen/et_text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_min_attendee" />
@@ -98,8 +102,9 @@
             android:padding="@dimen/et_padding"
             android:text="@string/event_cost"
             android:textSize="@dimen/et_text_size_medium"
+            android:backgroundTint="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_max_attendee" />
+            app:layout_constraintTop_toBottomOf="@+id/et_attendee_list" />
 
         <Button
             android:id="@+id/btn_add_event"
@@ -120,10 +125,11 @@
             android:id="@+id/img_invitation"
             android:layout_width="100dp"
             android:layout_height="150dp"
-            android:layout_marginTop="@dimen/btn_invite_margin_top"
+            android:layout_marginTop="48dp"
             android:background="@drawable/custom_button"
             android:src="@drawable/ic_add_person"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.491"
             app:layout_constraintStart_toEndOf="@+id/et_event_cost"
             app:layout_constraintTop_toBottomOf="@id/tv_address" />
     </androidx.constraintlayout.widget.ConstraintLayout>

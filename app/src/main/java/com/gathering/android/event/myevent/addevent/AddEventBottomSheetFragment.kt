@@ -1,5 +1,6 @@
 package com.gathering.android.event.myevent.addevent
 
+import android.content.Context
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -7,15 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
+import com.gathering.android.common.getNavigationResultLiveDataList
+import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddEventBinding
 import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import contacts.core.Contacts
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 
@@ -48,20 +54,29 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             when (state) {
                 is AddEventViewState.AddEventButtonVisibility -> binding.btnAddEvent.isEnabled =
                     state.isAddEventButtonEnabled
+
                 AddEventViewState.NavigateToAddLocation -> {
                     findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_addLocationBottomSheet)
                 }
+
                 AddEventViewState.NavigateToAddPic -> {
                     findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_addPicBottomSheet)
                 }
-                AddEventViewState.NavigateToInviteFriend -> {
-                    findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_inviteFriendBottomSheet)
-                }
+
                 is AddEventViewState.NavigateToMyEvent -> {
                     findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_navigation_event)
                 }
+
+                is AddEventViewState.NavigateToInviteFriend -> {
+                    val bundle = bundleOf("contact_list" to state.contactList)
+                    findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_inviteFriendBottomSheet,bundle)
+                }
+
                 is AddEventViewState.ShowError -> showToast(state.errorMessage)
-                is AddEventViewState.SetAddress -> binding.tvAddress.setText(state.address)
+                is AddEventViewState.SetAddress -> binding.tvAddress.text = state.address
+                is AddEventViewState.SetAttendeeList -> {
+                    binding.etAttendeeList.setText(state.attendees)
+                }
             }
         }
         return binding.root
@@ -89,8 +104,12 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onAddEventButtonClicked(provideEvent())
         }
 
-        getNavigationResultLiveData<String>()?.observe(viewLifecycleOwner) {
-            viewModel.onAddressChanged(it)
+        getNavigationResultLiveData<String>()?.observe(viewLifecycleOwner) { address ->
+            viewModel.onAddressChanged(address)
+        }
+
+        getNavigationResultLiveDataList()?.observe(viewLifecycleOwner) { attendeeList ->
+            viewModel.onAttendeeListChanged(attendeeList)
         }
     }
 
