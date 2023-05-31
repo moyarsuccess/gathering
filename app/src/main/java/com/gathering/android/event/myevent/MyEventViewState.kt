@@ -1,8 +1,10 @@
 package com.gathering.android.event.myevent
 
+import com.gathering.android.event.home.model.Event
+
 sealed interface MyEventViewState {
 
-    object ShowUserEventList : MyEventViewState
+    class ShowUserEventList(val myEventList: List<Event>) : MyEventViewState
 
     object NavigateToAddEvent : MyEventViewState
 

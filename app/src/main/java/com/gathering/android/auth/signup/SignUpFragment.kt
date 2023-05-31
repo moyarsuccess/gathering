@@ -1,6 +1,7 @@
 package com.gathering.android.auth.signup
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,6 +92,7 @@ class SignUpFragment : DialogFragment() {
                     binding.btnSignUp.isEnabled = state.isSignUpButtonEnabled
                 }
                 is SignUpViewState.Error.ShowAuthenticationFailedError -> {
+                    Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
             }

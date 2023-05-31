@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.event.home.model.Event
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
 class AddEventViewModel @Inject constructor() : ViewModel() {
@@ -27,7 +29,16 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
         _viewState.setValue(AddEventViewState.NavigateToInviteFriend(contactList))
     }
 
+    fun onTimeButtonClicked() {
+        _viewState.setValue(AddEventViewState.OpenTimePickerDialog)
+    }
+
+    fun onDateButtonClicked() {
+        _viewState.setValue(AddEventViewState.OpenDatePickerDialog)
+    }
+
     fun onAddEventButtonClicked(event: Event) {
+        addEventToFireStore(event)
         _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
     }
 
@@ -40,16 +51,10 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
         checkAllFieldsReady()
     }
 
-    fun onMinAttendeeChanged(minAttendee: String) {
-        checkAllFieldsReady()
-    }
-
     fun onAttendeeListChanged(contacts: List<Contact>) {
-        Log.i("WTF2", contacts.toString())
         contactList.clear()
         contactList.addAll(contacts)
         val attendee = contacts.joinToString(",")
-        Log.i("WTF2", attendee)
         _viewState.setValue(AddEventViewState.SetAttendeeList(attendee))
         checkAllFieldsReady()
     }
@@ -62,4 +67,18 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
         //TODO We should check if all the field have been field or not
         return true
     }
+
+    private fun addEventToFireStore(event: Event) {
+        val db = Firebase.firestore
+
+        db.collection("Events")
+            .add(event)
+            .addOnSuccessListener { documentReference ->
+                Log.d("WTF", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("WTF", "Error adding document", e)
+            }
+    }
+
 }

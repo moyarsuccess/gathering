@@ -2,7 +2,8 @@ package com.gathering.android.event.home.model
 
 import android.location.Location
 import java.io.Serializable
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 data class Event(
     val eventId: String = "",
@@ -12,8 +13,7 @@ data class Event(
     val photoUrl: String = "",
     val locationName: String = "",
     val location: Location? = null,
-    val startTime: String = "",
-    val endTime: String = "",
+    val time: String = "",
     val date: Date = Calendar.getInstance().time,
     val isContactEvent: Boolean = false,
     val isMyEvent: Boolean = false,

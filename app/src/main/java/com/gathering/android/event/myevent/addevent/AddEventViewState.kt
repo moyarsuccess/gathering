@@ -6,7 +6,7 @@ import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 sealed interface AddEventViewState {
 
     class AddEventButtonVisibility(val isAddEventButtonEnabled: Boolean) : AddEventViewState
-    class NavigateToMyEvent(event: Event) : AddEventViewState
+    class NavigateToMyEvent( val event: Event) : AddEventViewState
     class ShowError(val errorMessage: String) : AddEventViewState
     class SetAddress(val address: String) : AddEventViewState
     class SetAttendeeList(val attendees: String) : AddEventViewState
@@ -14,4 +14,6 @@ sealed interface AddEventViewState {
 
     object NavigateToAddPic : AddEventViewState
     object NavigateToAddLocation : AddEventViewState
+    object OpenTimePickerDialog : AddEventViewState
+    object OpenDatePickerDialog : AddEventViewState
 }

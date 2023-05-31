@@ -37,7 +37,7 @@
     <string name="address">Address</string>
     <string name="location">Location</string>
     <string name="event_min_attendee">Minimum attendee</string>
-    <string name="attendee_list">Attendee list</string>
+    <string name="attendees">Attendee</string>
     <string name="event_cost">Event cost</string>
     <string name="add_event">Add event</string>
     <string name="take_picture">Take Picture</string>
@@ -53,4 +53,8 @@
     <string name="rotate_left">rotate left</string>
     <string name="delete">delete</string>
     <string name="contact">contact</string>
+    <string name="event_name">Event name</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="time">time</string>
 </resources>
