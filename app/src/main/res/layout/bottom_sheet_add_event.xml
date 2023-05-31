@@ -2,109 +2,219 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="@color/bottom_sheet_dialog_backgroun_color">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ImageButton
             android:id="@+id/img_event"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:scaleType="fitXY"
-            android:layout_marginStart="@dimen/img_view_margin_start"
-            android:layout_marginTop="@dimen/img_view_margin_top"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:layout_marginBottom="@dimen/img_margin"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_launcher_foreground" />
 
-        <Button
-            android:id="@+id/btn_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/btn_location_margin_start"
-            android:layout_marginTop="@dimen/btn_location_margin_top"
-            android:background="@drawable/custom_button"
-            android:ems="10"
-            android:text="@string/location"
-            android:textSize="@dimen/btn_text_size_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/img_event"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/custom_edit_text"
-            android:ems="10"
-            android:padding="@dimen/et_padding"
-            android:backgroundTint="@color/black"
-            android:text="@string/address"
-            app:layout_constraintStart_toEndOf="@+id/img_event"
-            app:layout_constraintTop_toBottomOf="@+id/btn_location" />
-
         <EditText
-            android:id="@+id/et_description"
-            android:layout_width="wrap_content"
+            android:id="@+id/et_event_Name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/et_margin_start"
             android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
-            android:ems="10"
-            android:backgroundTint="@color/black"
+            android:hint="@string/event_name"
             android:padding="@dimen/et_padding"
-            android:text="@string/event_description"
             android:textSize="@dimen/et_text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img_event" />
 
         <EditText
-            android:id="@+id/et_min_attendee"
-            android:layout_width="wrap_content"
+            android:id="@+id/et_host"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/et_margin_start"
             android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
-            android:ems="10"
+            android:hint="@string/event_host"
             android:padding="@dimen/et_padding"
-            android:backgroundTint="@color/black"
-            android:text="@string/event_min_attendee"
             android:textSize="@dimen/et_text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_description" />
+            app:layout_constraintTop_toBottomOf="@+id/et_event_Name" />
 
         <EditText
-            android:id="@+id/et_attendee_list"
-            android:layout_width="wrap_content"
+            android:id="@+id/et_description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/et_margin_start"
             android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
-            android:ems="10"
-            android:backgroundTint="@color/black"
-            android:text="@string/attendee_list"
-            android:textSize="@dimen/et_text_size_medium"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_min_attendee" />
-
-        <EditText
-            android:id="@+id/et_event_cost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/et_margin_start"
-            android:layout_marginTop="@dimen/et_margin_top"
-            android:background="@drawable/custom_edit_text"
-            android:ems="10"
+            android:hint="@string/event_description"
             android:padding="@dimen/et_padding"
-            android:text="@string/event_cost"
             android:textSize="@dimen/et_text_size_medium"
-            android:backgroundTint="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_attendee_list" />
+            app:layout_constraintTop_toBottomOf="@+id/et_host" />
+
+        <LinearLayout
+            android:id="@+id/layout_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_description">
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tv_margin_start"
+                android:layout_marginTop="@dimen/tv_margin_top"
+                android:layout_weight="60"
+                android:background="@drawable/custom_edit_text"
+                android:padding="@dimen/et_padding"
+                android:text="@string/date"
+                android:textSize="@dimen/et_text_size_medium"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/btn_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/btn_location_margin_start"
+                android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
+                android:background="@drawable/custom_button"
+                android:ems="10"
+                android:text="@string/date"
+                android:textSize="@dimen/btn_text_size_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_event"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_date">
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/et_margin_start"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_weight="60"
+                android:background="@drawable/custom_edit_text"
+                android:padding="@dimen/et_padding"
+                android:text="@string/time"
+                android:textSize="@dimen/et_text_size_medium" />
+
+            <Button
+                android:id="@+id/btn_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/btn_location_margin_start"
+                android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
+                android:background="@drawable/custom_button"
+                android:ems="10"
+                android:text="@string/time"
+                android:textSize="@dimen/btn_text_size_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_event"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/layout_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_time">
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/et_margin_start"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_weight="60"
+                android:background="@drawable/custom_edit_text"
+                android:padding="@dimen/et_padding"
+                android:text="@string/location"
+                android:textSize="@dimen/et_text_size_medium" />
+
+            <Button
+                android:id="@+id/btn_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/btn_location_margin_start"
+                android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
+                android:background="@drawable/custom_button"
+                android:ems="10"
+                android:text="@string/location"
+                android:textSize="@dimen/btn_text_size_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_event"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_invitation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_location">
+
+            <TextView
+                android:id="@+id/tv_attendees"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/et_margin_start"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_weight="60"
+                android:background="@drawable/custom_edit_text"
+                android:padding="@dimen/et_padding"
+                android:text="@string/attendees"
+                android:textSize="@dimen/et_text_size_medium" />
+
+            <Button
+                android:id="@+id/btn_invitation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/btn_location_margin_start"
+                android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
+                android:background="@drawable/custom_button"
+                android:ems="10"
+                android:text="@string/invite"
+                android:textSize="@dimen/btn_text_size_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_event"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_add_event"
@@ -119,19 +229,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_event_cost" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_invitation" />
 
-        <ImageButton
-            android:id="@+id/img_invitation"
-            android:layout_width="100dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="48dp"
-            android:background="@drawable/custom_button"
-            android:src="@drawable/ic_add_person"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.491"
-            app:layout_constraintStart_toEndOf="@+id/et_event_cost"
-            app:layout_constraintTop_toBottomOf="@id/tv_address" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 

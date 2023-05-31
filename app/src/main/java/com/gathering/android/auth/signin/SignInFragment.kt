@@ -1,6 +1,7 @@
 package com.gathering.android.auth.signin
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,27 +62,35 @@ class SignInFragment : DialogFragment() {
                 is SignInViewState.Error.ShowEmptyEmailError -> {
                     binding.etMail.error = state.errorMessage
                 }
+
                 is SignInViewState.Error.ShowInvalidEmailError -> {
                     binding.etMail.error = state.errorMessage
                 }
+
                 is SignInViewState.Error.ShowEmptyPassError -> {
                     binding.etPass.error = state.errorMessage
                 }
+
                 is SignInViewState.Error.ShowInvalidPassError -> {
                     binding.etPass.error = state.errorMessage
                 }
+
                 is SignInViewState.Error.ShowGeneralError -> {
                     showToast(state.errorMessage)
                 }
+
                 is SignInViewState.NavigateToHome -> {
                     findNavController().navigate(
                         R.id.action_signInFragment_to_navigation_home
                     )
                 }
+
                 is SignInViewState.SignInButtonVisibility -> {
                     binding.btnSignIn.isEnabled = state.isSignInButtonEnabled
                 }
+
                 is SignInViewState.Error.ShowAuthenticationFailedError -> {
+                    Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
 
