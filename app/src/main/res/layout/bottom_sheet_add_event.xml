@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bottom_sheet_dialog_backgroun_color">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -10,10 +11,10 @@
 
         <ImageButton
             android:id="@+id/img_event"
-            android:layout_width="321dp"
-            android:layout_height="166dp"
-            android:layout_margin="@dimen/img_margin"
-            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:layout_marginBottom="@dimen/img_margin"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -27,8 +28,6 @@
             android:layout_marginTop="@dimen/et_margin_top"
             android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
-            android:backgroundTint="@color/gray"
-            android:ems="10"
             android:hint="@string/event_name"
             android:padding="@dimen/et_padding"
             android:textSize="@dimen/et_text_size_medium"
@@ -43,10 +42,8 @@
             android:layout_marginTop="@dimen/et_margin_top"
             android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
-            android:backgroundTint="@color/gray"
-            android:ems="10"
+            android:hint="@string/event_host"
             android:padding="@dimen/et_padding"
-            android:text="@string/event_host"
             android:textSize="@dimen/et_text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_event_Name" />
@@ -59,8 +56,6 @@
             android:layout_marginTop="@dimen/et_margin_top"
             android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
-            android:backgroundTint="@color/gray"
-            android:ems="10"
             android:hint="@string/event_description"
             android:padding="@dimen/et_padding"
             android:textSize="@dimen/et_text_size_medium"
@@ -77,31 +72,32 @@
 
             <TextView
                 android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/tv_margin_start"
                 android:layout_marginTop="@dimen/tv_margin_top"
+                android:layout_weight="60"
                 android:background="@drawable/custom_edit_text"
-                android:backgroundTint="@color/gray"
-                android:ems="10"
                 android:padding="@dimen/et_padding"
                 android:text="@string/date"
+                android:textSize="@dimen/et_text_size_medium"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <Button
                 android:id="@+id/btn_date"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
                 android:background="@drawable/custom_button"
                 android:ems="10"
                 android:text="@string/date"
-                android:textSize="@dimen/btn_text_size_medium"
+                android:textSize="@dimen/btn_text_size_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_event"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
         </LinearLayout>
 
@@ -116,27 +112,28 @@
 
             <TextView
                 android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/et_margin_start"
                 android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_weight="60"
                 android:background="@drawable/custom_edit_text"
-                android:backgroundTint="@color/gray"
-                android:ems="10"
                 android:padding="@dimen/et_padding"
-                android:text="@string/start"
+                android:text="@string/time"
                 android:textSize="@dimen/et_text_size_medium" />
 
             <Button
                 android:id="@+id/btn_time"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
                 android:background="@drawable/custom_button"
                 android:ems="10"
-                android:hint="@string/time"
-                android:textSize="@dimen/btn_text_size_medium"
+                android:text="@string/time"
+                android:textSize="@dimen/btn_text_size_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_event"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -152,23 +149,25 @@
             app:layout_constraintTop_toBottomOf="@+id/layout_time">
 
             <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_location"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/tv_margin_start"
-                android:layout_marginTop="@dimen/tv_margin_top"
+                android:layout_marginStart="@dimen/et_margin_start"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_weight="60"
                 android:background="@drawable/custom_edit_text"
-                android:backgroundTint="@color/gray"
-                android:ems="10"
                 android:padding="@dimen/et_padding"
-                android:text="@string/address" />
+                android:text="@string/location"
+                android:textSize="@dimen/et_text_size_medium" />
 
             <Button
                 android:id="@+id/btn_location"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
                 android:background="@drawable/custom_button"
                 android:ems="10"
                 android:text="@string/location"
@@ -176,6 +175,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_event"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -187,27 +187,33 @@
             app:layout_constraintTop_toBottomOf="@+id/layout_location">
 
             <TextView
-                android:id="@+id/tv_attendee_num"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_attendees"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/tv_margin_start"
-                android:layout_marginTop="@dimen/tv_margin_top"
+                android:layout_marginStart="@dimen/et_margin_start"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_weight="60"
                 android:background="@drawable/custom_edit_text"
-                android:backgroundTint="@color/gray"
-                android:ems="10"
                 android:padding="@dimen/et_padding"
-                android:text="@string/attendees" />
+                android:text="@string/attendees"
+                android:textSize="@dimen/et_text_size_medium" />
 
             <Button
                 android:id="@+id/btn_invitation"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
+                android:layout_marginEnd="@dimen/btn_location_margin_start"
+                android:layout_weight="40"
                 android:background="@drawable/custom_button"
                 android:ems="10"
-                android:text="@string/invite_friends"
-                android:textSize="@dimen/btn_text_size_small" />
+                android:text="@string/invite"
+                android:textSize="@dimen/btn_text_size_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_event"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </LinearLayout>
 
         <Button

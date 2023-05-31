@@ -14,13 +14,14 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddPicBinding
-import com.gathering.android.event.myevent.addevent.AddEventBottomSheetFragment.Companion.KEY_ARGUMENT_SELECTED_IMAGE
+import com.gathering.android.event.myevent.addevent.KEY_ARGUMENT_SELECTED_IMAGE
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.io.ByteArrayOutputStream
 
@@ -69,18 +70,24 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
         }
 
         binding.btnOk.setOnClickListener {
-            uriString = getImagePath((binding.imageView.drawable as BitmapDrawable).bitmap)
+            val bitmap = binding.imageView.getBitmap()
+            if (bitmap != null) {
+                uriString = getImagePath(bitmap)
+            }
 
-            val bundle = bundleOf(KEY_ARGUMENT_SELECTED_IMAGE to uriString)
-
-            findNavController().navigate(R.id.action_back_to_add_event, bundle)
+            setNavigationResult(KEY_ARGUMENT_SELECTED_IMAGE, uriString)
+            findNavController().popBackStack()
         }
 
         return binding.root
     }
 
+    private fun ImageView.getBitmap(): Bitmap? {
+        return (drawable as? BitmapDrawable)?.bitmap
+    }
+
     private fun rotateImageViewBitmap(degree: Float) {
-        val bitmap = (binding.imageView.drawable as BitmapDrawable).bitmap
+        val bitmap = binding.imageView.getBitmap() ?: return
         val matrix = Matrix()
         matrix.postRotate(degree)
         val rotatedBitmap = Bitmap.createBitmap(
@@ -122,7 +129,10 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
 
         val path = MediaStore.Images.Media.insertImage(
-            requireContext().contentResolver, inImage, "gathering_" + System.currentTimeMillis(), null
+            requireContext().contentResolver,
+            inImage,
+            "gathering_" + System.currentTimeMillis(),
+            null
         )
         return Uri.parse(path).toString()
     }

@@ -1,6 +1,5 @@
 package com.gathering.android.event.myevent.addevent
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.event.home.model.Event
@@ -39,7 +38,6 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
 
     fun onAddEventButtonClicked(event: Event) {
         addEventToFireStore(event)
-        _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
     }
 
     fun onAddressChanged(address: String) {
@@ -73,12 +71,17 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
 
         db.collection("Events")
             .add(event)
-            .addOnSuccessListener { documentReference ->
-                Log.d("WTF", "DocumentSnapshot added with ID: ${documentReference.id}")
+            .addOnSuccessListener {
+                _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
             }
-            .addOnFailureListener { e ->
-                Log.w("WTF", "Error adding document", e)
+            .addOnFailureListener {
+                _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
             }
+    }
+
+    fun onImageSelected(image: String?) {
+        if (image == null) return
+        _viewState.setValue(AddEventViewState.SetImage(image))
     }
 
 }

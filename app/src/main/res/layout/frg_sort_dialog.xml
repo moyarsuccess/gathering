@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/tv_filter_margin"
         android:text="@string/sort_by"
-        android:textSize="@dimen/tv_size" />
+        android:textSize="@dimen/sort_text_size" />
 
     <RadioGroup
         android:id="@+id/sortRadioGroup"

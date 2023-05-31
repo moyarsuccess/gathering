@@ -14,10 +14,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
-import com.gathering.android.common.getNavigationResultLiveDataList
-import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddEventBinding
 import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -48,12 +47,6 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val selectedImagePath = arguments?.getString(KEY_ARGUMENT_SELECTED_IMAGE)
-
-        if (selectedImagePath != null) {
-            binding.imgEvent.setImageURI(Uri.parse(selectedImagePath))
-        }
-
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is AddEventViewState.AddEventButtonVisibility -> binding.btnAddEvent.isEnabled =
@@ -80,18 +73,19 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 is AddEventViewState.ShowError -> showToast(state.errorMessage)
-                is AddEventViewState.SetAddress -> binding.tvAddress.text = state.address
+                is AddEventViewState.SetAddress -> binding.tvLocation.text = state.address
                 is AddEventViewState.SetAttendeeList -> {
-                    val attendeeNum = state.attendees.toString()
+                    val attendeeNum = state.attendees
                         .split(",")
                         .count()
                         .toString()
-                    binding.tvAttendeeNum.text = "$attendeeNum people invited to this event "
+                    binding.tvAttendees.text = "$attendeeNum people invited to this event "
 
                 }
 
                 AddEventViewState.OpenDatePickerDialog -> openDatePickerDialog()
                 AddEventViewState.OpenTimePickerDialog -> openTimePickerDialog()
+                is AddEventViewState.SetImage -> binding.imgEvent.setImageURI(Uri.parse(state.image))
             }
         }
 
@@ -119,11 +113,21 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onAddEventButtonClicked(provideEvent())
         }
 
-        getNavigationResultLiveData<String>()?.observe(viewLifecycleOwner) { address ->
+        getNavigationResultLiveData<String>(KEY_ARGUMENT_SELECTED_ADDRESS)?.observe(
+            viewLifecycleOwner
+        ) { address ->
             viewModel.onAddressChanged(address)
         }
 
-        getNavigationResultLiveDataList()?.observe(viewLifecycleOwner) { attendeeList ->
+        getNavigationResultLiveData<String>(KEY_ARGUMENT_SELECTED_IMAGE)?.observe(
+            viewLifecycleOwner
+        ) { image ->
+            viewModel.onImageSelected(image)
+        }
+
+        getNavigationResultLiveData<List<Contact>>(KEY_ARGUMENT_SELECTED_ATTENDEE_LIST)?.observe(
+            viewLifecycleOwner
+        ) { attendeeList ->
             viewModel.onAttendeeListChanged(attendeeList)
         }
     }
@@ -188,9 +192,5 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             day
         )
         datePickerDialog.show()
-    }
-
-    companion object {
-        const val KEY_ARGUMENT_SELECTED_IMAGE = "selectedImagePath"
     }
 }

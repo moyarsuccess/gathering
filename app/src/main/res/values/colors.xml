@@ -14,5 +14,6 @@
     <color name="custom_button_color">#F5B8A7</color>
     <color name="start_color">#F8F1EF</color>
     <color name="end_color">#FFE3DB</color>
-
+    <color name="bottom_sheet_dialog_backgroun_color">#ccc</color>
+    <color name="edit_text_background_color">#FFFFFF</color>
 </resources>
