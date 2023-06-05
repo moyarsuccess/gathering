@@ -1,16 +1,36 @@
 package com.gathering.android.event.home
 
 import android.location.Location
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
+import com.gathering.android.event.model.EventLocation
+import kotlin.math.sin
+import kotlin.math.cos
 import javax.inject.Inject
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 class EventLocationComparator @Inject constructor() : Comparator<Event> {
     override fun compare(event1: Event, event2: Event): Int {
-        val distA = event1.location?.distanceTo(getCurrentLocation())
-        val distB = event2.location?.distanceTo(getCurrentLocation())
+        val distA = event1.location.distanceTo(getCurrentLocation())
+        val distB = event2.location.distanceTo(getCurrentLocation())
 
-        return (distA ?: 0f).compareTo(distB ?: 0f)
+        return (distA).compareTo(distB)
+    }
+
+    private fun EventLocation.distanceTo(otherLocation: Location): Double {
+        val lat1 = Math.toRadians(lat)
+        val lon1 = Math.toRadians(lon)
+        val lat2 = Math.toRadians(otherLocation.latitude)
+        val lon2 = Math.toRadians(otherLocation.longitude)
+
+        val dlat = lat2 - lat1
+        val dlon = lon2 - lon1
+        val a = sin(dlat / 2).pow(2) + cos(lat1) * cos(lat2) * sin(dlon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return 6371 * c
     }
 
     private fun getCurrentLocation(): Location {

@@ -5,7 +5,7 @@ import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
@@ -76,13 +76,13 @@ class EventListViewModel @Inject constructor(
 
         if (filter.isTodayFilterOn) {
             filteredEventList = filteredEventList.filter { event ->
-                DateUtils.isToday(event.date.time)
+                DateUtils.isToday(event.dateAndTime)
 
             }
         }
 
         filteredEventList = if (sortType == SortType.SORT_BY_DATE) {
-            filteredEventList.sortedBy { it.date }
+            filteredEventList.sortedBy { it.dateAndTime }
         } else {
             filteredEventList.sortedWith(eventLocationComparator)
         }

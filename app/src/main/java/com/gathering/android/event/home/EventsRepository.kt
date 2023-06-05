@@ -1,71 +1,58 @@
 package com.gathering.android.event.home
 
-import android.location.Location
-import com.gathering.android.event.home.model.Event
-import java.util.Calendar
+import com.gathering.android.event.model.Event
+import com.gathering.android.event.model.EventLocation
 import javax.inject.Inject
 
 class EventsRepository @Inject constructor() {
 
     fun provideEventListMock(): List<Event> {
         return mutableListOf(
-
             Event(
-                eventId = "1",
                 eventName = "anahid's Party",
                 hostName = "Anahid",
                 description = "Dinner and game is waiting for you",
                 photoUrl = "",
-                locationName = "Anahid's Home in Montreal",
-                location = Location("").also { it.altitude = 45.5019; it.longitude = 73.5674 },
-                time = "7:00",
-                date = Calendar.getInstance().time,
+                location = EventLocation(
+                    45.5019, 73.5674, "Anahid's Home in Montreal"
+                ),
+                dateAndTime = 0,
                 isContactEvent = false,
-                activities = listOf("Game", "Dinner", "Tea Time"),
                 eventCost = 10
             ), Event(
-                eventId = "2",
                 eventName = "Ida's Party",
                 hostName = "Ida",
                 description = "Dinner and game and swimming pool is waiting for you",
                 photoUrl = "",
-                locationName = "Niagra falls",
-                location = Location("").also { it.altitude = 43.0896; it.longitude = 79.0849 },
-                time = "5:00",
-                date = Calendar.getInstance().time,
+                location = EventLocation(
+                    43.0896, 79.0849, "Niagra falls"
+                ),
+                dateAndTime = 0,
                 isContactEvent = true,
                 isMyEvent = true,
-                activities = listOf("Game", "Dinner", "Tea Time"),
                 eventCost = 10
             ), Event(
-                eventId = "3",
                 eventName = "Amir's Party",
                 hostName = "Amir",
                 description = "Dinner and game and swimming pool is waiting for you",
                 photoUrl = "",
-                locationName = "Niagra falls",
-                location = Location("").also { it.altitude = 43.0896; it.longitude = 79.0849 },
-                time = "8:00",
-                date = Calendar.getInstance().time,
+                location = EventLocation(
+                    43.0896, 79.0849, "Niagra falls"
+                ),
+                dateAndTime = 0,
                 isContactEvent = true,
-                activities = listOf("Game", "Dinner", "Tea Time"),
-                eventCost = 10
+                eventCost = 10,
             ), Event(
-                eventId = "4",
+                dateAndTime = 0,
                 eventName = "Mo's Party",
                 hostName = "Mo",
                 description = "Dinner and game and swimming pool is waiting for you",
                 photoUrl = "",
-                locationName = "Mo's Vancouver Villa",
-                location = Location("").also { it.altitude = 49.2827; it.longitude = 123.1207 },
-                time = "8:00",
-                date = Calendar.getInstance().run {
-                    add(Calendar.DAY_OF_YEAR, 1)
-                    time
-                },
+                location = EventLocation(
+                    49.2827, 123.1207, "Mo's Vancouver Villa"
+                ),
                 isContactEvent = true,
-                activities = listOf("Game", "Dinner", "Tea Time"),
-                eventCost = 10
+                eventCost = 10,
             )
         )
     }

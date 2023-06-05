@@ -2,7 +2,7 @@ package com.gathering.android.event.myevent.addevent
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.location.Location
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,13 +14,18 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
+import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddEventBinding
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
+import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
+import com.gathering.android.event.model.Event
+import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 
@@ -30,7 +35,16 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     lateinit var binding: BottomSheetAddEventBinding
 
     @Inject
+    lateinit var geocoder: Geocoder
+
+    @Inject
     lateinit var viewModel: AddEventViewModel
+
+    private var attendees: String = ""
+
+    private var photoUrl: String = ""
+
+    private var calender: Calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +75,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 is AddEventViewState.NavigateToMyEvent -> {
+                    setNavigationResult(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST, true)
                     findNavController().popBackStack()
                 }
 
@@ -75,17 +90,21 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 is AddEventViewState.ShowError -> showToast(state.errorMessage)
                 is AddEventViewState.SetAddress -> binding.tvLocation.text = state.address
                 is AddEventViewState.SetAttendeeList -> {
+                    attendees = state.attendees
                     val attendeeNum = state.attendees
                         .split(",")
                         .count()
                         .toString()
-                    binding.tvAttendees.text = "$attendeeNum people invited to this event "
+                    binding.tvAttendees.text = "$attendeeNum $INVITE_PEOPLE"
 
                 }
 
                 AddEventViewState.OpenDatePickerDialog -> openDatePickerDialog()
                 AddEventViewState.OpenTimePickerDialog -> openTimePickerDialog()
-                is AddEventViewState.SetImage -> binding.imgEvent.setImageURI(Uri.parse(state.image))
+                is AddEventViewState.SetImage -> {
+                    photoUrl = Uri.parse(state.image).toString()
+                    binding.imgEvent.setImageURI(Uri.parse(state.image))
+                }
             }
         }
 
@@ -110,7 +129,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnAddEvent.setOnClickListener {
-            viewModel.onAddEventButtonClicked(provideEvent())
+            viewModel.onAddEventButtonClicked(makeCurrentEvent())
         }
 
         getNavigationResultLiveData<String>(KEY_ARGUMENT_SELECTED_ADDRESS)?.observe(
@@ -140,32 +159,46 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
         ).show()
     }
 
-    private fun provideEvent(): Event {
+    private fun makeCurrentEvent(): Event {
         return Event(
-            eventId = "1",
             eventName = binding.etEventName.text.toString(),
             hostName = binding.etHost.text.toString(),
-            description = binding.etDescription.toString(),
-            photoUrl = "",
-            location = Location("").also { it.altitude = 45.5019; it.longitude = 73.5674 },
-            time = binding.tvTime.text.toString(),
-            date = Date(),
+            description = binding.etDescription.text.toString(),
+            photoUrl = photoUrl,
+            location = locationFromAddressLine(binding.tvLocation.text.toString()),
+            dateAndTime = currentTimestamp(),
             isContactEvent = false,
             isMyEvent = true,
-            activities = listOf("party", "dinner", "drink", "cake", "tea")
+            attendees = attendees.split(",")
         )
     }
 
+    private fun currentTimestamp(): Long {
+        return calender.time.time
+    }
+
+    private fun locationFromAddressLine(address: String): EventLocation {
+        val addressList = geocoder
+            .getFromLocationName(address, 1)
+            ?: return EventLocation()
+
+        val lat = addressList.firstOrNull()?.latitude ?: 0.0
+        val long = addressList.firstOrNull()?.longitude ?: 0.0
+        val addressLine = addressList.firstOrNull()?.getAddressLine(0) ?: ""
+        return EventLocation(lat, long, addressLine)
+    }
+
     private fun openTimePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
+        val hour = calender.get(Calendar.HOUR_OF_DAY)
+        val minute = calender.get(Calendar.MINUTE)
 
         val timePickerDialog = TimePickerDialog(
             requireContext(),
             { _, selectedHour, selectedMinute ->
                 val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
                 binding.tvTime.text = selectedTime
+                calender.set(Calendar.HOUR_OF_DAY, selectedHour)
+                calender.set(Calendar.MINUTE, selectedMinute)
             },
             hour,
             minute,
@@ -176,21 +209,27 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun openDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val year = calender.get(Calendar.YEAR)
+        val month = calender.get(Calendar.MONTH)
+        val day = calender.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
                 binding.tvDate.text = selectedDate
+                calender.set(Calendar.YEAR, selectedYear)
+                calender.set(Calendar.MONTH, selectedMonth)
+                calender.set(Calendar.DAY_OF_MONTH, selectedDay)
             },
             year,
             month,
             day
         )
         datePickerDialog.show()
+    }
+
+    companion object {
+        const val INVITE_PEOPLE = "people invited to this event"
     }
 }

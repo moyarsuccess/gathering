@@ -1,6 +1,7 @@
 package com.gathering.android.event.myevent.addevent
 
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
+import com.gathering.android.event.model.EventEntity
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 
 sealed interface AddEventViewState {
