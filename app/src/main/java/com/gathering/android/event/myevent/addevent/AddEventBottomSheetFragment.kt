@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.setNavigationResult
-import com.gathering.android.databinding.BottomSheetAddEventBinding
+import com.gathering.android.databinding.BottomSheetAddEvent2Binding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
@@ -28,11 +28,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
-    lateinit var binding: BottomSheetAddEventBinding
+    lateinit var binding: BottomSheetAddEvent2Binding
 
     @Inject
     lateinit var geocoder: Geocoder
@@ -54,7 +53,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetAddEventBinding.inflate(LayoutInflater.from(requireContext()))
+        binding = BottomSheetAddEvent2Binding.inflate(LayoutInflater.from(requireContext()))
         return binding.root
     }
 
@@ -105,6 +104,9 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                     photoUrl = Uri.parse(state.image).toString()
                     binding.imgEvent.setImageURI(Uri.parse(state.image))
                 }
+
+                AddEventViewState.MorphAddEventButtonToProgress -> binding.btnAddEvent.startAnimation()
+                AddEventViewState.RevertAddEventProgressToButton -> binding.btnAddEvent.revertAnimation();
             }
         }
 
@@ -129,6 +131,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnAddEvent.setOnClickListener {
+
             viewModel.onAddEventButtonClicked(makeCurrentEvent())
         }
 

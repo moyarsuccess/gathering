@@ -39,12 +39,14 @@ class AddEventViewModel @Inject constructor(
     }
 
     fun onAddEventButtonClicked(event: Event) {
+        _viewState.setValue(AddEventViewState.MorphAddEventButtonToProgress)
         eventRepository.addEvent(event) { eventRequest ->
             when (eventRequest) {
                 is EventRequest.Failure -> viewState.setValue(AddEventViewState.ShowError(""))
-                is EventRequest.Success<*> -> viewState.setValue(
-                    AddEventViewState.NavigateToMyEvent(event)
-                )
+                is EventRequest.Success<*> -> {
+                    _viewState.setValue(AddEventViewState.RevertAddEventProgressToButton)
+                    _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
+                }
             }
         }
     }
