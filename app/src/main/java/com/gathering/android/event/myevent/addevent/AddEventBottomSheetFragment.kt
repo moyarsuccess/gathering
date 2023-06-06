@@ -5,17 +5,19 @@ import android.app.TimePickerDialog
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.setNavigationResult
-import com.gathering.android.databinding.BottomSheetAddEvent2Binding
+import com.gathering.android.databinding.BottomSheetAddEventBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
@@ -31,7 +33,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
-    lateinit var binding: BottomSheetAddEvent2Binding
+    lateinit var binding: BottomSheetAddEventBinding
 
     @Inject
     lateinit var geocoder: Geocoder
@@ -53,7 +55,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetAddEvent2Binding.inflate(LayoutInflater.from(requireContext()))
+        binding = BottomSheetAddEventBinding.inflate(LayoutInflater.from(requireContext()))
         return binding.root
     }
 
@@ -86,7 +88,11 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                     )
                 }
 
-                is AddEventViewState.ShowError -> showToast(state.errorMessage)
+                is AddEventViewState.ShowError -> Log.d(
+                    "something wrong",
+                    state.errorMessage.toString()
+                )
+
                 is AddEventViewState.SetAddress -> binding.tvLocation.text = state.address
                 is AddEventViewState.SetAttendeeList -> {
                     attendees = state.attendees
@@ -106,7 +112,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 AddEventViewState.MorphAddEventButtonToProgress -> binding.btnAddEvent.startAnimation()
-                AddEventViewState.RevertAddEventProgressToButton -> binding.btnAddEvent.revertAnimation();
+                AddEventViewState.RevertAddEventProgressToButton -> binding.btnAddEvent.revertAnimation()
             }
         }
 
@@ -135,6 +141,31 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onAddEventButtonClicked(makeCurrentEvent())
         }
 
+        binding.etEventName.doOnTextChanged { text, _, _, _ ->
+            viewModel.onEventNameChanged(text.toString())
+        }
+
+        binding.etHost.doOnTextChanged { text, _, _, _ ->
+            viewModel.onHostChanged(text.toString())
+        }
+
+        binding.etDescription.doOnTextChanged { text, _, _, _ ->
+            viewModel.onDescriptionChanged(text.toString())
+        }
+
+        binding.tvDate.doOnTextChanged { text, _, _, _ ->
+            viewModel.onDateChanged(text.toString())
+        }
+
+        binding.tvTime.doOnTextChanged { text, _, _, _ ->
+            viewModel.onTimeChanged(text.toString())
+        }
+
+        binding.tvLocation.doOnTextChanged { text, _, _, _ ->
+            viewModel.onEventNameChanged(text.toString())
+        }
+
+
         getNavigationResultLiveData<String>(KEY_ARGUMENT_SELECTED_ADDRESS)?.observe(
             viewLifecycleOwner
         ) { address ->
@@ -152,14 +183,8 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
         ) { attendeeList ->
             viewModel.onAttendeeListChanged(attendeeList)
         }
-    }
 
-    private fun showToast(text: String) {
-        Toast.makeText(
-            requireContext(),
-            text,
-            Toast.LENGTH_LONG
-        ).show()
+        viewModel.onViewCreated()
     }
 
     private fun makeCurrentEvent(): Event {
