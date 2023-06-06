@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.event.home.viewmodel
 
 import com.gathering.android.event.model.Event
 

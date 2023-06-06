@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.event.home.view
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgSortDialogBinding
+import com.gathering.android.event.home.EventListViewModel
 
 //TODO: this class does not keep the state of sorted options. it will be fixed in T28
 class SortDialogFragment(private val eventListViewModel: EventListViewModel) : DialogFragment() {

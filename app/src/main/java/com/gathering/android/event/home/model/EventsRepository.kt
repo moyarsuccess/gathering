@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.event.home.model
 
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventLocation
