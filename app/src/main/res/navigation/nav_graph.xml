@@ -36,7 +36,7 @@
     </dialog>
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.gathering.android.event.home.HomeFragment"
+        android:name="com.gathering.android.event.home.view.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/frg_home">
         <action
@@ -51,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_event"
-        android:name="com.gathering.android.event.myevent.MyEventFragment"
+        android:name="com.gathering.android.event.myevent.view.MyEventFragment"
         android:label="MyEventFragment"
         tools:layout="@layout/frg_my_event">
         <action

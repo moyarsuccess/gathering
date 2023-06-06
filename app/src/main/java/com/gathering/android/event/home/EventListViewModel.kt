@@ -5,6 +5,10 @@ import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
+import com.gathering.android.event.home.model.EventsRepository
+import com.gathering.android.event.home.view.Filter
+import com.gathering.android.event.home.view.SortType
+import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.Event
 import javax.inject.Inject
 

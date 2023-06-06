@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent
+package com.gathering.android.event.myevent.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

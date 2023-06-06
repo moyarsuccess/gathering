@@ -1,11 +1,11 @@
-package com.gathering.android.event.home
+package com.gathering.android.event.home.view
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import com.gathering.android.databinding.FrgFilterDialogBinding
+import com.gathering.android.event.home.EventListViewModel
 
 //TODO: this class does not keep the state of filtered options. it will be fixed in T28
 class FilterDialogFragment(private val eventListViewModel: EventListViewModel) : DialogFragment() {

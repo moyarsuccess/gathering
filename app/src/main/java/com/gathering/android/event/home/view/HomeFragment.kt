@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.event.home.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgHomeBinding
-import com.gathering.android.event.home.FilterDialogFragment.Companion.TAG
+import com.gathering.android.event.home.EventListViewModel
+import com.gathering.android.event.home.viewmodel.EventViewState
+import com.gathering.android.event.home.view.FilterDialogFragment.Companion.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
