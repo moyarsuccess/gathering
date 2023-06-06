@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.ItemEventBinding
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject

@@ -21,7 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddPicBinding
-import com.gathering.android.event.myevent.addevent.KEY_ARGUMENT_SELECTED_IMAGE
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.io.ByteArrayOutputStream
 

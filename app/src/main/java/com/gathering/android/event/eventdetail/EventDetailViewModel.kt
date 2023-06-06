@@ -3,7 +3,7 @@ package com.gathering.android.event.eventdetail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
 import javax.inject.Inject
 
 class EventDetailViewModel @Inject constructor() : ViewModel() {

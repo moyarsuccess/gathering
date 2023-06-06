@@ -1,6 +1,6 @@
 package com.gathering.android.event.eventdetail
 
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
 
 sealed interface EventDetailViewState {
 

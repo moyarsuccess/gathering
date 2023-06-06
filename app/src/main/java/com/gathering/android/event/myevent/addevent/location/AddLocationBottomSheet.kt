@@ -21,7 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddLocationBinding
-import com.gathering.android.event.myevent.addevent.KEY_ARGUMENT_SELECTED_ADDRESS
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory

@@ -2,13 +2,15 @@ package com.gathering.android.event.myevent.addevent
 
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.event.home.model.Event
+import com.gathering.android.event.model.Event
+import com.gathering.android.event.model.EventRepository
+import com.gathering.android.event.model.EventRequest
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
-class AddEventViewModel @Inject constructor() : ViewModel() {
+class AddEventViewModel @Inject constructor(
+    private val eventRepository: EventRepository
+) : ViewModel() {
 
     private val _viewState = ActiveMutableLiveData<AddEventViewState>()
     val viewState: ActiveMutableLiveData<AddEventViewState> by ::_viewState
@@ -37,7 +39,14 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onAddEventButtonClicked(event: Event) {
-        addEventToFireStore(event)
+        eventRepository.addEvent(event) { eventRequest ->
+            when (eventRequest) {
+                is EventRequest.Failure -> viewState.setValue(AddEventViewState.ShowError(""))
+                is EventRequest.Success<*> -> viewState.setValue(
+                    AddEventViewState.NavigateToMyEvent(event)
+                )
+            }
+        }
     }
 
     fun onAddressChanged(address: String) {
@@ -64,19 +73,6 @@ class AddEventViewModel @Inject constructor() : ViewModel() {
     private fun isAllFieldsValid(): Boolean {
         //TODO We should check if all the field have been field or not
         return true
-    }
-
-    private fun addEventToFireStore(event: Event) {
-        val db = Firebase.firestore
-
-        db.collection("Events")
-            .add(event)
-            .addOnSuccessListener {
-                _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
-            }
-            .addOnFailureListener {
-                _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
-            }
     }
 
     fun onImageSelected(image: String?) {
