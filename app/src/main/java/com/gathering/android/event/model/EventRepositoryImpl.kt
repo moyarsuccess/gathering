@@ -40,6 +40,30 @@ class EventRepositoryImpl @Inject constructor(
             }
     }
 
+    override fun getMyEvents(
+        onEventRequestReady: (eventRequest: EventRequest) -> Unit
+    ) {
+
+        fireStore.collection(EVENT_COLLECTION_NAME)
+            .whereEqualTo("host.email", auth.currentUser?.email ?: "").get()
+            .addOnSuccessListener { documentSnapshots ->
+                val eventList = mutableListOf<EventEntity>()
+                if (!documentSnapshots.isEmpty) {
+                    for (snapshot in documentSnapshots) {
+                        eventList.add(
+                            snapshot.toObject(
+                                EventEntity::class.java
+                            )
+                        )
+                    }
+                }
+                onEventRequestReady(EventRequest.Success(eventList.toEvents()))
+            }
+            .addOnFailureListener { exception ->
+                onEventRequestReady(EventRequest.Failure(exception))
+            }
+    }
+
     private fun Event.toEventEntity(): EventEntity {
         return EventEntity(
             eventName = this.eventName,
