@@ -18,7 +18,7 @@ class MyEventViewModel @Inject constructor(
 
     fun onResume() {
         _viewState.setValue(MyEventViewState.ShowProgress)
-        eventRepository.getAllEvents { request ->
+        eventRepository.getMyEvents { request ->
             when (request) {
                 is EventRequest.Failure -> hideProgress()
                 is EventRequest.Success<*> -> {
