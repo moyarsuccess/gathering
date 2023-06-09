@@ -17,7 +17,6 @@ class AddEventViewModel @Inject constructor(
 
     private var isImageFilled: Boolean = false
     private var isEventNameFilled: Boolean = false
-    private var isHostNameFilled: Boolean = false
     private var isDescriptionFilled: Boolean = false
     private var isDateFilled: Boolean = false
     private var isTimeFilled: Boolean = false
@@ -75,13 +74,6 @@ class AddEventViewModel @Inject constructor(
     fun onEventNameChanged(eventName: String) {
         isEventNameFilled = isEventNameFiled(eventName)
         val errorMessage = if (isEventNameFilled) null else EVENT_NAME_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
-        checkAllFieldsReady()
-    }
-
-    fun onHostChanged(host: String) {
-        isHostNameFilled = isHostNameFiled(host)
-        val errorMessage = if (isEventNameFilled) null else HOST_NAME_NOT_FILLED_MESSAGE
         _viewState.setValue(AddEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
@@ -166,7 +158,6 @@ class AddEventViewModel @Inject constructor(
     private fun isAllFieldsFilled(): Boolean {
         return isImageFilled &&
                 isEventNameFilled &&
-                isHostNameFilled &&
                 isDescriptionFilled &&
                 isDateFilled &&
                 isTimeFilled &&
@@ -176,7 +167,6 @@ class AddEventViewModel @Inject constructor(
     companion object {
         private const val IMAGE_NOT_FILLED_MESSAGE = "Please pick or take a picture"
         private const val EVENT_NAME_NOT_FILLED_MESSAGE = "Please enter event name"
-        private const val HOST_NAME_NOT_FILLED_MESSAGE = "Please enter host name"
         private const val DESCRIPTION_NOT_FILLED_MESSAGE = "Please enter description"
         private const val DATE_NOT_FILLED_MESSAGE = "Please select a valid date "
         private const val TIME_NOT_FILLED_MESSAGE = "Please select a valid time"

@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
@@ -24,8 +23,12 @@ import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventLocation
+import com.gathering.android.event.model.User
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 import javax.inject.Inject
@@ -145,10 +148,6 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onEventNameChanged(text.toString())
         }
 
-        binding.etHost.doOnTextChanged { text, _, _, _ ->
-            viewModel.onHostChanged(text.toString())
-        }
-
         binding.etDescription.doOnTextChanged { text, _, _, _ ->
             viewModel.onDescriptionChanged(text.toString())
         }
@@ -190,7 +189,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     private fun makeCurrentEvent(): Event {
         return Event(
             eventName = binding.etEventName.text.toString(),
-            hostName = binding.etHost.text.toString(),
+            host = null,
             description = binding.etDescription.text.toString(),
             photoUrl = photoUrl,
             location = locationFromAddressLine(binding.tvLocation.text.toString()),

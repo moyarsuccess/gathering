@@ -35,20 +35,6 @@
             app:layout_constraintTop_toBottomOf="@+id/img_event" />
 
         <EditText
-            android:id="@+id/et_host"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/et_margin_start"
-            android:layout_marginTop="@dimen/et_margin_top"
-            android:layout_marginEnd="@dimen/tv_margin_end"
-            android:background="@drawable/custom_edit_text"
-            android:hint="@string/event_host"
-            android:padding="@dimen/et_padding"
-            android:textSize="@dimen/et_text_size_medium"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_event_Name" />
-
-        <EditText
             android:id="@+id/et_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +46,7 @@
             android:padding="@dimen/et_padding"
             android:textSize="@dimen/et_text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_host" />
+            app:layout_constraintTop_toBottomOf="@+id/et_event_Name" />
 
         <LinearLayout
             android:id="@+id/layout_date"

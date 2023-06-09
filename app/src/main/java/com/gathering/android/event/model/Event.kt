@@ -4,7 +4,7 @@ import java.io.Serializable
 
 data class Event(
     val eventName: String,
-    val hostName: String,
+    val host: User?,
     val description: String,
     val photoUrl: String,
     val location: EventLocation,

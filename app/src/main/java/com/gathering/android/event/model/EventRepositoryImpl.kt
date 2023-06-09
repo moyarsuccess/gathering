@@ -1,10 +1,12 @@
 package com.gathering.android.event.model
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
-    private val fireStore: FirebaseFirestore
+    private val fireStore: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) : EventRepository {
 
     override fun addEvent(event: Event, onEventRequestReady: (eventRequest: EventRequest) -> Unit) {
@@ -41,7 +43,7 @@ class EventRepositoryImpl @Inject constructor(
     private fun Event.toEventEntity(): EventEntity {
         return EventEntity(
             eventName = this.eventName,
-            hostName = this.hostName,
+            host = userFromCurrentUser(),
             description = this.description,
             photoUrl = this.photoUrl,
             location = this.location,
@@ -56,7 +58,7 @@ class EventRepositoryImpl @Inject constructor(
         return map {
             Event(
                 eventName = it.eventName,
-                hostName = it.hostName,
+                host = it.host,
                 description = it.description,
                 photoUrl = it.photoUrl,
                 location = it.location,
@@ -66,6 +68,11 @@ class EventRepositoryImpl @Inject constructor(
                 attendees = it.attendees,
             )
         }
+    }
+
+    private fun userFromCurrentUser(): User {
+        val user = auth.currentUser ?: return User()
+        return User(user.uid, user.displayName, user.email, user.phoneNumber)
     }
 
     companion object {
