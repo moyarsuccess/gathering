@@ -4,7 +4,7 @@ import java.io.Serializable
 
 data class EventEntity(
     val eventName: String = "",
-    val hostName: String = "",
+    val host: User = User("", "", "", ""),
     val description: String = "",
     val photoUrl: String = "",
     val location: EventLocation = EventLocation(0.0, 0.0, ""),

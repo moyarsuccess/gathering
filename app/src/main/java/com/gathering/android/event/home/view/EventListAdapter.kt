@@ -53,7 +53,6 @@ class EventListAdapter @Inject constructor(
                 onEventClickListener(event)
             }
             itemBinding.tvEventTitle.text = event.eventName
-            itemBinding.tvEventHost.text = event.hostName
             itemBinding.tvEventDescription.text = event.description
             imageLoader.loadImage(event.photoUrl, itemBinding.imgEvent)
         }
