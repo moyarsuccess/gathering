@@ -52,7 +52,7 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
     private fun setupClickListeners() {
         binding.btnCamera.setOnClickListener {
             PermissionX.init(this)
-                .permissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .permissions(Manifest.permission.CAMERA)
                 .request { allGranted, _, _ ->
                     if (allGranted) {
                         viewModel.onCameraClicked()
@@ -64,16 +64,7 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
                 }
         }
         binding.btnGallery.setOnClickListener {
-            PermissionX.init(this).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .request { allGranted, _, _ ->
-                    if (allGranted) {
-                        viewModel.onGalleryClicked()
-                    } else {
-                        Toast.makeText(
-                            requireContext(), "gallery permission denied.", Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
+            viewModel.onGalleryClicked()
         }
 
         binding.rotateLeft.setOnClickListener {
