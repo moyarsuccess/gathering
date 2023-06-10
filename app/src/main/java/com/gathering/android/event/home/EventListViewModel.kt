@@ -6,17 +6,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.AuthRepository
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.event.home.model.EventsRepository
 import com.gathering.android.event.home.view.Filter
 import com.gathering.android.event.home.view.SortType
 import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.Event
+import com.gathering.android.event.model.EventRepository
+import com.gathering.android.event.model.EventRequest
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val eventRepository: EventsRepository,
-    private val eventLocationComparator: EventLocationComparator
+    private val eventRepository: EventRepository,
+    private val eventLocationComparator: EventLocationComparator,
+    private val eventDateComparator: EventDateComparator
 ) :
     ViewModel() {
 
@@ -48,55 +50,64 @@ class EventListViewModel @Inject constructor(
         sortType: SortType
     ) {
         _viewState.setValue(EventViewState.ShowProgress)
-        val filteredEventList = getRefinedEventList(
+        getRefinedEventList(
             filter, sortType
-        )
-        _viewState.setValue(EventViewState.ShowEventList(filteredEventList))
+        ) {
+            _viewState.setValue(EventViewState.ShowEventList(it))
 
-        if (filteredEventList.isEmpty()) {
-            _viewState.setValue(EventViewState.ShowNoData)
-        } else {
-            _viewState.setValue(EventViewState.HideNoData)
+            if (it.isEmpty()) {
+                _viewState.setValue(EventViewState.ShowNoData)
+            } else {
+                _viewState.setValue(EventViewState.HideNoData)
+            }
+
+            _viewState.setValue(EventViewState.HideProgress)
         }
-
-        _viewState.setValue(EventViewState.HideProgress)
     }
 
     fun onEventItemClicked(event: Event) {
         _viewState.setValue(EventViewState.NavigateToEventDetail(event))
     }
 
+    @Suppress("UNCHECK_CAST")
     private fun getRefinedEventList(
-        filter: Filter, sortType: SortType
-    ): List<Event> {
-        val eventList = eventRepository.provideEventListMock()
-        var filteredEventList: List<Event> = eventList
+        filter: Filter,
+        sortType: SortType,
+        onFilteredEventsReady: (eventList: List<Event>) -> Unit
+    ) {
+        eventRepository.getAllEvents { request ->
+            when (request) {
+                is EventRequest.Failure -> hideProgress()
+                is EventRequest.Success<*> -> {
+                    (request.data as? List<Event>)?.also { eventList ->
+                        val filteredList = eventList
+                            .filter { event ->
+                                if (!filter.isContactsFilterOn) true
+                                else event.isContactEvent
+                            }.filter { event ->
+                                if (!filter.isMyEventsFilterOn) true
+                                else event.isMyEvent
+                            }.filter { event ->
+                                if (!filter.isTodayFilterOn) true
+                                else DateUtils.isToday(event.dateAndTime)
+                            }.sortedWith(sortType.getProperComparator())
 
-        if (filter.isContactsFilterOn) {
-            filteredEventList = filteredEventList.filter { event ->
-                event.isContactEvent
+                        onFilteredEventsReady(filteredList)
+                    }
+                }
             }
         }
+    }
 
-        if (filter.isMyEventsFilterOn) {
-            filteredEventList = filteredEventList.filter { event ->
-                event.isMyEvent
-            }
+    private fun SortType.getProperComparator(): Comparator<Event> {
+        return when (this) {
+            SortType.SORT_BY_LOCATION -> eventLocationComparator
+            SortType.SORT_BY_DATE -> eventDateComparator
         }
+    }
 
-        if (filter.isTodayFilterOn) {
-            filteredEventList = filteredEventList.filter { event ->
-                DateUtils.isToday(event.dateAndTime)
-
-            }
-        }
-
-        filteredEventList = if (sortType == SortType.SORT_BY_DATE) {
-            filteredEventList.sortedBy { it.dateAndTime }
-        } else {
-            filteredEventList.sortedWith(eventLocationComparator)
-        }
-        return filteredEventList
+    private fun hideProgress() {
+        _viewState.setValue(EventViewState.HideProgress)
     }
 }
 
