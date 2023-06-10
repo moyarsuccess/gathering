@@ -71,8 +71,15 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.gathering.android.profile.ProfileFragment"
-        android:label="ProfileFragment"
-        tools:layout="@layout/frg_profile" />
+        android:label="ProfileFragment2"
+        tools:layout="@layout/frg_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_updateUserInfoBottomSheetFragment"
+            app:destination="@id/personalDataBottomSheetFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_favoriteEvent"
+            app:destination="@id/favoriteEvent" />
+    </fragment>
     <fragment
         android:id="@+id/eventDetailFragment"
         android:name="com.gathering.android.event.eventdetail.EventDetailFragment"
@@ -150,5 +157,23 @@
         android:id="@+id/forgetPassInfoBottomSheet"
         android:name="com.gathering.android.auth.password.ResetPassInfoBottomSheet"
         android:label="forgetPassInfoBottomSheet"
-        tools:layout="@layout/bottom_sheet_forget_pass_info"></dialog>
+        tools:layout="@layout/bottom_sheet_forget_pass_info" />
+    <dialog
+        android:id="@+id/personalDataBottomSheetFragment"
+        android:name="com.gathering.android.profile.updateinfo.UpdateUserInfoFragment"
+        android:label="PersonalDataBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_update_user_info">
+        <action
+            android:id="@+id/action_personalDataBottomSheetFragment_to_addPicBottomSheet"
+            app:destination="@id/addPicBottomSheet" />
+        <argument
+            android:name="UpdatedUserInfo"
+            app:argType="com.gathering.android.profile.updateinfo.UpdatedUserInfo" />
+    </dialog>
+    <dialog
+        android:id="@+id/favoriteEvent"
+        android:name="com.gathering.android.profile.favoriteEvent.FavoriteEvent"
+        android:label="FavoriteEvent"
+        tools:layout="@layout/bottom_sheet_favorite_event" />
+
 </navigation>
