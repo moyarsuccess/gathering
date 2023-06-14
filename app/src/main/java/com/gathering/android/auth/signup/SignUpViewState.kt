@@ -6,6 +6,8 @@ sealed interface SignUpViewState {
 
     class SignUpButtonVisibility(val isSignUpButtonEnabled: Boolean) : SignUpViewState
 
+    class Message(val text: String?) : SignUpViewState
+
     sealed class Error(val errorMessage: String?) : SignUpViewState {
         class ShowGeneralError(errorMessage: String?) : Error(errorMessage)
         class ShowAuthenticationFailedError(errorMessage: String?) : Error(errorMessage)
@@ -16,4 +18,6 @@ sealed interface SignUpViewState {
         class ShowEmptyPassError(errorMessage: String?) : Error(errorMessage)
         class ShowEmptyConfirmedPassError(errorMessage: String?) : Error(errorMessage)
     }
+
+
 }

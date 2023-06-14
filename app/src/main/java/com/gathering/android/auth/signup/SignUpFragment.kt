@@ -95,6 +95,9 @@ class SignUpFragment : DialogFragment() {
                     Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
+                is SignUpViewState.Message -> {
+                    showToast(state.text)
+                }
             }
         }
     }

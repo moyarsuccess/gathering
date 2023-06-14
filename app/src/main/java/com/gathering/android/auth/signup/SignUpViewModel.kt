@@ -1,11 +1,15 @@
 package com.gathering.android.auth.signup
 
+import android.content.Context
 import android.text.TextUtils
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.AuthRepository
 import com.gathering.android.auth.model.ResponseState
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -44,15 +48,17 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onSignUpButtonClicked(email: String, pass: String) {
-        repository.signUpUser(email, pass, onResponseReady = { state ->
+        repository.signUpUser(email, pass) { state ->
             when (state) {
                 is ResponseState.Failure -> _viewState.value =
-                    SignUpViewState.Error.ShowAuthenticationFailedError(state.Error)
-                is ResponseState.Success -> _viewState.value = SignUpViewState.NavigateToHomeScreen
+                    SignUpViewState.Error.ShowAuthenticationFailedError("error")
+                is ResponseState.Success -> {
+                    sendEmailVerification()
+                    _viewState.value = SignUpViewState.NavigateToHomeScreen
+                }
             }
-        })
+        }
     }
-
     private fun checkAllFieldsReady() {
         _viewState.value = SignUpViewState.SignUpButtonVisibility(isAllFieldsValid())
     }
@@ -74,6 +80,17 @@ class SignUpViewModel @Inject constructor(
 
     private fun isAllFieldsValid(): Boolean {
         return isEmailValid && isPassValid && isConfirmedPassValid
+    }
+
+    private fun sendEmailVerification() {
+        val user = Firebase.auth.currentUser
+        user?.sendEmailVerification()?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                _viewState.value = SignUpViewState.Message("Email verification sent. Please check your email")
+            } else {
+                _viewState.value = SignUpViewState.Message("Failed to send Email Verification, try again!")
+            }
+        }
     }
 
     companion object {

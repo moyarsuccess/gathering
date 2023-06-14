@@ -33,9 +33,15 @@ class AuthRepository @Inject constructor() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user: FirebaseUser? = auth.currentUser
-                    onResponseReady(ResponseState.Success(user.toUser()))
+                    user?.sendEmailVerification()?.addOnCompleteListener { verificationTask ->
+                        if (verificationTask.isSuccessful) {
+                            onResponseReady(ResponseState.Success(user.toUser()))
+                        } else {
+                            onResponseReady(ResponseState.Failure(verificationTask.exception?.message ?: "Email verification failed"))
+                        }
+                    }
                 } else {
-                    onResponseReady(ResponseState.Failure("Authentication failed"))
+                    onResponseReady(ResponseState.Failure(task.exception?.message ?: "Authentication failed"))
                 }
             }
             .addOnFailureListener { error ->
