@@ -2,6 +2,7 @@ package com.gathering.android.auth.signup
 
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -53,8 +54,7 @@ class SignUpViewModel @Inject constructor(
                 is ResponseState.Failure -> _viewState.value =
                     SignUpViewState.Error.ShowAuthenticationFailedError("error")
                 is ResponseState.Success -> {
-                    sendEmailVerification()
-                    _viewState.value = SignUpViewState.NavigateToHomeScreen
+                    _viewState.value = SignUpViewState.NavigateToVerification
                 }
             }
         }
@@ -81,18 +81,6 @@ class SignUpViewModel @Inject constructor(
     private fun isAllFieldsValid(): Boolean {
         return isEmailValid && isPassValid && isConfirmedPassValid
     }
-
-    private fun sendEmailVerification() {
-        val user = Firebase.auth.currentUser
-        user?.sendEmailVerification()?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _viewState.value = SignUpViewState.Message("Email verification sent. Please check your email")
-            } else {
-                _viewState.value = SignUpViewState.Message("Failed to send Email Verification, try again!")
-            }
-        }
-    }
-
     companion object {
         private const val INVALID_EMail_ADDRESS_FORMAT_ERROR_MESSAGE =
             "Please enter a valid email address"

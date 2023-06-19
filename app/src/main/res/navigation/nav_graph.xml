@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_introFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_introFragment_to_showEmailVerification"
+            app:destination="@id/showEmailVerificationSent" />
     </dialog>
     <dialog
         android:id="@+id/signUpFragment"
@@ -24,6 +27,12 @@
         <action
             android:id="@+id/action_signUpFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_signUpFragment_to_showEmailVerification"
+            app:destination="@id/showEmailVerificationSent" />
+        <action
+            android:id="@+id/action_showEmailVerification_to_navigation_home"
+            app:destination="@id/showEmailVerificationSent" />
     </dialog>
     <dialog
         android:id="@+id/signInFragment"
@@ -112,5 +121,17 @@
         <argument
             android:name="Contact"
             app:argType="com.gathering.android.event.myevent.addevent.invitation.model.Contact" />
+    </dialog>
+    <dialog
+        android:id="@+id/showEmailVerificationSent"
+        android:name="com.gathering.android.auth.signup.VerificationFragment"
+        android:label="showEmailVerification"
+        tools:layout="@layout/frg_verification">
+        <action
+           android:id="@+id/action_showEmailVerification_to_navigation_home"
+           app:destination="@id/navigation_home"/>
+        <action
+            android:id="@+id/action_showEmailVerification_to_signInFragment"
+            app:destination="@id/signInFragment"/>
     </dialog>
 </navigation>

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
+import com.gathering.android.R
 import com.gathering.android.databinding.FrgSignUpBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -59,6 +60,7 @@ class SignUpFragment : DialogFragment() {
             val email = binding.etMail.text.toString()
             val pass = binding.etPass.text.toString()
             viewModel.onSignUpButtonClicked(email, pass)
+
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
@@ -84,10 +86,6 @@ class SignUpFragment : DialogFragment() {
                 is SignUpViewState.Error.ShowGeneralError -> {
                     showToast(state.errorMessage)
                 }
-                is SignUpViewState.NavigateToHomeScreen -> {
-                    findNavController().popBackStack()
-                    findNavController().popBackStack()
-                }
                 is SignUpViewState.SignUpButtonVisibility -> {
                     binding.btnSignUp.isEnabled = state.isSignUpButtonEnabled
                 }
@@ -95,8 +93,13 @@ class SignUpFragment : DialogFragment() {
                     Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
-                is SignUpViewState.Message -> {
-                    showToast(state.text)
+                is SignUpViewState.NavigateToIntroPage -> {
+                    findNavController().popBackStack()
+                }
+                is SignUpViewState.NavigateToVerification -> {
+                    findNavController().navigate(
+                        R.id.action_showEmailVerification_to_navigation_home
+                    )
                 }
             }
         }

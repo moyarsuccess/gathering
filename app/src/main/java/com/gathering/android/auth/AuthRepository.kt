@@ -1,5 +1,6 @@
 package com.gathering.android.auth
 
+import android.widget.Toast
 import com.gathering.android.auth.model.ResponseState
 import com.gathering.android.auth.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +19,27 @@ class AuthRepository @Inject constructor() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user: FirebaseUser? = auth.currentUser
+                    if (user?.isEmailVerified == true) {
+                        onResponseReady(ResponseState.Success(user.toUser()))
+                    } else {
+                        onResponseReady(ResponseState.Failure("Account Not Verified Please Check Your Inbox For Verification Email"))
+                        auth.signOut()
+                    }
+                } else {
+                    onResponseReady(ResponseState.Failure("Authentication failed"))
+                }
+            }
+            .addOnFailureListener { error ->
+                onResponseReady(ResponseState.Failure(error.toString()))
+            }
+    }
+
+    fun signUpUser(email: String, pass: String, onResponseReady: (ResponseState) -> Unit) {
+        auth = Firebase.auth
+        auth.createUserWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user: FirebaseUser? = auth.currentUser
                     onResponseReady(ResponseState.Success(user.toUser()))
                 } else {
                     onResponseReady(ResponseState.Failure("Authentication failed"))
@@ -27,32 +49,13 @@ class AuthRepository @Inject constructor() {
                 onResponseReady(ResponseState.Failure(error.toString()))
             }
     }
-    fun signUpUser(email: String, pass: String, onResponseReady: (ResponseState) -> Unit) {
-        auth = Firebase.auth
-        auth.createUserWithEmailAndPassword(email, pass)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user: FirebaseUser? = auth.currentUser
-                    user?.sendEmailVerification()?.addOnCompleteListener { verificationTask ->
-                        if (verificationTask.isSuccessful) {
-                            onResponseReady(ResponseState.Success(user.toUser()))
-                        } else {
-                            onResponseReady(ResponseState.Failure(verificationTask.exception?.message ?: "Email verification failed"))
-                        }
-                    }
-                } else {
-                    onResponseReady(ResponseState.Failure(task.exception?.message ?: "Authentication failed"))
-                }
-            }
-            .addOnFailureListener { error ->
-                onResponseReady(ResponseState.Failure(error.toString()))
-            }
-    }
 
+    fun verifyUser() {
+
+    }
     fun isSignedIn(): Boolean {
         return Firebase.auth.currentUser != null
     }
-
     private fun FirebaseUser?.toUser(): User {
         return User(
             uId = this?.uid,
