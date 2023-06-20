@@ -62,4 +62,6 @@
     <string name="send_again">send email again</string>
     <string name="back_to_sign_in">back to sign in</string>
     <string name="verified_your_email_address">verified your email address?</string>
+    <string name="verified">Verified</string>
+    <string name="verified_your_email_address_click_below">verified your email address? click below!</string>
 </resources>

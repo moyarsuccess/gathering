@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_introFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
-        <action
-            android:id="@+id/action_introFragment_to_showEmailVerification"
-            app:destination="@id/showEmailVerificationSent" />
     </dialog>
     <dialog
         android:id="@+id/signUpFragment"
@@ -25,13 +22,7 @@
         android:label="SignUpFragment"
         tools:layout="@layout/frg_sign_up">
         <action
-            android:id="@+id/action_signUpFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
-        <action
             android:id="@+id/action_signUpFragment_to_showEmailVerification"
-            app:destination="@id/showEmailVerificationSent" />
-        <action
-            android:id="@+id/action_showEmailVerification_to_navigation_home"
             app:destination="@id/showEmailVerificationSent" />
     </dialog>
     <dialog
@@ -42,6 +33,10 @@
         <action
             android:id="@+id/action_signInFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_signInFragment_to_verificationFragment"
+            app:popUpTo="@+id/main_nav_graph"
+            app:destination="@id/showEmailVerificationSent" />
     </dialog>
     <fragment
         android:id="@+id/navigation_home"
@@ -128,10 +123,7 @@
         android:label="showEmailVerification"
         tools:layout="@layout/frg_verification">
         <action
-           android:id="@+id/action_showEmailVerification_to_navigation_home"
-           app:destination="@id/navigation_home"/>
-        <action
-            android:id="@+id/action_showEmailVerification_to_signInFragment"
-            app:destination="@id/signInFragment"/>
+            android:id="@+id/action_showEmailVerification_to_navigation_home"
+            app:destination="@id/navigation_home" />
     </dialog>
 </navigation>

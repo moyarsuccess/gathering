@@ -1,16 +1,11 @@
 package com.gathering.android.auth.signup
 
-import android.content.Context
 import android.text.TextUtils
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.AuthRepository
 import com.gathering.android.auth.model.ResponseState
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import java.util.regex.Pattern
 import javax.inject.Inject
 

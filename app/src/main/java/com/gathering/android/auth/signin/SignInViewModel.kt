@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.AuthRepository
 import com.gathering.android.auth.model.ResponseState
+import com.gathering.android.auth.model.SignInFailed
+import com.gathering.android.auth.model.VerificationNeeded
 import javax.inject.Inject
 
 
@@ -36,10 +38,15 @@ class SignInViewModel @Inject constructor(
     fun onSignInButtonClicked(email: String, pass: String) {
         repository.signInUser(email, pass, onResponseReady = { state ->
             when (state) {
-                is ResponseState.Failure -> _viewState.value =
-                    SignInViewState.Error.ShowAuthenticationFailedError(state.Error)
-                is ResponseState.Success -> _viewState.value =
-                    SignInViewState.NavigateToHome
+                is ResponseState.Failure -> {
+                    if (state.errorMessage is SignInFailed) {
+                        _viewState.value =
+                            SignInViewState.Error.ShowAuthenticationFailedError(state.errorMessage.message)
+                    } else if (state.errorMessage is VerificationNeeded) {
+                        _viewState.value = SignInViewState.NavigateToVerification
+                    }
+                }
+                is ResponseState.Success -> _viewState.value = SignInViewState.NavigateToHome
             }
         })
     }
@@ -58,15 +65,13 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun isAllFieldsValid(): Boolean {
-        return isEmailValid &&
-                isPassValid
+        return isEmailValid && isPassValid
     }
 
     companion object {
         private const val INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE =
             "Please enter a valid email address"
-        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE =
-            "Please enter a valid password"
+        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "Please enter a valid password"
     }
 }
 

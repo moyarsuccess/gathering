@@ -93,12 +93,9 @@ class SignUpFragment : DialogFragment() {
                     Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
-                is SignUpViewState.NavigateToIntroPage -> {
-                    findNavController().popBackStack()
-                }
                 is SignUpViewState.NavigateToVerification -> {
                     findNavController().navigate(
-                        R.id.action_showEmailVerification_to_navigation_home
+                        R.id.action_signUpFragment_to_showEmailVerification
                     )
                 }
             }

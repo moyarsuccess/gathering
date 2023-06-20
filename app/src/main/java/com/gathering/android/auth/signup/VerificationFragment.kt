@@ -17,9 +17,7 @@ import javax.inject.Inject
 class VerificationFragment : DialogFragment() {
 
     private lateinit var binding: FrgVerificationBinding
-    private lateinit var countDownTimer: CountDownTimer
-    private var isTimerFinished = false
-
+    private var countDownTimer: CountDownTimer? = null
 
     @Inject
     lateinit var viewModel: VerificationViewModel
@@ -29,8 +27,7 @@ class VerificationFragment : DialogFragment() {
         setStyle(
             STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
         )
-        startTimer()
-        viewModel.onSendEmailVerification()
+        viewModel.onSendEmailBtnClicked()
     }
 
     override fun onCreateView(
@@ -44,23 +41,17 @@ class VerificationFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSendEmail.setOnClickListener {
-            //send email verification and start countdown again
-            if (isTimerFinished) {
-                //sendEmailVerification()
-            } else {
-                showToast("please wait for the timer to finish")
-            }
-
-            startTimer()
-
-            binding.btnBackToSignIn.setOnClickListener {
-                navigateToSignInPage()
-            }
+            viewModel.onSendEmailBtnClicked()
+        }
+        binding.btnVerified.setOnClickListener {
+            viewModel.onVerifiedClicked()
         }
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is VerificationViewState.NavigateToHomeScreen -> {
-                    findNavController().popBackStack()
+                    findNavController().navigate(
+                        R.id.action_showEmailVerification_to_navigation_home
+                    )
                 }
                 is VerificationViewState.NavigateToIntroPage -> {
                     findNavController().popBackStack()
@@ -68,43 +59,43 @@ class VerificationFragment : DialogFragment() {
                 is VerificationViewState.NavigateToVerification -> {
                     findNavController().popBackStack()
                 }
-                is VerificationViewState.SendEmailAgainVisibility -> {
-                    binding.btnSendEmail.isEnabled = state.isSendEmailAgainVisibility
-                }
-                VerificationViewState.NavigateToSignIn -> {
-                    findNavController().popBackStack()
-                    R.id.action_showEmailVerification_to_signInFragment
-                }
                 is VerificationViewState.Message -> {
                     showToast(state.text)
+                }
+                is VerificationViewState.ButtonState -> {
+                    binding.btnSendEmail.isEnabled = state.isEnabled
+                }
+                is VerificationViewState.StartTimer -> {
+                    val seconds = state.seconds
+                    val onTimerFinished = state.onTimerFinished
+                    startTimer(seconds, onTimerFinished)
                 }
             }
         }
     }
 
-    private fun navigateToSignInPage() {
-        findNavController().navigate(R.id.action_showEmailVerification_to_signInFragment)
-    }
-
-    private fun startTimer() {
-        countDownTimer = object : CountDownTimer(60000, 1000) {
+    private fun startTimer(seconds: Int, onTimerFinished: () -> Unit) {
+        countDownTimer = object : CountDownTimer(seconds * 1000L, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
                 binding.tvCountDown.text = secondsRemaining.toString()
             }
 
             override fun onFinish() {
-                isTimerFinished = true
+                onTimerFinished()
             }
         }.start()
-
-        countDownTimer.start()
+        countDownTimer?.start()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
-        countDownTimer.cancel()
+        countDownTimer?.cancel()
     }
 
     private fun showToast(errorMessage: String?) {

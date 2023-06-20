@@ -1,8 +1,6 @@
 package com.gathering.android.auth.signup
 
 sealed interface SignUpViewState {
-
-    object NavigateToIntroPage : SignUpViewState
     object NavigateToVerification : SignUpViewState
 
     class SignUpButtonVisibility(val isSignUpButtonEnabled: Boolean) : SignUpViewState
@@ -16,6 +14,4 @@ sealed interface SignUpViewState {
         class ShowEmptyPassError(errorMessage: String?) : Error(errorMessage)
         class ShowEmptyConfirmedPassError(errorMessage: String?) : Error(errorMessage)
     }
-
-
 }

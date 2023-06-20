@@ -15,57 +15,56 @@
         app:srcCompat="@drawable/logo_transparent_svg" />
 
     <TextView
-        android:padding="20dp"
         android:id="@+id/tv_emailVerification"
-        style="@style/editTextLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/img_margin"
         android:text="@string/please_check_your_inbox_to_verify_your_email_address"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_logo" />
 
     <TextView
-        android:padding="20dp"
-        android:id="@+id/tv_afterVerification"
-        style="@style/editTextLayoutStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/verified_your_email_address"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_sendEmail" />
-
-    <TextView
-        android:id="@+id/tv_empty"
-        android:padding="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_afterVerification" />
-
-    <TextView
         android:id="@+id/tv_countDown"
-        android:padding="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:padding="@dimen/img_margin"
+        app:layout_constraintEnd_toStartOf="@id/btn_sendEmail"
         app:layout_constraintTop_toBottomOf="@id/tv_emailVerification" />
 
-    <Button
-        app:layout_constraintStart_toEndOf="@id/tv_empty"
-        android:id="@+id/btn_back_to_sign_in"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="@string/back_to_sign_in"
-        app:layout_constraintTop_toBottomOf="@id/tv_afterVerification" />
 
     <Button
         android:id="@+id/btn_sendEmail"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/btn_verification_frg_width"
+        android:layout_height="@dimen/btn_verification_frg_height"
+        android:background="@color/custom_button_color"
         android:text="@string/send_again"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_countDown"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_emailVerification" />
+
+    <TextView
+        android:id="@+id/tv_afterVerification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/btn_verification_frg_width"
+        android:padding="@dimen/img_margin"
+        android:text="@string/verified_your_email_address_click_below"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btn_verified"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_sendEmail" />
+
+    <Button
+        android:id="@+id/btn_verified"
+        android:layout_width="@dimen/btn_verification_frg_width"
+        android:layout_height="@dimen/btn_verification_frg_height"
+        android:background="@color/custom_button_color"
+        android:text="@string/verified"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_afterVerification" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

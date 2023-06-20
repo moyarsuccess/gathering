@@ -1,16 +1,11 @@
 package com.gathering.android.auth.signup
 
 import android.util.Log
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
-import androidx.navigation.fragment.findNavController
-import com.gathering.android.R
 import com.gathering.android.auth.AuthRepository
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.gathering.android.auth.model.ResponseState
 
 class VerificationViewModel @javax.inject.Inject constructor(
     private val repository: AuthRepository
@@ -20,21 +15,34 @@ class VerificationViewModel @javax.inject.Inject constructor(
     val viewState: LiveData<VerificationViewState> by ::_viewState
 
     fun onSendEmailBtnClicked() {
-        repository.verifyUser()
-        // start the timer
-        // send verification email
-    }
-    fun onSendEmailVerification() {
-            val user = Firebase.auth.currentUser
-            user?.sendEmailVerification()?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("verificationEmail","email verification sent successfully.")
-                } else {
-                    _viewState.value = VerificationViewState.Message("Failed to send Email Verification, try again!")
-                }
+        repository.sendEmailVerification() { result ->
+            if (result is ResponseState.Success) {
+                Log.d("verificationEmail", "email verification sent successfully.")
+                _viewState.value = VerificationViewState.ButtonState(false)
+                _viewState.value = VerificationViewState.StartTimer(seconds)
+                { _viewState.value = VerificationViewState.ButtonState(true) }
+            } else {
+                _viewState.value =
+                    VerificationViewState.Message("Failed to send Email Verification, try again!")
             }
         }
+    }
 
-    fun onBackToSignInClicked(){
+    fun onVerifiedClicked() {
+        if (repository.isUserVerified()) {
+            _viewState.value = VerificationViewState.NavigateToHomeScreen
+        } else {
+            _viewState.value = VerificationViewState.Message("email must be verified")
+        }
+    }
+
+    fun onResume() {
+        if (repository.isUserVerified()){
+            _viewState.value = VerificationViewState.NavigateToHomeScreen
+        }
+    }
+
+    companion object {
+        private const val seconds: Int = 60
     }
 }

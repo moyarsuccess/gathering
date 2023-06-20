@@ -4,6 +4,7 @@ package com.gathering.android.event.home
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.gathering.android.auth.AuthRepository
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.event.home.model.EventsRepository
 import com.gathering.android.event.home.view.Filter
@@ -13,6 +14,7 @@ import com.gathering.android.event.model.Event
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val eventRepository: EventsRepository,
     private val eventLocationComparator: EventLocationComparator
 ) :
@@ -24,7 +26,11 @@ class EventListViewModel @Inject constructor(
     private var lastSortType = SortType.SORT_BY_DATE
     private var lastFilter = Filter()
     fun onViewCreated() {
-        loadEventList(lastFilter, lastSortType)
+        if (!authRepository.isSignedIn() || !authRepository.isUserVerified()) {
+            _viewState.setValue(EventViewState.NavigateToIntroScreen)
+        } else {
+            loadEventList(lastFilter, lastSortType)
+        }
     }
 
     fun onSortChanged(sortType: SortType) {

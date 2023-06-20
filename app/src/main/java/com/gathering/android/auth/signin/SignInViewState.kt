@@ -4,6 +4,7 @@ package com.gathering.android.auth.signin
 sealed interface SignInViewState {
 
     object NavigateToHome : SignInViewState
+    object NavigateToVerification : SignInViewState
     class SignInButtonVisibility(val isSignInButtonEnabled: Boolean) : SignInViewState
 
 
