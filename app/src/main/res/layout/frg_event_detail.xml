@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:background="@color/start_color"
         android:id="@+id/img_event"
         android:layout_width="match_parent"
         android:layout_height="@dimen/img_height"

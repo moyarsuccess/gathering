@@ -45,11 +45,11 @@ class IntroFragment : DialogFragment() {
                 resources.getString(R.string.fragment_1_text)
             ),
             IntroPageFragment.AppIntro(
-                R.drawable.img2,
+                R.drawable.img4,
                 resources.getString(R.string.fragment_2_text)
             ),
             IntroPageFragment.AppIntro(
-                R.drawable.img3,
+                R.drawable.img5,
                 resources.getString(R.string.fragment_3_text)
             )
         )

@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/et_margin"
-            android:background="@color/gray"
+            android:background="@color/bottom_sheet_background"
             android:hint="@string/my_contacts"
             android:padding="@dimen/et_padding"
             app:layout_constraintBottom_toBottomOf="@id/guide_20_percent"
@@ -25,13 +25,13 @@
             android:id="@+id/rvContact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/tv_margin_start"
             android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guide_20_percent" />
+            app:layout_constraintTop_toBottomOf="@id/guide_20_percent"
+            app:spanCount="2" />
 
         <Button
             android:id="@+id/btn_ok"
