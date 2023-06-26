@@ -7,18 +7,19 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/img_event"
             android:layout_width="match_parent"
-            android:layout_height="256dp"
+            android:layout_height="@dimen/btn_sheet_imageView"
             android:layout_marginBottom="@dimen/img_margin"
+            android:background="@color/bottom_sheet_background"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            app:srcCompat="@drawable/add_event_capture_pic" />
 
         <EditText
             android:id="@+id/et_event_Name"
@@ -62,10 +63,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/tv_margin_start"
                 android:layout_marginTop="@dimen/tv_margin_top"
-                android:layout_weight="60"
+                android:layout_weight="@dimen/tv_add_event_weight"
                 android:background="@drawable/custom_edit_text"
                 android:padding="@dimen/et_padding"
-                android:text="@string/date"
                 android:textSize="@dimen/et_text_size_medium"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -76,7 +76,7 @@
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
                 android:layout_marginEnd="@dimen/btn_location_margin_start"
-                android:layout_weight="40"
+                android:layout_weight="@dimen/btn_date_add_event_weight"
                 android:background="@drawable/custom_button"
                 android:ems="10"
                 android:text="@string/date"
@@ -102,10 +102,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/et_margin_start"
                 android:layout_marginTop="@dimen/et_margin_top"
-                android:layout_weight="60"
+                android:layout_weight="@dimen/tv_add_event_weight"
                 android:background="@drawable/custom_edit_text"
                 android:padding="@dimen/et_padding"
-                android:text="@string/time"
                 android:textSize="@dimen/et_text_size_medium" />
 
             <Button
@@ -115,7 +114,7 @@
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
                 android:layout_marginEnd="@dimen/btn_location_margin_start"
-                android:layout_weight="40"
+                android:layout_weight="@dimen/btn_date_add_event_weight"
                 android:background="@drawable/custom_button"
                 android:ems="10"
                 android:text="@string/time"
@@ -140,10 +139,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/et_margin_start"
                 android:layout_marginTop="@dimen/et_margin_top"
-                android:layout_weight="60"
+                android:layout_weight="@dimen/tv_add_event_weight"
                 android:background="@drawable/custom_edit_text"
                 android:padding="@dimen/et_padding"
-                android:text="@string/location"
                 android:textSize="@dimen/et_text_size_medium" />
 
             <Button
@@ -153,7 +151,7 @@
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
                 android:layout_marginEnd="@dimen/btn_location_margin_start"
-                android:layout_weight="40"
+                android:layout_weight="@dimen/btn_date_add_event_weight"
                 android:background="@drawable/custom_button"
                 android:ems="10"
                 android:text="@string/location"
@@ -178,10 +176,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/et_margin_start"
                 android:layout_marginTop="@dimen/et_margin_top"
-                android:layout_weight="60"
+                android:layout_weight="@dimen/tv_add_event_weight"
                 android:background="@drawable/custom_edit_text"
                 android:padding="@dimen/et_padding"
-                android:text="@string/attendees"
                 android:textSize="@dimen/et_text_size_medium" />
 
             <Button
@@ -191,7 +188,7 @@
                 android:layout_marginStart="@dimen/btn_location_margin_start"
                 android:layout_marginTop="@dimen/btn_location_margin_top"
                 android:layout_marginEnd="@dimen/btn_location_margin_start"
-                android:layout_weight="40"
+                android:layout_weight="@dimen/btn_date_add_event_weight"
                 android:background="@drawable/custom_button"
                 android:ems="10"
                 android:text="@string/invite"
@@ -216,9 +213,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_invitation"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp" />
+            app:spinning_bar_color="@color/spinning_bar"
+            app:spinning_bar_padding="@dimen/bar_padding"
+            app:spinning_bar_width="@dimen/bar_width" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

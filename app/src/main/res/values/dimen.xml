@@ -44,6 +44,12 @@
     <dimen name="elevation">4dp</dimen>
     <dimen name="img_margin">20dp</dimen>
     <dimen name="home_padding">24dp</dimen>
+    <dimen name="guideline">250dp</dimen>
+    <dimen name="sign_in_margin_top_btn">100dp</dimen>
+    <dimen name="tv_add_event_weight">60</dimen>
+    <dimen name="btn_date_add_event_weight">40</dimen>
+    <dimen name="bar_padding">6dp</dimen>
+    <dimen name="bar_width">4dp</dimen>
 
 
     <dimen name="fab_margin_bottom">70dp</dimen>

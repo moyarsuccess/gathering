@@ -6,16 +6,17 @@
     android:padding="@dimen/padding">
 
     <ImageView
+        android:background="@drawable/ic_launcher_foreground"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_sheet_imageView"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:background="@color/start_color"
         android:id="@+id/rotate_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:background="@color/start_color"
         android:id="@+id/rotate_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
