@@ -44,15 +44,16 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onSignUpButtonClicked(email: String, pass: String) {
-        repository.signUpUser(email, pass, onResponseReady = { state ->
+        repository.signUpUser(email, pass) { state ->
             when (state) {
                 is ResponseState.Failure -> _viewState.value =
-                    SignUpViewState.Error.ShowAuthenticationFailedError(state.Error)
-                is ResponseState.Success -> _viewState.value = SignUpViewState.NavigateToHomeScreen
+                    SignUpViewState.Error.ShowAuthenticationFailedError("error")
+                is ResponseState.Success -> {
+                    _viewState.value = SignUpViewState.NavigateToVerification
+                }
             }
-        })
+        }
     }
-
     private fun checkAllFieldsReady() {
         _viewState.value = SignUpViewState.SignUpButtonVisibility(isAllFieldsValid())
     }
@@ -75,7 +76,6 @@ class SignUpViewModel @Inject constructor(
     private fun isAllFieldsValid(): Boolean {
         return isEmailValid && isPassValid && isConfirmedPassValid
     }
-
     companion object {
         private const val INVALID_EMail_ADDRESS_FORMAT_ERROR_MESSAGE =
             "Please enter a valid email address"

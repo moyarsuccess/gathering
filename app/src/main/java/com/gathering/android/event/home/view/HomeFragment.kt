@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgHomeBinding
 import com.gathering.android.event.home.EventListViewModel
-import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.home.view.FilterDialogFragment.Companion.TAG
+import com.gathering.android.event.home.viewmodel.EventViewState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,6 +53,8 @@ class HomeFragment : Fragment() {
                 }
                 EventViewState.ShowNoData -> binding.tvNoData.isVisible = true
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
+                EventViewState.NavigateToIntroScreen ->
+                    findNavController().navigate(R.id.action_homeFragment_to_introFragment)
             }
         }
         return binding.root
@@ -70,14 +72,14 @@ class HomeFragment : Fragment() {
         viewModel.onViewCreated()
 
 
-        binding.sortButton.setOnClickListener{
+        binding.sortButton.setOnClickListener {
             val dialog = SortDialogFragment(viewModel)
-            dialog.show(parentFragmentManager,TAG)
+            dialog.show(parentFragmentManager, TAG)
         }
 
         binding.filterButton.setOnClickListener {
             val dialog = FilterDialogFragment(viewModel)
-            dialog.show(parentFragmentManager,TAG)
+            dialog.show(parentFragmentManager, TAG)
         }
     }
 

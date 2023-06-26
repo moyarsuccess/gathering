@@ -17,4 +17,7 @@ sealed interface EventViewState {
     object ShowNoData : EventViewState
 
     object HideNoData : EventViewState
+
+    object NavigateToIntroScreen : EventViewState
+
 }

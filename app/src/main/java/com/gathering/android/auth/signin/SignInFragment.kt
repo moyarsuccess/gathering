@@ -93,7 +93,11 @@ class SignInFragment : DialogFragment() {
                     Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
-
+                SignInViewState.NavigateToVerification -> {
+                    findNavController().navigate(
+                        R.id.action_signInFragment_to_verificationFragment
+                    )
+                }
             }
         }
     }
