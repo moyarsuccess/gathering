@@ -5,8 +5,8 @@ sealed interface SignInViewState {
 
     object NavigateToHome : SignInViewState
     object NavigateToVerification : SignInViewState
+    object NavigateToPasswordReset : SignInViewState
     class SignInButtonVisibility(val isSignInButtonEnabled: Boolean) : SignInViewState
-
 
     sealed class Error(val errorMessage: String?) : SignInViewState {
         class ShowGeneralError(errorMessage: String?) : Error(errorMessage)
