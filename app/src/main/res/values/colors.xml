@@ -19,4 +19,5 @@
     <color name="edit_text_background_color">#FFFFFF</color>
     <color name="spinning_bar">#FFF</color>
     <color name="intro_btn_color">#BBBBBB</color>
+    <color name="numbers_Background_Color">#F0EFEF</color>
 </resources>
