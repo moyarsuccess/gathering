@@ -48,15 +48,15 @@ class VerificationFragment : DialogFragment() {
         }
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is VerificationViewState.NavigateToHomeScreen -> {
+                 VerificationViewState.NavigateToHomeScreen -> {
                     findNavController().navigate(
                         R.id.action_showEmailVerification_to_navigation_home
                     )
                 }
-                is VerificationViewState.NavigateToIntroPage -> {
+                 VerificationViewState.NavigateToIntroPage -> {
                     findNavController().popBackStack()
                 }
-                is VerificationViewState.NavigateToVerification -> {
+                 VerificationViewState.NavigateToVerification -> {
                     findNavController().popBackStack()
                 }
                 is VerificationViewState.Message -> {

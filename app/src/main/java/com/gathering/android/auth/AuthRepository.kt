@@ -46,6 +46,18 @@ class AuthRepository @Inject constructor() {
         }
     }
 
+    fun resetPassword(email: String, onResponseReady: (ResponseState) -> Unit) {
+        auth = Firebase.auth
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val user: FirebaseUser? = auth.currentUser
+                onResponseReady(ResponseState.Success(user.toUser()))
+            } else {
+                onResponseReady(ResponseState.Failure(Exception("Failed to send reset password link, try again!")))
+            }
+        }
+    }
+
     fun sendEmailVerification(onResponseReady: (ResponseState) -> Unit) {
         val user = Firebase.auth.currentUser
         user?.sendEmailVerification()?.addOnCompleteListener { task ->
