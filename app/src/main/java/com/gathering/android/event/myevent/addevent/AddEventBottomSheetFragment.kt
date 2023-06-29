@@ -23,14 +23,10 @@ import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventLocation
-import com.gathering.android.event.model.User
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Calendar
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -221,7 +217,6 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
         val timePickerDialog = TimePickerDialog(
             requireContext(),
-            R.style.CustomTimePickerDialog,
             { _, selectedHour, selectedMinute ->
                 val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
                 binding.tvTime.text = selectedTime

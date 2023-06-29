@@ -11,6 +11,9 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/peach</item>
+        <item name="android:datePickerDialogTheme">@style/DialogTheme</item>
+        <item name="android:timePickerDialogTheme">@style/DialogTheme</item>
+
         <!-- Customize your theme here. -->
     </style>
 
@@ -31,6 +34,7 @@
     </style>
 
     //Custom bottom sheet style
+
     <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
@@ -46,22 +50,11 @@
         <item name="behavior_peekHeight">1000dp</item>
         <item name="behavior_hideable">true</item>
     </style>
+    
+    // theme used for datePicker and TimerPicker
 
-    //Custom timePicker Dialog
-    <style name="CustomTimePickerDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
-        <item name="android:timePickerStyle">@style/CustomTimePicker</item>
-        <item name="android:buttonBarNegativeButtonStyle">@style/CustomTimePicker</item>
-        <item name="android:buttonBarPositiveButtonStyle">@style/CustomTimePicker</item>
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/custom_button_color</item>
+        <item name="android:textColorPrimary">#000000</item>
     </style>
-
-    <style name="CustomTimePicker" parent="@android:style/Widget.Material.TimePicker">
-        <item name="android:headerBackground">@color/custom_button_color</item>
-        <item name="android:numbersTextColor">@color/black</item>
-        <item name="android:numbersSelectorColor">@color/custom_button_color</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:numbersBackgroundColor">@color/numbers_Background_Color</item>
-        <item name="android:numbersInnerTextColor">@color/black</item>
-    </style>
-
-
 </resources>
