@@ -56,6 +56,10 @@ class SignInFragment : DialogFragment() {
             viewModel.onSignInButtonClicked(email, pass)
         }
 
+        binding.tvForgetPassword.setOnClickListener {
+            viewModel.onForgotPassTvClicked()
+        }
+
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -79,12 +83,6 @@ class SignInFragment : DialogFragment() {
                     showToast(state.errorMessage)
                 }
 
-                is SignInViewState.NavigateToHome -> {
-                    findNavController().navigate(
-                        R.id.action_signInFragment_to_navigation_home
-                    )
-                }
-
                 is SignInViewState.SignInButtonVisibility -> {
                     binding.btnSignIn.isEnabled = state.isSignInButtonEnabled
                 }
@@ -93,9 +91,21 @@ class SignInFragment : DialogFragment() {
                     Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
+
                 SignInViewState.NavigateToVerification -> {
                     findNavController().navigate(
                         R.id.action_signInFragment_to_verificationFragment
+                    )
+                }
+
+                SignInViewState.NavigateToHome -> {
+                    findNavController().navigate(
+                        R.id.action_signInFragment_to_navigation_home
+                    )
+                }
+                SignInViewState.NavigateToPasswordReset -> {
+                    findNavController().navigate(
+                        R.id.action_signInFragment_to_forgetPasswordFragment
                     )
                 }
             }

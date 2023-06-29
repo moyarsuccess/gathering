@@ -1,6 +1,7 @@
 package com.gathering.android.auth.signin
 
 import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,6 +50,10 @@ class SignInViewModel @Inject constructor(
                 is ResponseState.Success -> _viewState.value = SignInViewState.NavigateToHome
             }
         })
+    }
+
+    fun onForgotPassTvClicked(){
+        _viewState.value = SignInViewState.NavigateToPasswordReset
     }
 
     private fun checkAllFieldsReady() {

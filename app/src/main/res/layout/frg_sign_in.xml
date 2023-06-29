@@ -48,6 +48,13 @@
                 android:inputType="textPassword"
                 android:padding="@dimen/padding" />
 
+            <TextView
+                android:id="@+id/tv_forget_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dots_size"
+                android:text="@string/reset_pass_text" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.Guideline
@@ -58,11 +65,11 @@
             app:layout_constraintGuide_begin="@dimen/guideline" />
 
         <Button
-            android:layout_marginTop="@dimen/sign_in_margin_top_btn"
             android:id="@+id/btn_sign_in"
             style="@style/buttonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sign_in_margin_top_btn"
             android:background="@drawable/custom_button"
             android:padding="@dimen/padding"
             android:text="@string/signIn_button_text"
