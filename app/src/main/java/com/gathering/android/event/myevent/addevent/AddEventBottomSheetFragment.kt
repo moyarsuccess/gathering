@@ -221,7 +221,6 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
         val timePickerDialog = TimePickerDialog(
             requireContext(),
-            R.style.CustomTimePickerDialog,
             { _, selectedHour, selectedMinute ->
                 val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
                 binding.tvTime.text = selectedTime
