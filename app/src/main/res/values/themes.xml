@@ -11,10 +11,10 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/peach</item>
-        <item name="android:datePickerDialogTheme">@style/DialogTheme</item>
-        <item name="android:timePickerDialogTheme">@style/DialogTheme</item>
-
         <!-- Customize your theme here. -->
+        <item name="android:timePickerDialogTheme">@style/DialogTheme</item>
+        <item name="android:datePickerDialogTheme">@style/DialogTheme</item>
+
     </style>
 
     <style name="editTextLayoutStyle">
@@ -34,7 +34,6 @@
     </style>
 
     //Custom bottom sheet style
-
     <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
@@ -50,11 +49,12 @@
         <item name="behavior_peekHeight">1000dp</item>
         <item name="behavior_hideable">true</item>
     </style>
-    
-    // theme used for datePicker and TimerPicker
 
+    // theme used for datePicker and TimerPicker
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/custom_button_color</item>
         <item name="android:textColorPrimary">#000000</item>
     </style>
+
+
 </resources>
