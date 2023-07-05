@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventRepository
-import com.gathering.android.event.model.EventRequest
+import com.gathering.android.common.ResponseState
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import javax.inject.Inject
 
@@ -62,8 +62,8 @@ class AddEventViewModel @Inject constructor(
         _viewState.setValue(AddEventViewState.MorphAddEventButtonToProgress)
         eventRepository.addEvent(event) { eventRequest ->
             when (eventRequest) {
-                is EventRequest.Failure -> viewState.setValue(AddEventViewState.ShowError(""))
-                is EventRequest.Success<*> -> {
+                is ResponseState.Failure -> viewState.setValue(AddEventViewState.ShowError(""))
+                is ResponseState.Success<*> -> {
                     _viewState.setValue(AddEventViewState.RevertAddEventProgressToButton)
                     _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
                 }

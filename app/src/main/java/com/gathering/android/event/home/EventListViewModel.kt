@@ -11,7 +11,7 @@ import com.gathering.android.event.home.view.SortType
 import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventRepository
-import com.gathering.android.event.model.EventRequest
+import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
@@ -77,8 +77,8 @@ class EventListViewModel @Inject constructor(
     ) {
         eventRepository.getAllEvents { request ->
             when (request) {
-                is EventRequest.Failure -> hideProgress()
-                is EventRequest.Success<*> -> {
+                is ResponseState.Failure -> hideProgress()
+                is ResponseState.Success<*> -> {
                     (request.data as? List<Event>)?.also { eventList ->
                         val filteredList = eventList
                             .filter { event ->

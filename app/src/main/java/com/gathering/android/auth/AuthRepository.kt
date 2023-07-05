@@ -32,20 +32,6 @@ class AuthRepository @Inject constructor() {
         }
     }
 
-    fun signUpUser(email: String, pass: String, onResponseReady: (ResponseState) -> Unit) {
-        auth = Firebase.auth
-        auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val user: FirebaseUser? = auth.currentUser
-                onResponseReady(ResponseState.Success(user.toUser()))
-            } else {
-                onResponseReady(ResponseState.Failure(Exception("SignUp failed")))
-            }
-        }.addOnFailureListener { error ->
-            onResponseReady(ResponseState.Failure(error))
-        }
-    }
-
     fun resetPassword(email: String, onResponseReady: (ResponseState) -> Unit) {
         auth = Firebase.auth
         auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
