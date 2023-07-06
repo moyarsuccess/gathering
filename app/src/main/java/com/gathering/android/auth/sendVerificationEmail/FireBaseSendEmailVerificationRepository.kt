@@ -21,4 +21,18 @@ class FireBaseSendEmailVerificationRepository
             }
         }
     }
+
+    override fun emailVerify(token: String, onResponseReady: (ResponseState) -> Unit) {
+        if (isUserVerified())
+            onResponseReady(ResponseState.Success(Unit))
+        else
+            onResponseReady(ResponseState.Failure(Exception("email not verified!")))
+    }
+
+    private fun isUserVerified(): Boolean {
+        Firebase.auth.currentUser?.reload()
+        // reload is an async call
+        Thread.sleep(2000)
+        return Firebase.auth.currentUser?.isEmailVerified == true
+    }
 }

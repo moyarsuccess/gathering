@@ -5,10 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.AuthRepository
+import com.gathering.android.auth.emailVerify.EmailVerifyRepository
 import com.gathering.android.auth.model.ResponseState
+import com.gathering.android.auth.sendVerificationEmail.ApiSendEmailVerificationRepository
+import com.gathering.android.common.ResponseState
 
 class VerificationViewModel @javax.inject.Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val newRepository: EmailVerifyRepository
 ) : ViewModel() {
 
     private val _viewState = MutableLiveData<VerificationViewState>()
@@ -33,6 +37,18 @@ class VerificationViewModel @javax.inject.Inject constructor(
             _viewState.value = VerificationViewState.NavigateToHomeScreen
         } else {
             _viewState.value = VerificationViewState.Message("email must be verified")
+        }
+
+        newRepository.emailVerify("") {
+            result ->
+            if (result is ResponseState.Success<*>) {
+                _viewState.value = VerificationViewState.NavigateToHomeScreen
+            } else if (result is ResponseState.Failure){
+               if(result.throwable is ApiSendEmailVerificationRepository.UserNotVerifiedException) {
+                   // show user not verified
+               } else {
+                   // show exception message
+               }
         }
     }
 
