@@ -1,4 +1,4 @@
-package com.gathering.android.auth.signup
+package com.gathering.android.auth.verification
 
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -27,7 +27,8 @@ class VerificationFragment : DialogFragment() {
         setStyle(
             STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
         )
-        viewModel.onSendEmailBtnClicked()
+        // TODO send email
+        viewModel.onSendEmailBtnClicked("")
     }
 
     override fun onCreateView(
@@ -41,10 +42,12 @@ class VerificationFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSendEmail.setOnClickListener {
-            viewModel.onSendEmailBtnClicked()
+            // TODO pass email for sending email
+            viewModel.onSendEmailBtnClicked("")
         }
         binding.btnVerified.setOnClickListener {
-            viewModel.onVerifiedClicked()
+            // TODO pass the token to verify
+            viewModel.onVerificationLinkRecieved("")
         }
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {

@@ -1,16 +1,15 @@
-package com.gathering.android.auth.signin
+package com.gathering.android.auth.password
 
 import android.util.Log
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.auth.AuthRepository
-import com.gathering.android.auth.model.ResponseState
+import com.gathering.android.auth.password.repo.PasswordRepository
+import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
 class ForgetPasswordViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val passwordRepository: PasswordRepository
 ) : ViewModel() {
 
     private val _viewState = MutableLiveData<ForgetPasswordViewState>()
@@ -21,19 +20,26 @@ class ForgetPasswordViewModel @Inject constructor(
             _viewState.value = ForgetPasswordViewState.Message("Invalid email address.")
             return
         }
-        repository.resetPassword(email) { state ->
+        passwordRepository.forgetPassword(email) { state ->
             when (state) {
-                is ResponseState.Success -> {
+                is ResponseState.Failure -> {
+                    _viewState.value =
+                        ForgetPasswordViewState.Message("Failed to send reset password link.")
+                }
+
+                is ResponseState.Success<*> -> {
                     Log.d("ResetEmail", "reset password email was sent successfully.")
                     _viewState.value = ForgetPasswordViewState.NavigateToResetPassInfoBottomSheet
                 }
-                is ResponseState.Failure -> {
+
+                is ResponseState.SuccessWithError<*> -> {
                     _viewState.value =
                         ForgetPasswordViewState.Message("Failed to send reset password link.")
                 }
             }
         }
     }
+
     private fun isEmailValid(email: String): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
         return email.matches(emailPattern.toRegex())

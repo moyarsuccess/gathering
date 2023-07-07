@@ -122,7 +122,7 @@
     </dialog>
     <dialog
         android:id="@+id/showEmailVerificationSent"
-        android:name="com.gathering.android.auth.signup.VerificationFragment"
+        android:name="com.gathering.android.auth.verification.VerificationFragment"
         android:label="showEmailVerification"
         tools:layout="@layout/frg_verification">
         <action
@@ -131,7 +131,7 @@
     </dialog>
     <fragment
         android:id="@+id/forgetPasswordFragment"
-        android:name="com.gathering.android.auth.signin.ForgetPassFragment"
+        android:name="com.gathering.android.auth.password.ForgetPasswordFragment"
         android:label="forgetPasswordFragment"
         tools:layout="@layout/frg_password_reset">
         <action
@@ -140,7 +140,7 @@
     </fragment>
     <dialog
         android:id="@+id/forgetPassInfoBottomSheet"
-        android:name="com.gathering.android.auth.signin.ResetPassInfoBottomSheet"
+        android:name="com.gathering.android.auth.password.ResetPassInfoBottomSheet"
         android:label="forgetPassInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_forget_pass_info">
     </dialog>

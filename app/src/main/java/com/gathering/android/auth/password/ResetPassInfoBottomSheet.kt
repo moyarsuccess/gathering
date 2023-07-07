@@ -1,4 +1,4 @@
-package com.gathering.android.auth.signin
+package com.gathering.android.auth.password
 
 import android.os.Bundle
 import android.view.LayoutInflater

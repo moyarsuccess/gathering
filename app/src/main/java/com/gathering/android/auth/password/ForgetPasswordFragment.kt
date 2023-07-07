@@ -1,7 +1,6 @@
-package com.gathering.android.auth.signin
+package com.gathering.android.auth.password
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ForgetPassFragment : DialogFragment() {
+class ForgetPasswordFragment : DialogFragment() {
 
     private lateinit var binding: FrgPasswordResetBinding
 

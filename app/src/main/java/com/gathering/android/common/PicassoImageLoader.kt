@@ -3,7 +3,7 @@ package com.gathering.android.common
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 
-class ImageLoaderImp : ImageLoader {
+class PicassoImageLoader : ImageLoader {
 
     override fun loadImage(imageUrl: String?, imageView: ImageView) {
 

@@ -1,5 +1,7 @@
 package com.gathering.android.event.model
 
+import com.gathering.android.auth.model.User
+import com.gathering.android.common.ResponseState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
@@ -9,18 +11,21 @@ class EventRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : EventRepository {
 
-    override fun addEvent(event: Event, onEventRequestReady: (eventRequest: EventRequest) -> Unit) {
+    override fun addEvent(
+        event: Event,
+        onEventRequestReady: (eventRequest: ResponseState) -> Unit
+    ) {
         fireStore.collection(EVENT_COLLECTION_NAME)
             .add(event.toEventEntity())
             .addOnSuccessListener {
-                onEventRequestReady(EventRequest.Success(true))
+                onEventRequestReady(ResponseState.Success(true))
             }
             .addOnFailureListener {
-                onEventRequestReady(EventRequest.Failure(it))
+                onEventRequestReady(ResponseState.Failure(it))
             }
     }
 
-    override fun getAllEvents(onEventRequestReady: (eventRequest: EventRequest) -> Unit) {
+    override fun getAllEvents(onEventRequestReady: (eventRequest: ResponseState) -> Unit) {
         fireStore.collection(EVENT_COLLECTION_NAME).get()
             .addOnSuccessListener { documentSnapshots ->
                 val eventList = mutableListOf<EventEntity>()
@@ -33,15 +38,15 @@ class EventRepositoryImpl @Inject constructor(
                         )
                     }
                 }
-                onEventRequestReady(EventRequest.Success(eventList.toEvents()))
+                onEventRequestReady(ResponseState.Success(eventList.toEvents()))
             }
             .addOnFailureListener { exception ->
-                onEventRequestReady(EventRequest.Failure(exception))
+                onEventRequestReady(ResponseState.Failure(exception))
             }
     }
 
     override fun getMyEvents(
-        onEventRequestReady: (eventRequest: EventRequest) -> Unit
+        onEventRequestReady: (eventRequest: ResponseState) -> Unit
     ) {
 
         fireStore.collection(EVENT_COLLECTION_NAME)
@@ -57,10 +62,10 @@ class EventRepositoryImpl @Inject constructor(
                         )
                     }
                 }
-                onEventRequestReady(EventRequest.Success(eventList.toEvents()))
+                onEventRequestReady(ResponseState.Success(eventList.toEvents()))
             }
             .addOnFailureListener { exception ->
-                onEventRequestReady(EventRequest.Failure(exception))
+                onEventRequestReady(ResponseState.Failure(exception))
             }
     }
 
@@ -95,8 +100,9 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     private fun userFromCurrentUser(): User {
-        val user = auth.currentUser ?: return User()
-        return User(user.uid, user.displayName, user.email, user.phoneNumber)
+        // TODO there is no need to pass host object anymore
+        val user = auth.currentUser ?: return User("", "", "", "")
+        return User("", "", "", "")
     }
 
     companion object {

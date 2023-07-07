@@ -1,4 +1,4 @@
-package com.gathering.android.auth.signup
+package com.gathering.android.auth.verification
 
 sealed interface VerificationViewState {
 
