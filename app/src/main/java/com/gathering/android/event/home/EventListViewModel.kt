@@ -4,18 +4,18 @@ package com.gathering.android.event.home
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.auth.AuthRepository
+import com.gathering.android.auth.verification.repo.VerificationRepository
 import com.gathering.android.common.ActiveMutableLiveData
+import com.gathering.android.common.ResponseState
 import com.gathering.android.event.home.view.Filter
 import com.gathering.android.event.home.view.SortType
 import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventRepository
-import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val verificationRepository: VerificationRepository,
     private val eventRepository: EventRepository,
     private val eventLocationComparator: EventLocationComparator,
     private val eventDateComparator: EventDateComparator
@@ -28,7 +28,7 @@ class EventListViewModel @Inject constructor(
     private var lastSortType = SortType.SORT_BY_DATE
     private var lastFilter = Filter()
     fun onViewCreated() {
-        if (!authRepository.isSignedIn() || !authRepository.isUserVerified()) {
+        if (!verificationRepository.isUserVerified()) {
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {
             loadEventList(lastFilter, lastSortType)
@@ -77,6 +77,8 @@ class EventListViewModel @Inject constructor(
     ) {
         eventRepository.getAllEvents { request ->
             when (request) {
+                // TODO check this block later
+                is ResponseState.SuccessWithError<*> -> hideProgress()
                 is ResponseState.Failure -> hideProgress()
                 is ResponseState.Success<*> -> {
                     (request.data as? List<Event>)?.also { eventList ->
@@ -95,6 +97,7 @@ class EventListViewModel @Inject constructor(
                         onFilteredEventsReady(filteredList)
                     }
                 }
+
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.gathering.android.event.model
 
+import com.gathering.android.auth.model.User
 import java.io.Serializable
 
 data class Event(

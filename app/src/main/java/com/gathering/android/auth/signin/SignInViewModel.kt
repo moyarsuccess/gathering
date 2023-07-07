@@ -1,19 +1,16 @@
 package com.gathering.android.auth.signin
 
 import android.text.TextUtils
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.auth.AuthRepository
-import com.gathering.android.auth.model.ResponseState
-import com.gathering.android.auth.model.SignInFailed
-import com.gathering.android.auth.model.VerificationNeeded
+import com.gathering.android.auth.signin.repo.SignInRepository
+import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
 
 class SignInViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val signInRepository: SignInRepository
 ) : ViewModel() {
 
     private val _viewState = MutableLiveData<SignInViewState>()
@@ -37,22 +34,24 @@ class SignInViewModel @Inject constructor(
     }
 
     fun onSignInButtonClicked(email: String, pass: String) {
-        repository.signInUser(email, pass, onResponseReady = { state ->
+        signInRepository.signInUser(email, pass, onResponseReady = { state ->
             when (state) {
                 is ResponseState.Failure -> {
-                    if (state.errorMessage is SignInFailed) {
-                        _viewState.value =
-                            SignInViewState.Error.ShowAuthenticationFailedError(state.errorMessage.message)
-                    } else if (state.errorMessage is VerificationNeeded) {
-                        _viewState.value = SignInViewState.NavigateToVerification
-                    }
+                    // TODO show error
                 }
-                is ResponseState.Success -> _viewState.value = SignInViewState.NavigateToHome
+
+                is ResponseState.Success<*> -> {
+                    _viewState.value = SignInViewState.NavigateToHome
+                }
+
+                is ResponseState.SuccessWithError<*> -> {
+                    // TODO Show proper error
+                }
             }
         })
     }
 
-    fun onForgotPassTvClicked(){
+    fun onForgotPassTvClicked() {
         _viewState.value = SignInViewState.NavigateToPasswordReset
     }
 

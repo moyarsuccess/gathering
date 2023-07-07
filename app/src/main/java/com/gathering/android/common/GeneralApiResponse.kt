@@ -1,6 +1,6 @@
 package com.gathering.android.common
 
 data class GeneralApiResponse(
-    val code: Int,
-    val message: String
-)
+    override val code: Int,
+    override val message: String?,
+) : ApiResponse

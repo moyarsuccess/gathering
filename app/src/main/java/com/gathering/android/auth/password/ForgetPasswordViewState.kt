@@ -1,4 +1,4 @@
-package com.gathering.android.auth.signin
+package com.gathering.android.auth.password
 
 sealed interface ForgetPasswordViewState {
 

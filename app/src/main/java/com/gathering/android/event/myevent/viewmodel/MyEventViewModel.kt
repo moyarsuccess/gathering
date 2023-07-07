@@ -3,9 +3,9 @@ package com.gathering.android.event.myevent.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
+import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.Event
 import com.gathering.android.event.model.EventRepository
-import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
@@ -34,6 +34,10 @@ class MyEventViewModel @Inject constructor(
                     } ?: run {
                         hideProgress()
                     }
+                }
+
+                is ResponseState.SuccessWithError<*> -> {
+                    // TODO show proper error
                 }
             }
         }

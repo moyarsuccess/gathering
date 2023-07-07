@@ -1,5 +1,6 @@
 package com.gathering.android.event.model
 
+import com.gathering.android.auth.model.User
 import com.gathering.android.common.ResponseState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,7 +11,10 @@ class EventRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : EventRepository {
 
-    override fun addEvent(event: Event, onEventRequestReady: (eventRequest: ResponseState) -> Unit) {
+    override fun addEvent(
+        event: Event,
+        onEventRequestReady: (eventRequest: ResponseState) -> Unit
+    ) {
         fireStore.collection(EVENT_COLLECTION_NAME)
             .add(event.toEventEntity())
             .addOnSuccessListener {
@@ -96,8 +100,9 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     private fun userFromCurrentUser(): User {
-        val user = auth.currentUser ?: return User()
-        return User(user.uid, user.displayName, user.email, user.phoneNumber)
+        // TODO there is no need to pass host object anymore
+        val user = auth.currentUser ?: return User("", "", "", "")
+        return User("", "", "", "")
     }
 
     companion object {

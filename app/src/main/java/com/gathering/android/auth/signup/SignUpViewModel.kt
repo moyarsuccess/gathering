@@ -4,13 +4,13 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.auth.AuthRepository
-import com.gathering.android.auth.model.ResponseState
+import com.gathering.android.auth.signup.repo.SignUpRepository
+import com.gathering.android.common.ResponseState
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 class SignUpViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val signUpRepository: SignUpRepository
 ) : ViewModel() {
 
     private val _viewState = MutableLiveData<SignUpViewState>()
@@ -44,16 +44,24 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onSignUpButtonClicked(email: String, pass: String) {
-        repository.signUpUser(email, pass) { state ->
+        signUpRepository.signUpUser(email, pass) { state ->
             when (state) {
-                is ResponseState.Failure -> _viewState.value =
-                    SignUpViewState.Error.ShowAuthenticationFailedError("error")
-                is ResponseState.Success -> {
+                is ResponseState.Failure -> {
+                    _viewState.value =
+                        SignUpViewState.Error.ShowAuthenticationFailedError("error")
+                }
+
+                is ResponseState.Success<*> -> {
                     _viewState.value = SignUpViewState.NavigateToVerification
+                }
+
+                is ResponseState.SuccessWithError<*> -> {
+                    // TODO show proper error
                 }
             }
         }
     }
+
     private fun checkAllFieldsReady() {
         _viewState.value = SignUpViewState.SignUpButtonVisibility(isAllFieldsValid())
     }
@@ -76,6 +84,7 @@ class SignUpViewModel @Inject constructor(
     private fun isAllFieldsValid(): Boolean {
         return isEmailValid && isPassValid && isConfirmedPassValid
     }
+
     companion object {
         private const val INVALID_EMail_ADDRESS_FORMAT_ERROR_MESSAGE =
             "Please enter a valid email address"

@@ -67,6 +67,10 @@ class AddEventViewModel @Inject constructor(
                     _viewState.setValue(AddEventViewState.RevertAddEventProgressToButton)
                     _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
                 }
+
+                is ResponseState.SuccessWithError<*> -> {
+                    // TODO show proper error
+                }
             }
         }
     }

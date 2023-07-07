@@ -1,6 +1,6 @@
 package com.gathering.android.auth.signin.repo
 
-import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.ResponseState
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,19 +16,20 @@ class ApiSignInRepository @Inject constructor(
         pass: String,
         onResponseReady: (ResponseState) -> Unit
     ) {
-        signInRemoteService.signIn(email, pass).enqueue(object : Callback<GeneralApiResponse> {
+        signInRemoteService.signIn(email, pass).enqueue(object : Callback<AuthorizedResponse> {
             override fun onResponse(
-                call: Call<GeneralApiResponse>,
-                response: Response<GeneralApiResponse>
+                call: Call<AuthorizedResponse>,
+                response: Response<AuthorizedResponse>
             ) {
                 if (response.isSuccessful) {
+                    // TODO Save the JWT in shared pref to be used in future API calls
                     onResponseReady(ResponseState.Success(response.body()))
                 } else {
                     onResponseReady(ResponseState.SuccessWithError(response.body()))
                 }
             }
 
-            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
                 onResponseReady(ResponseState.Failure(t))
             }
         })
