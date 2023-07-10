@@ -69,7 +69,7 @@ class HomeFragment : Fragment() {
                 DividerItemDecoration.VERTICAL
             )
         )
-        viewModel.onViewCreated()
+        viewModel.onViewCreated("")
 
 
         binding.sortButton.setOnClickListener {

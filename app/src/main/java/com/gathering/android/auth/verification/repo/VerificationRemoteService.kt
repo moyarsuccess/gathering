@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface VerificationRemoteService {
-    @GET("auth/verification")
+    @GET("auth/verification/email")
     fun sendEmailVerification(@Query("email") email: String): Call<GeneralApiResponse>
 
     @GET("auth/verification")

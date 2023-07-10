@@ -68,36 +68,50 @@ class SignUpFragment : DialogFragment() {
                 is SignUpViewState.Error.ShowEmptyEmailError -> {
                     binding.etMail.error = state.errorMessage
                 }
+
                 is SignUpViewState.Error.ShowInvalidEmailError -> {
                     binding.etMail.error = state.errorMessage
                 }
+
                 is SignUpViewState.Error.ShowEmptyPassError -> {
                     binding.etPass.error = state.errorMessage
                 }
+
                 is SignUpViewState.Error.ShowInvalidPassError -> {
                     binding.etPass.error = state.errorMessage
                 }
+
                 is SignUpViewState.Error.ShowEmptyConfirmedPassError -> {
                     binding.etVerifyPass.error = state.errorMessage
                 }
+
                 is SignUpViewState.Error.ShowInvalidConfirmedPassError -> {
                     binding.etVerifyPass.error = state.errorMessage
                 }
+
                 is SignUpViewState.Error.ShowGeneralError -> {
                     showToast(state.errorMessage)
                 }
+
                 is SignUpViewState.SignUpButtonVisibility -> {
                     binding.btnSignUp.isEnabled = state.isSignUpButtonEnabled
                 }
+
                 is SignUpViewState.Error.ShowAuthenticationFailedError -> {
                     Log.d("WTF", state.errorMessage.toString())
                     showToast(state.errorMessage)
                 }
+
                 is SignUpViewState.NavigateToVerification -> {
+                    val bundle = Bundle()
+                    bundle.putString("email", state.email)
                     findNavController().navigate(
-                        R.id.action_signUpFragment_to_showEmailVerification
+                        R.id.action_signUpFragment_to_showEmailVerification,
+                        bundle
                     )
                 }
+
+                is SignUpViewState.Error.ShowSuccessWithError -> showToast(state.errorMessage)
             }
         }
     }

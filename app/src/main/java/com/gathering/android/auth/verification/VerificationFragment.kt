@@ -2,6 +2,7 @@ package com.gathering.android.auth.verification
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VerificationFragment : DialogFragment() {
+class VerificationFragment : DialogFragment(), TokenListener {
 
     private lateinit var binding: FrgVerificationBinding
     private var countDownTimer: CountDownTimer? = null
@@ -27,8 +28,8 @@ class VerificationFragment : DialogFragment() {
         setStyle(
             STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
         )
-        // TODO send email
-        viewModel.onSendEmailBtnClicked("")
+        val email = arguments?.getString("email")
+        viewModel.onViewCreated(email ?: "")
     }
 
     override fun onCreateView(
@@ -43,31 +44,36 @@ class VerificationFragment : DialogFragment() {
 
         binding.btnSendEmail.setOnClickListener {
             // TODO pass email for sending email
-            viewModel.onSendEmailBtnClicked("")
+            viewModel.onViewCreated("")
         }
         binding.btnVerified.setOnClickListener {
             // TODO pass the token to verify
-            viewModel.onVerificationLinkRecieved("")
+            viewModel.onVerificationLinkReceived("")
         }
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                 VerificationViewState.NavigateToHomeScreen -> {
+                VerificationViewState.NavigateToHomeScreen -> {
                     findNavController().navigate(
                         R.id.action_showEmailVerification_to_navigation_home
                     )
                 }
-                 VerificationViewState.NavigateToIntroPage -> {
+
+                VerificationViewState.NavigateToIntroPage -> {
                     findNavController().popBackStack()
                 }
-                 VerificationViewState.NavigateToVerification -> {
+
+                VerificationViewState.NavigateToVerification -> {
                     findNavController().popBackStack()
                 }
+
                 is VerificationViewState.Message -> {
                     showToast(state.text)
                 }
+
                 is VerificationViewState.ButtonState -> {
                     binding.btnSendEmail.isEnabled = state.isEnabled
                 }
+
                 is VerificationViewState.StartTimer -> {
                     val seconds = state.seconds
                     val onTimerFinished = state.onTimerFinished
@@ -103,5 +109,10 @@ class VerificationFragment : DialogFragment() {
 
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onTokenReceived(token: String?) {
+        Log.d("WTF3", token.toString())
+        viewModel.onVerificationLinkReceived(token ?: "")
     }
 }

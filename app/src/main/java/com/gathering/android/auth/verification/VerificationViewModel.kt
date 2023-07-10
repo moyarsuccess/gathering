@@ -6,15 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.verification.repo.VerificationRepository
 import com.gathering.android.common.ResponseState
+import javax.inject.Inject
 
-class VerificationViewModel @javax.inject.Inject constructor(
+class VerificationViewModel @Inject constructor(
     private val verificationRepository: VerificationRepository
 ) : ViewModel() {
 
     private val _viewState = MutableLiveData<VerificationViewState>()
     val viewState: LiveData<VerificationViewState> by ::_viewState
 
-    fun onSendEmailBtnClicked(email: String) {
+    fun onViewCreated(email: String) {
         verificationRepository.sendEmailVerification(email) { result ->
             when (result) {
                 is ResponseState.Failure -> {
@@ -30,32 +31,33 @@ class VerificationViewModel @javax.inject.Inject constructor(
                 }
 
                 is ResponseState.SuccessWithError<*> -> {
-                    // TODO Show proper error
+                    VerificationViewState.Message("VerificationEMAIL SEND WITH ERROR, something went WRONG!")
                 }
             }
         }
     }
 
-    fun onVerificationLinkRecieved(token: String) {
-        verificationRepository.emailVerify(token) { state ->
-            when (state) {
-                is ResponseState.Failure -> {
-                    // TODO
-                }
-
-                is ResponseState.Success<*> -> {
-                    // TODO
-                }
-
-                is ResponseState.SuccessWithError<*> -> {
-                    // TODO
-                }
-            }
-        }
+    fun onVerificationLinkReceived(token: String) {
+        Log.d("WTF4", token)
+//        verificationRepository.emailVerify(token) { state ->
+//            when (state) {
+//                is ResponseState.Failure -> {
+//                    // TODO
+//                }
+//
+//                is ResponseState.Success<*> -> {
+//                    // TODO
+//                }
+//
+//                is ResponseState.SuccessWithError<*> -> {
+//                    // TODO
+//                }
+//            }
+//        }
     }
 
     fun onResume() {
-        if (verificationRepository.isUserVerified()) {
+        if (verificationRepository.isUserVerified("")) {
             _viewState.value = VerificationViewState.NavigateToHomeScreen
         }
     }

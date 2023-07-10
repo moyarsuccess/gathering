@@ -27,8 +27,8 @@ class EventListViewModel @Inject constructor(
 
     private var lastSortType = SortType.SORT_BY_DATE
     private var lastFilter = Filter()
-    fun onViewCreated() {
-        if (!verificationRepository.isUserVerified()) {
+    fun onViewCreated(token:String) {
+        if (!verificationRepository.isUserVerified(token)) {
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {
             loadEventList(lastFilter, lastSortType)

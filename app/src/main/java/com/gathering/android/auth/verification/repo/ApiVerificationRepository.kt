@@ -3,13 +3,15 @@ package com.gathering.android.auth.verification.repo
 import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.ResponseState
+import com.gathering.android.common.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
 class ApiVerificationRepository @Inject constructor(
-    private val verificationRemoteService: VerificationRemoteService
+    private val verificationRemoteService: VerificationRemoteService,
+    private val tokenManager: TokenManager
 ) : VerificationRepository {
 
     override fun sendEmailVerification(email: String, onResponseReady: (ResponseState) -> Unit) {
@@ -40,7 +42,9 @@ class ApiVerificationRepository @Inject constructor(
                     response: Response<AuthorizedResponse>
                 ) {
                     if (response.isSuccessful) {
-                        // TODO Save the JWT in shared pref to be used in future API calls
+                        val token = response.body()?.jwt
+                        tokenManager.saveToken(token)
+
                         onResponseReady(ResponseState.Success(response.body()))
                     } else {
                         onResponseReady(ResponseState.SuccessWithError(response.body()))
@@ -53,7 +57,7 @@ class ApiVerificationRepository @Inject constructor(
             })
     }
 
-    override fun isUserVerified(): Boolean {
-        TODO("Not yet implemented")
+    override fun isUserVerified(token: String): Boolean {
+        return tokenManager.isTokenValid((token))
     }
 }
