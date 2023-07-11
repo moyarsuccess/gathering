@@ -15,49 +15,56 @@ class VerificationViewModel @Inject constructor(
     private val _viewState = MutableLiveData<VerificationViewState>()
     val viewState: LiveData<VerificationViewState> by ::_viewState
 
-    fun onViewCreated(email: String) {
-        verificationRepository.sendEmailVerification(email) { result ->
+    fun onViewCreated(email: String?, token: String?) {
+        if (token.isNullOrEmpty() && email.isNullOrEmpty()) return
+        if (token.isNullOrEmpty()) {
+            sendEmailVerification(email)
+        } else {
+            verifyEmail(token)
+        }
+    }
+
+    fun sendEmailVerification(email: String?) {
+        verificationRepository.sendEmailVerification(email ?: "") { result ->
             when (result) {
                 is ResponseState.Failure -> {
+                    _viewState.value = VerificationViewState.ButtonState(true)
                     _viewState.value =
-                        VerificationViewState.Message("Failed to send Email Verification, try again!")
+                        VerificationViewState.ShowError("Failed to send Email Verification, try again!")
                 }
 
                 is ResponseState.Success<*> -> {
                     Log.d("verificationEmail", "email verification sent successfully.")
-                    _viewState.value = VerificationViewState.ButtonState(false)
-                    _viewState.value = VerificationViewState.StartTimer(seconds)
-                    { _viewState.value = VerificationViewState.ButtonState(true) }
+                    _viewState.value = VerificationViewState.ButtonState(true)
                 }
 
                 is ResponseState.SuccessWithError<*> -> {
-                    VerificationViewState.Message("VerificationEMAIL SEND WITH ERROR, something went WRONG!")
+                    VerificationViewState.ShowError("VerificationEMAIL SEND WITH ERROR, something went WRONG!")
                 }
             }
         }
     }
 
-    fun onVerificationLinkReceived(token: String) {
-        Log.d("WTF4", token)
-//        verificationRepository.emailVerify(token) { state ->
-//            when (state) {
-//                is ResponseState.Failure -> {
-//                    // TODO
-//                }
-//
-//                is ResponseState.Success<*> -> {
-//                    // TODO
-//                }
-//
-//                is ResponseState.SuccessWithError<*> -> {
-//                    // TODO
-//                }
-//            }
-//        }
+    private fun verifyEmail(token: String?) {
+        verificationRepository.emailVerify(token ?: "") { result ->
+            when (result) {
+                is ResponseState.Failure -> {
+                    _viewState.value = VerificationViewState.ShowError("Failed to verify user")
+                }
+
+                is ResponseState.Success<*> -> {
+                    Log.d("Email verify", "User verified successfully.")
+                    _viewState.value = VerificationViewState.NavigateToHomeScreen
+                }
+
+                is ResponseState.SuccessWithError<*> -> {
+                }
+            }
+        }
     }
 
     fun onResume() {
-        if (verificationRepository.isUserVerified("")) {
+        if (verificationRepository.isUserExist()) {
             _viewState.value = VerificationViewState.NavigateToHomeScreen
         }
     }

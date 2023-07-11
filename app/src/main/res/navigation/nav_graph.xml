@@ -133,6 +133,8 @@
             app:destination="@id/navigation_home" />
         <deepLink
             android:id="@+id/showEmailVerificationSent"
+            android:autoVerify="true"
+            app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/email/verified" />
     </dialog>
     <fragment

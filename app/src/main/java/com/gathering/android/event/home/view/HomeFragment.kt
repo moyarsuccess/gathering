@@ -1,6 +1,7 @@
 package com.gathering.android.event.home.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,14 +48,22 @@ class HomeFragment : Fragment() {
                         R.id.action_navigation_home_to_eventDetailFragment, bundle
                     )
                 }
+
                 is EventViewState.ShowError -> showToast(state.errorMessage)
                 is EventViewState.ShowEventList -> {
                     adapter.setEventItem(state.eventList.toMutableList())
                 }
+
                 EventViewState.ShowNoData -> binding.tvNoData.isVisible = true
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
-                EventViewState.NavigateToIntroScreen ->
-                    findNavController().navigate(R.id.action_homeFragment_to_introFragment)
+                EventViewState.NavigateToIntroScreen -> {
+                    if (R.id.showEmailVerificationSent != findNavController().currentDestination?.id) {
+                        Log.d("WTF-1","${R.id.showEmailVerificationSent}")
+                        Log.d("WTF_2","${R.id.introFragment}")
+                        Log.d("WTF_3","${findNavController().currentDestination?.id}")
+                        findNavController().navigate(R.id.action_homeFragment_to_introFragment)
+                    }
+                }
             }
         }
         return binding.root
