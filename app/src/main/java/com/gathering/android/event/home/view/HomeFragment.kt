@@ -1,7 +1,6 @@
 package com.gathering.android.event.home.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,9 +57,6 @@ class HomeFragment : Fragment() {
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
                 EventViewState.NavigateToIntroScreen -> {
                     if (R.id.showEmailVerificationSent != findNavController().currentDestination?.id) {
-                        Log.d("WTF-1","${R.id.showEmailVerificationSent}")
-                        Log.d("WTF_2","${R.id.introFragment}")
-                        Log.d("WTF_3","${findNavController().currentDestination?.id}")
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)
                     }
                 }
@@ -78,7 +74,7 @@ class HomeFragment : Fragment() {
                 DividerItemDecoration.VERTICAL
             )
         )
-        viewModel.onViewCreated("")
+        viewModel.onViewCreated()
 
 
         binding.sortButton.setOnClickListener {

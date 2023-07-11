@@ -15,7 +15,7 @@ class VerificationViewModel @Inject constructor(
     private val _viewState = MutableLiveData<VerificationViewState>()
     val viewState: LiveData<VerificationViewState> by ::_viewState
 
-    fun onViewCreated(email: String?, token: String?) {
+    fun onViewResumed(email: String?, token: String?) {
         if (token.isNullOrEmpty() && email.isNullOrEmpty()) return
         if (token.isNullOrEmpty()) {
             sendEmailVerification(email)
@@ -60,12 +60,6 @@ class VerificationViewModel @Inject constructor(
                 is ResponseState.SuccessWithError<*> -> {
                 }
             }
-        }
-    }
-
-    fun onResume() {
-        if (verificationRepository.isUserExist()) {
-            _viewState.value = VerificationViewState.NavigateToHomeScreen
         }
     }
 

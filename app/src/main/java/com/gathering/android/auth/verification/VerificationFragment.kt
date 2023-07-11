@@ -65,14 +65,14 @@ class VerificationFragment : DialogFragment() {
             }
         }
 
-        viewModel.onViewCreated(extractEmail(), extractToken())
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
-        val token = extractToken()
-        viewModel.onResume()
+
+        viewModel.onViewResumed(extractEmail(), extractToken())
+
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

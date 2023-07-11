@@ -57,7 +57,7 @@ class ApiVerificationRepository @Inject constructor(
             })
     }
 
-    override fun isUserVerified(token: String): Boolean {
-        return tokenManager.isTokenValid((token))
+    override fun isUserVerified(): Boolean {
+        return tokenManager.isTokenValid()
     }
 }

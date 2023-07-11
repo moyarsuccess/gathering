@@ -6,6 +6,6 @@ interface VerificationRepository {
     fun sendEmailVerification(email: String, onResponseReady: (ResponseState) -> Unit)
     fun emailVerify(token: String, onResponseReady: (ResponseState) -> Unit)
 
-    fun isUserVerified(token: String): Boolean
+    fun isUserVerified(): Boolean
 }
 
