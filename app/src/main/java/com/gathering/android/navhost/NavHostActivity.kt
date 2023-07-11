@@ -9,6 +9,7 @@ import com.gathering.android.R
 import com.gathering.android.databinding.ActNavHostBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class NavHostActivity : AppCompatActivity() {
 

@@ -45,26 +45,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_emailVerification" />
 
-    <TextView
-        android:id="@+id/tv_afterVerification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/btn_verification_frg_width"
-        android:padding="@dimen/img_margin"
-        android:text="@string/verified_your_email_address_click_below"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/btn_verified"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_sendEmail" />
-
-    <Button
-        android:id="@+id/btn_verified"
-        android:layout_width="@dimen/btn_verification_frg_width"
-        android:layout_height="@dimen/btn_verification_frg_height"
-        android:background="@color/custom_button_color"
-        android:text="@string/verified"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_afterVerification" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

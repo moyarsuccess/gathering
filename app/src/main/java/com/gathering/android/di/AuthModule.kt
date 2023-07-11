@@ -1,5 +1,7 @@
 package com.gathering.android.di
 
+import android.content.Context
+import com.gathering.android.Application
 import com.gathering.android.auth.password.repo.ApiPasswordRepository
 import com.gathering.android.auth.password.repo.PasswordRemoteService
 import com.gathering.android.auth.password.repo.PasswordRepository
@@ -12,9 +14,11 @@ import com.gathering.android.auth.signup.repo.SignUpRepository
 import com.gathering.android.auth.verification.repo.ApiVerificationRepository
 import com.gathering.android.auth.verification.repo.VerificationRemoteService
 import com.gathering.android.auth.verification.repo.VerificationRepository
+import com.gathering.android.common.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -81,9 +85,18 @@ class AuthModule {
 
     @Provides
     @Singleton
+    fun provideTokenManager(
+        @ApplicationContext context: Context
+    ): TokenManager {
+        return TokenManager(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideVerificationRepository(
-        passwordRemoteService: VerificationRemoteService
+        passwordRemoteService: VerificationRemoteService,
+        tokenManager: TokenManager
     ): VerificationRepository {
-        return ApiVerificationRepository(passwordRemoteService)
+        return ApiVerificationRepository(passwordRemoteService, tokenManager)
     }
 }

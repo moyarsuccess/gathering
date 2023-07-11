@@ -48,15 +48,16 @@ class SignUpViewModel @Inject constructor(
             when (state) {
                 is ResponseState.Failure -> {
                     _viewState.value =
-                        SignUpViewState.Error.ShowAuthenticationFailedError("error")
+                        SignUpViewState.Error.ShowAuthenticationFailedError("SignUp can not be done")
                 }
 
                 is ResponseState.Success<*> -> {
-                    _viewState.value = SignUpViewState.NavigateToVerification
+                    _viewState.value = SignUpViewState.NavigateToVerification(email)
                 }
 
                 is ResponseState.SuccessWithError<*> -> {
-                    // TODO show proper error
+                    SignUpViewState.Error.ShowSuccessWithError("SignUp success with error")
+
                 }
             }
         }

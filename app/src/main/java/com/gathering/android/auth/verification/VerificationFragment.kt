@@ -1,12 +1,15 @@
 package com.gathering.android.auth.verification
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.databinding.FrgVerificationBinding
@@ -17,18 +20,16 @@ import javax.inject.Inject
 class VerificationFragment : DialogFragment() {
 
     private lateinit var binding: FrgVerificationBinding
-    private var countDownTimer: CountDownTimer? = null
 
     @Inject
     lateinit var viewModel: VerificationViewModel
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
             STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
         )
-        // TODO send email
-        viewModel.onSendEmailBtnClicked("")
     }
 
     override fun onCreateView(
@@ -38,70 +39,60 @@ class VerificationFragment : DialogFragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSendEmail.setOnClickListener {
-            // TODO pass email for sending email
-            viewModel.onSendEmailBtnClicked("")
+            viewModel.sendEmailVerification(extractEmail())
         }
-        binding.btnVerified.setOnClickListener {
-            // TODO pass the token to verify
-            viewModel.onVerificationLinkRecieved("")
-        }
+
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                 VerificationViewState.NavigateToHomeScreen -> {
+                VerificationViewState.NavigateToHomeScreen -> {
                     findNavController().navigate(
                         R.id.action_showEmailVerification_to_navigation_home
                     )
                 }
-                 VerificationViewState.NavigateToIntroPage -> {
-                    findNavController().popBackStack()
+
+                is VerificationViewState.ShowError -> {
+                    showToast(state.message)
                 }
-                 VerificationViewState.NavigateToVerification -> {
-                    findNavController().popBackStack()
-                }
-                is VerificationViewState.Message -> {
-                    showToast(state.text)
-                }
+
                 is VerificationViewState.ButtonState -> {
                     binding.btnSendEmail.isEnabled = state.isEnabled
                 }
-                is VerificationViewState.StartTimer -> {
-                    val seconds = state.seconds
-                    val onTimerFinished = state.onTimerFinished
-                    startTimer(seconds, onTimerFinished)
-                }
             }
         }
+
     }
 
-    private fun startTimer(seconds: Int, onTimerFinished: () -> Unit) {
-        countDownTimer = object : CountDownTimer(seconds * 1000L, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val secondsRemaining = millisUntilFinished / 1000
-                binding.tvCountDown.text = secondsRemaining.toString()
-            }
-
-            override fun onFinish() {
-                onTimerFinished()
-            }
-        }.start()
-        countDownTimer?.start()
-    }
-
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
-        viewModel.onResume()
+
+        viewModel.onViewResumed(extractEmail(), extractToken())
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        countDownTimer?.cancel()
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun extractToken(): String? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT, Intent::class.java)
+        } else {
+            arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT)
+        }?.data?.getQueryParameter(TOKEN_PARAM)
+    }
+
+    private fun extractEmail(): String? {
+        return arguments?.getString("email")
     }
 
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+    }
+
+    companion object {
+        const val TOKEN_PARAM = "token"
     }
 }

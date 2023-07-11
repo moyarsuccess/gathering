@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_signUpFragment_to_showEmailVerification"
             app:destination="@id/showEmailVerificationSent" />
+        <argument
+            android:name="Email"
+            app:argType="string" />
     </dialog>
     <dialog
         android:id="@+id/signInFragment"
@@ -128,6 +131,11 @@
         <action
             android:id="@+id/action_showEmailVerification_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <deepLink
+            android:id="@+id/showEmailVerificationSent"
+            android:autoVerify="true"
+            app:action="android.intent.action.VIEW"
+            app:uri="gathering://gathering.com/email/verified" />
     </dialog>
     <fragment
         android:id="@+id/forgetPasswordFragment"
@@ -142,6 +150,5 @@
         android:id="@+id/forgetPassInfoBottomSheet"
         android:name="com.gathering.android.auth.password.ResetPassInfoBottomSheet"
         android:label="forgetPassInfoBottomSheet"
-        tools:layout="@layout/bottom_sheet_forget_pass_info">
-    </dialog>
+        tools:layout="@layout/bottom_sheet_forget_pass_info"></dialog>
 </navigation>

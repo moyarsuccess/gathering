@@ -29,6 +29,7 @@ class EventListViewModel @Inject constructor(
     private var lastFilter = Filter()
     fun onViewCreated() {
         if (!verificationRepository.isUserVerified()) {
+
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {
             loadEventList(lastFilter, lastSortType)
