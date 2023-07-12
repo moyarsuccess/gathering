@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.signin.repo.SignInRepository
+import com.gathering.android.auth.signup.SignUpViewState
 import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
@@ -37,15 +38,18 @@ class SignInViewModel @Inject constructor(
         signInRepository.signInUser(email, pass, onResponseReady = { state ->
             when (state) {
                 is ResponseState.Failure -> {
-                    // TODO show error
+                    _viewState.value =
+                        SignInViewState.Error.ShowGeneralError("can not reach the server")
                 }
 
                 is ResponseState.Success<*> -> {
-                    _viewState.value = SignInViewState.NavigateToHome
+                    _viewState.value =
+                        SignInViewState.NavigateToHome
                 }
 
                 is ResponseState.SuccessWithError<*> -> {
-                    // TODO Show proper error
+                    _viewState.value =
+                        SignInViewState.Error.ShowAuthenticationFailedError("Sign in failed")
                 }
             }
         })
