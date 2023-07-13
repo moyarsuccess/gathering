@@ -1,7 +1,6 @@
-package com.gathering.android.di
+package com.gathering.android.navhost.di
 
 import android.content.Context
-import com.gathering.android.Application
 import com.gathering.android.auth.password.repo.ApiPasswordRepository
 import com.gathering.android.auth.password.repo.PasswordRemoteService
 import com.gathering.android.auth.password.repo.PasswordRepository
@@ -30,7 +29,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun providePasswordRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofit retrofit: Retrofit
     ): PasswordRemoteService {
         return retrofit.create(PasswordRemoteService::class.java)
     }
@@ -46,7 +45,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignInRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofit retrofit: Retrofit
     ): SignInRemoteService {
         return retrofit.create(SignInRemoteService::class.java)
     }
@@ -62,7 +61,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignUpRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofit retrofit: Retrofit
     ): SignUpRemoteService {
         return retrofit.create(SignUpRemoteService::class.java)
     }
@@ -78,7 +77,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideVerificationRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofit retrofit: Retrofit
     ): VerificationRemoteService {
         return retrofit.create(VerificationRemoteService::class.java)
     }

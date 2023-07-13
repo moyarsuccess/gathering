@@ -1,14 +1,17 @@
-package com.gathering.android.di
+package com.gathering.android.navhost.di
 
+import com.gathering.android.common.HeaderInterceptor
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.PicassoImageLoader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,10 +32,29 @@ class ApplicationModule {
         return BASE_URL
     }
 
+    @Singleton
     @Provides
-    fun provideRetrofit(baseUrl: String): Retrofit {
+    @UnauthorizedRetrofit
+    fun provideUnauthorizedRetrofit(baseUrl: String): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @AuthorizedRetrofit
+    fun provideAuthorizedRetrofit(
+        baseUrl: String,
+        interceptor: HeaderInterceptor
+    ): Retrofit {
+        val client = OkHttpClient
+            .Builder()
+            .addInterceptor(interceptor)
+            .build()
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
