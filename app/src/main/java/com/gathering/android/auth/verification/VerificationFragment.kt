@@ -51,7 +51,7 @@ class VerificationFragment : DialogFragment() {
             when (state) {
                 VerificationViewState.NavigateToHomeScreen -> {
                     findNavController().navigate(
-                        R.id.action_showEmailVerification_to_navigation_home
+                        R.id.action_verification_to_navigation_home
                     )
                 }
 

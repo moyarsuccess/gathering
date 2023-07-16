@@ -1,7 +1,8 @@
 package com.gathering.android.profile.repo
 
-import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.UpdateProfileResponse
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Multipart
 import retrofit2.http.PUT
@@ -12,7 +13,7 @@ interface ProfileRemoteService {
     @Multipart
     @PUT("profile")
     fun uploadProfile(
-        @Part displayName: String,
-        @Part photoFile: MultipartBody.Part,
-    ): Call<GeneralApiResponse>
+        @Part("display_name") displayName: RequestBody,
+        @Part photo: MultipartBody.Part,
+    ): Call<UpdateProfileResponse>
 }

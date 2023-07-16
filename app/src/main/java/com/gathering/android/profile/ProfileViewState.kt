@@ -10,5 +10,6 @@ sealed interface ProfileViewState {
     object NavigateToFavoriteEvent : ProfileViewState
 
     object NavigateToPersonalData : ProfileViewState
+    object NavigateToIntro : ProfileViewState
 
 }

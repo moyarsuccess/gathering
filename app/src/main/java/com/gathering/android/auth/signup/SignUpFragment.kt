@@ -106,7 +106,7 @@ class SignUpFragment : DialogFragment() {
                     val bundle = Bundle()
                     bundle.putString("email", state.email)
                     findNavController().navigate(
-                        R.id.action_signUpFragment_to_showEmailVerification,
+                        R.id.action_signUpFragment_to_verificationFragment,
                         bundle
                     )
                 }

@@ -8,10 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
-import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.FrgProfileBinding
-import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER_INFO_DATA
-import com.gathering.android.profile.updateinfo.UpdatedUserInfo
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -43,7 +40,6 @@ class ProfileFragment : Fragment() {
                 is ProfileViewState.ShowImage -> {
                     val photoUrl = state.imgUrl
                     imageLoader.loadImage(photoUrl, binding.imgProfile)
-
                 }
 
                 ProfileViewState.NavigateToFavoriteEvent -> {
@@ -61,6 +57,10 @@ class ProfileFragment : Fragment() {
                 is ProfileViewState.SetEmail -> {
                     binding.tvEmail.text = state.email
                 }
+
+                ProfileViewState.NavigateToIntro -> {
+                    findNavController().navigate(R.id.action_navigation_profile_to_introFragment)
+                }
             }
         }
 
@@ -72,13 +72,22 @@ class ProfileFragment : Fragment() {
             viewModel.onPersonalDataLayoutClicked()
         }
 
-        getNavigationResultLiveData<UpdatedUserInfo>(KEY_ARGUMENT_UPDATE_USER_INFO_DATA)?.observe(
-            viewLifecycleOwner
-        ) {
-            viewModel.onDisplayNameChanged(it.updatedDisplayName)
-            viewModel.onImageChanged(it.updatedPhotoUrl)
+        binding.btnSignOut.setOnClickListener {
+            viewModel.onSignUpButtonClicked()
         }
 
+//        getNavigationResultLiveData<UpdatedUserInfo>(KEY_ARGUMENT_UPDATE_USER_INFO_DATA)?.observe(
+//            viewLifecycleOwner
+//        ) {
+//            viewModel.onDisplayNameChanged(it.updatedDisplayName)
+//            viewModel.onImageChanged(it.updatedPhotoUrl)
+//        }
+
         viewModel.onViewCreated()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onViewResumed()
     }
 }

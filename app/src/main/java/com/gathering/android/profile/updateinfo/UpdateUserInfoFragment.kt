@@ -1,6 +1,5 @@
 package com.gathering.android.profile.updateinfo
 
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,13 +10,10 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.auth.model.User
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.getNavigationResultLiveData
-import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetUpdateUserInfoBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
-import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER_INFO_DATA
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -32,8 +28,6 @@ class UpdateUserInfoFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
-
-    private var photoUrl: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,15 +52,12 @@ class UpdateUserInfoFragment : BottomSheetDialogFragment() {
                 }
 
                 is UpdateUserInfoViewState.NavigateToProfile -> {
-                    setNavigationResult(
-                        KEY_ARGUMENT_UPDATE_USER_INFO_DATA, state.updatedUserInfo
-                    )
                     findNavController().popBackStack()
                 }
 
                 is UpdateUserInfoViewState.ShowImage -> {
-                    photoUrl = state.imgUrl
-                    imageLoader.loadImage(photoUrl, binding.imgProfile)
+                    Log.d("WTF_1", state.imgUrl)
+                    imageLoader.loadImage(state.imgUrl, binding.imgProfile)
                 }
 
                 is UpdateUserInfoViewState.ShowEmailAddress -> {
@@ -93,12 +84,7 @@ class UpdateUserInfoFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnSave.setOnClickListener {
-
-            val bm = (binding.imgProfile.drawable as BitmapDrawable).bitmap
-            viewModel.onSaveButtonClicked(
-                bm,
-                User(displayName = binding.etDisplayName.text.toString())
-            )
+            viewModel.onSaveButtonClicked(displayName = binding.etDisplayName.text.toString())
         }
 
         binding.etDisplayName.doOnTextChanged { text, _, _, _ ->

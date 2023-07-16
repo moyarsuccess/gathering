@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_home">
+    app:startDestination="@id/navigation_homeFragment">
     <dialog
         android:id="@+id/introFragment"
         android:name="com.gathering.android.intro.IntroFragment"
@@ -22,8 +22,8 @@
         android:label="SignUpFragment"
         tools:layout="@layout/frg_sign_up">
         <action
-            android:id="@+id/action_signUpFragment_to_showEmailVerification"
-            app:destination="@id/showEmailVerificationSent" />
+            android:id="@+id/action_signUpFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment" />
         <argument
             android:name="Email"
             app:argType="string" />
@@ -34,18 +34,18 @@
         android:label="SignInFragment"
         tools:layout="@layout/frg_sign_in">
         <action
-            android:id="@+id/action_signInFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            android:id="@+id/action_signInFragment_to_navigation_homeFragment"
+            app:destination="@id/navigation_homeFragment" />
         <action
             android:id="@+id/action_signInFragment_to_verificationFragment"
-            app:destination="@id/showEmailVerificationSent"
+            app:destination="@id/verificationFragment"
             app:popUpTo="@+id/main_nav_graph" />
         <action
             android:id="@+id/action_signInFragment_to_forgetPasswordFragment"
             app:destination="@id/forgetPasswordFragment" />
     </dialog>
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_homeFragment"
         android:name="com.gathering.android.event.home.view.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/frg_home">
@@ -60,7 +60,7 @@
             app:argType="com.gathering.android.event.model.Event" />
     </fragment>
     <fragment
-        android:id="@+id/navigation_event"
+        android:id="@+id/navigation_eventFragment"
         android:name="com.gathering.android.event.myevent.view.MyEventFragment"
         android:label="MyEventFragment"
         tools:layout="@layout/frg_my_event">
@@ -71,7 +71,7 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.gathering.android.profile.ProfileFragment"
-        android:label="ProfileFragment2"
+        android:label="ProfileFragment"
         tools:layout="@layout/frg_profile">
         <action
             android:id="@+id/action_navigation_profile_to_updateUserInfoBottomSheetFragment"
@@ -79,6 +79,9 @@
         <action
             android:id="@+id/action_navigation_profile_to_favoriteEvent"
             app:destination="@id/favoriteEvent" />
+        <action
+            android:id="@+id/action_navigation_profile_to_introFragment"
+            app:destination="@id/introFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventDetailFragment"
@@ -102,7 +105,7 @@
             app:destination="@id/addPicBottomSheet" />
         <action
             android:id="@+id/action_addEventBottomSheetFragment_to_navigation_event"
-            app:destination="@id/navigation_event" />
+            app:destination="@id/navigation_eventFragment" />
         <action
             android:id="@+id/action_addEventBottomSheetFragment_to_inviteFriendBottomSheet"
             app:destination="@id/inviteFriendBottomSheet" />
@@ -131,15 +134,15 @@
             app:argType="com.gathering.android.event.myevent.addevent.invitation.model.Contact" />
     </dialog>
     <dialog
-        android:id="@+id/showEmailVerificationSent"
+        android:id="@+id/verificationFragment"
         android:name="com.gathering.android.auth.verification.VerificationFragment"
         android:label="showEmailVerification"
         tools:layout="@layout/frg_verification">
         <action
-            android:id="@+id/action_showEmailVerification_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            android:id="@+id/action_verification_to_navigation_home"
+            app:destination="@id/navigation_homeFragment" />
         <deepLink
-            android:id="@+id/showEmailVerificationSent"
+            android:id="@+id/verificationFragment"
             android:autoVerify="true"
             app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/email/verified" />
@@ -166,9 +169,9 @@
         <action
             android:id="@+id/action_personalDataBottomSheetFragment_to_addPicBottomSheet"
             app:destination="@id/addPicBottomSheet" />
-        <argument
-            android:name="UpdatedUserInfo"
-            app:argType="com.gathering.android.profile.updateinfo.UpdatedUserInfo" />
+<!--        <argument-->
+<!--            android:name="UpdatedUserInfo"-->
+<!--            app:argType="com.gathering.android.profile.updateinfo.UpdatedUserInfo" />-->
     </dialog>
     <dialog
         android:id="@+id/favoriteEvent"

@@ -2,9 +2,8 @@ package com.gathering.android.common
 
 import com.gathering.android.auth.model.User
 
-data class AuthorizedResponse(
+data class UpdateProfileResponse(
     override val code: Int,
     override val message: String?,
-    val jwt: String,
     val user: User
 ) : ApiResponse

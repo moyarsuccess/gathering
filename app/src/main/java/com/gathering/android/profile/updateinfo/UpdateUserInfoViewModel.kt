@@ -1,63 +1,54 @@
 package com.gathering.android.profile.updateinfo
 
-import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.auth.model.User
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.common.RequestState
-import com.gathering.android.profile.ProfileRepository
+import com.gathering.android.common.ResponseState
+import com.gathering.android.common.UserRepo
+import com.gathering.android.profile.repo.ProfileRepository
 import javax.inject.Inject
 
 class UpdateUserInfoViewModel @Inject constructor(
+    private val userRepo: UserRepo,
     private val profileRepository: ProfileRepository
 ) :
     ViewModel() {
     private var isDisplayNameFilled: Boolean = false
     private var isImageUrlFilled: Boolean = false
+    private var photoUrl = ""
 
     private val _viewState = ActiveMutableLiveData<UpdateUserInfoViewState>()
-    val viewState: ActiveMutableLiveData<UpdateUserInfoViewState> by ::_viewState
+    val viewState: LiveData<UpdateUserInfoViewState> by ::_viewState
 
     fun onViewCreated() {
-        val user = profileRepository.getUserData()
-        _viewState.setValue(UpdateUserInfoViewState.ShowImage(user.photoUrl ?: ""))
-        _viewState.setValue(UpdateUserInfoViewState.ShowDisplayName(user.displayName ?: ""))
-        _viewState.setValue(UpdateUserInfoViewState.ShowEmailAddress(user.email ?: ""))
+        val user = userRepo.getUser()
+        _viewState.setValue(UpdateUserInfoViewState.ShowImage(user.imageUrl))
+        _viewState.setValue(UpdateUserInfoViewState.ShowDisplayName(user.displayName))
+        _viewState.setValue(UpdateUserInfoViewState.ShowEmailAddress(user.email))
     }
 
     fun onImageButtonClicked() {
         _viewState.setValue(UpdateUserInfoViewState.NavigateToAddPic)
     }
 
-    fun onSaveButtonClicked(bitmap: Bitmap?, user: User) {
-        profileRepository.uploadPhoto(bitmap) { requestState ->
-            when (requestState) {
-                is RequestState.Failure -> viewState.setValue(UpdateUserInfoViewState.ShowError(""))
-                is RequestState.Success<*> -> {
-                    val photoUrl = requestState.data.toString()
-                    updateProfile(user, photoUrl)
-                }
-            }
-        }
-    }
-
-    private fun updateProfile(user: User, photoUrl: String) {
-        profileRepository.updateDisplayNameAndPhotoURL(user, photoUrl) { requestState ->
-            when (requestState) {
-                is RequestState.Failure -> {
-                    viewState.setValue(UpdateUserInfoViewState.ShowError(""))
-                }
-
-                is RequestState.Success<*> -> {
-                    _viewState.setValue(
-                        UpdateUserInfoViewState.NavigateToProfile(
-                            UpdatedUserInfo(
-                                updatedDisplayName = user.displayName ?: "",
-                                updatedPhotoUrl = photoUrl
-                            )
-                        )
+    fun onSaveButtonClicked(displayName: String) {
+        profileRepository.updateProfile(displayName, photoUrl) { responseState ->
+            when (responseState) {
+                is ResponseState.Failure -> _viewState.setValue(
+                    UpdateUserInfoViewState.ShowError(
+                        responseState.throwable.message
                     )
+                )
+
+                is ResponseState.Success<*> -> {
+                    _viewState.setValue(UpdateUserInfoViewState.NavigateToProfile)
                 }
+
+                is ResponseState.SuccessWithError<*> -> _viewState.setValue(
+                    UpdateUserInfoViewState.ShowError(
+                        "update successfully with error"
+                    )
+                )
             }
         }
     }
@@ -71,11 +62,11 @@ class UpdateUserInfoViewModel @Inject constructor(
 
     fun onImageURLChanged(imgUrl: String) {
         isImageUrlFilled = isImageUrlFilled(imgUrl)
+        photoUrl = imgUrl
         val errorMessage = if (isImageUrlFilled) null else IMAGE_NOT_FILLED_MESSAGE
         _viewState.setValue(UpdateUserInfoViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
-
 
     private fun isDisplayNameFilled(imgUrl: String): Boolean {
         return imgUrl.isNotEmpty() && imgUrl.isNotBlank()

@@ -1,11 +1,14 @@
 package com.gathering.android.navhost.di
 
+import android.content.Context
+import com.gathering.android.common.UserRepo
 import com.gathering.android.profile.repo.ApiProfileRepository
 import com.gathering.android.profile.repo.ProfileRemoteService
 import com.gathering.android.profile.repo.ProfileRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -25,8 +28,14 @@ class ProfileModule {
     @Provides
     @Singleton
     fun provideProfileRepository(
-        profileRemoteService: ProfileRemoteService
+        profileRemoteService: ProfileRemoteService,
+        @ApplicationContext context: Context,
+        userRepo: UserRepo
     ): ProfileRepository {
-        return ApiProfileRepository(profileRemoteService)
+        return ApiProfileRepository(
+            context = context,
+            profileRemoteService = profileRemoteService,
+            userRepo
+        )
     }
 }
