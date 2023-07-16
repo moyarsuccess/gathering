@@ -7,19 +7,19 @@ class TokenRepo @Inject constructor(
 ) {
 
     fun saveToken(token: String?) {
-        keyValueStorage.saveData(KEY_TOKEN, token ?: "")
+        keyValueStorage.save(KEY_TOKEN, token ?: "")
     }
 
-    fun getToken(): String? {
-        return keyValueStorage.getData(KEY_TOKEN)
+    fun getToken(): String {
+        return keyValueStorage.getString(KEY_TOKEN)
     }
 
     fun isTokenValid(): Boolean {
-        return getToken() != null
+        return getToken().isNotEmpty()
     }
 
     fun clearToken() {
-        keyValueStorage.clearData(KEY_TOKEN)
+        keyValueStorage.remove(KEY_TOKEN)
     }
 
     companion object {

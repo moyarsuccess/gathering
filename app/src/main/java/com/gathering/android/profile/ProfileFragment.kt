@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.auth.model.User
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.FrgProfileBinding
+import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -76,18 +79,10 @@ class ProfileFragment : Fragment() {
             viewModel.onSignUpButtonClicked()
         }
 
-//        getNavigationResultLiveData<UpdatedUserInfo>(KEY_ARGUMENT_UPDATE_USER_INFO_DATA)?.observe(
-//            viewLifecycleOwner
-//        ) {
-//            viewModel.onDisplayNameChanged(it.updatedDisplayName)
-//            viewModel.onImageChanged(it.updatedPhotoUrl)
-//        }
+        getNavigationResultLiveData<User>(KEY_ARGUMENT_UPDATE_USER)?.observe(viewLifecycleOwner) {
+            viewModel.onViewCreated()
+        }
 
         viewModel.onViewCreated()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onViewResumed()
     }
 }

@@ -28,7 +28,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun providePasswordRemoteService(
-        @UnauthorizedRetrofit retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): PasswordRemoteService {
         return retrofit.create(PasswordRemoteService::class.java)
     }
@@ -44,7 +44,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignInRemoteService(
-        @UnauthorizedRetrofit retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): SignInRemoteService {
         return retrofit.create(SignInRemoteService::class.java)
     }
@@ -60,7 +60,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignUpRemoteService(
-        @UnauthorizedRetrofit retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): SignUpRemoteService {
         return retrofit.create(SignUpRemoteService::class.java)
     }
@@ -76,7 +76,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideVerificationRemoteService(
-        @UnauthorizedRetrofit retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): VerificationRemoteService {
         return retrofit.create(VerificationRemoteService::class.java)
     }

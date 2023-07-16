@@ -2,7 +2,6 @@ package com.gathering.android.profile.updateinfo
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,11 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.getNavigationResultLiveData
+import com.gathering.android.common.setNavigationResult
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.BottomSheetUpdateUserInfoBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
+import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -52,12 +54,12 @@ class UpdateUserInfoFragment : BottomSheetDialogFragment() {
                 }
 
                 is UpdateUserInfoViewState.NavigateToProfile -> {
+                    setNavigationResult(KEY_ARGUMENT_UPDATE_USER, state.user)
                     findNavController().popBackStack()
                 }
 
                 is UpdateUserInfoViewState.ShowImage -> {
-                    Log.d("WTF_1", state.imgUrl)
-                    imageLoader.loadImage(state.imgUrl, binding.imgProfile)
+                    imageLoader.loadImage(state.photo_url, binding.imgProfile)
                 }
 
                 is UpdateUserInfoViewState.ShowEmailAddress -> {
@@ -66,10 +68,7 @@ class UpdateUserInfoFragment : BottomSheetDialogFragment() {
                 }
 
                 is UpdateUserInfoViewState.ShowError -> {
-                    Log.d(
-                        "something wrong",
-                        state.errorMessage.toString()
-                    )
+                    state.errorMessage?.also { showErrorText(it) }
                 }
 
                 is UpdateUserInfoViewState.ShowDisplayName -> binding.etDisplayName.setText(state.displayName)

@@ -33,16 +33,16 @@ class ApiProfileRepository @Inject constructor(
     ) {
         val file = context.contentResolver.getFileFromContentUri(photoUri)
         if (file == null) {
-            onResponseReady(ResponseState.Failure(IOException("Photo Uri was not valid")))
+            onResponseReady(ResponseState.Failure(IOException(PHOTO_URI_WAS_NOT_VALID)))
             return
         }
         val filePart = MultipartBody.Part.createFormData(
-            "photo",
+            PHOTO,
             file.absolutePath,
-            file.asRequestBody("image/*".toMediaTypeOrNull())
+            file.asRequestBody(FILE_PATH.toMediaTypeOrNull())
         )
 
-        val name: RequestBody = displayName.toRequestBody("text/plain".toMediaTypeOrNull())
+        val name: RequestBody = displayName.toRequestBody(CONTENT_TYPE.toMediaTypeOrNull())
 
         profileRemoteService.uploadProfile(name, filePart)
             .enqueue(object : Callback<UpdateProfileResponse> {
@@ -56,7 +56,7 @@ class ApiProfileRepository @Inject constructor(
                     }
                     val body = response.body()
                     if (body == null) {
-                        onResponseReady(ResponseState.SuccessWithError(Exception("Body was null")))
+                        onResponseReady(ResponseState.SuccessWithError(Exception(BODY_WAS_NULL)))
                         return
                     }
                     userRepo.saveUser(body.user)
@@ -75,7 +75,8 @@ class ApiProfileRepository @Inject constructor(
         var outputStream: FileOutputStream? = null
 
         try {
-            val tempFile = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+            val tempFile =
+                File(context.cacheDir, "${FILE_CHILD}${System.currentTimeMillis()}$FILE_TYPE")
             outputStream = FileOutputStream(tempFile)
             inputStream?.use { input ->
                 val buffer = ByteArray(4 * 1024) // 4k buffer
@@ -92,5 +93,15 @@ class ApiProfileRepository @Inject constructor(
             outputStream?.close()
         }
         return null
+    }
+
+    companion object {
+        const val PHOTO = "photo"
+        const val FILE_PATH = "image/*"
+        const val CONTENT_TYPE = "text/plain"
+        const val FILE_CHILD = "temp_image_"
+        const val FILE_TYPE = ".jpg"
+        const val PHOTO_URI_WAS_NOT_VALID = "PHOTO_URI_WAS_NOT_VALID"
+        const val BODY_WAS_NULL = "BODY_WAS_NULL"
     }
 }

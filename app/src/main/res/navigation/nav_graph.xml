@@ -169,9 +169,9 @@
         <action
             android:id="@+id/action_personalDataBottomSheetFragment_to_addPicBottomSheet"
             app:destination="@id/addPicBottomSheet" />
-<!--        <argument-->
-<!--            android:name="UpdatedUserInfo"-->
-<!--            app:argType="com.gathering.android.profile.updateinfo.UpdatedUserInfo" />-->
+        <argument
+            android:name="User"
+            app:argType="com.gathering.android.auth.model.User" />
     </dialog>
     <dialog
         android:id="@+id/favoriteEvent"

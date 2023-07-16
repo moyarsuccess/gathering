@@ -20,7 +20,7 @@ class ProfileModule {
     @Provides
     @Singleton
     fun provideProfileRemoteService(
-        @AuthorizedRetrofit retrofit: Retrofit
+        @AuthorizedRetrofitQualifier retrofit: Retrofit
     ): ProfileRemoteService {
         return retrofit.create(ProfileRemoteService::class.java)
     }

@@ -8,18 +8,18 @@ class UserRepo @Inject constructor(
     private val keyValueStorage: KeyValueStorage,
     private val gson: Gson
 ) {
-
     fun saveUser(user: User) {
-        keyValueStorage.saveData(USER_INFO, gson.toJson(user))
+        keyValueStorage.save(USER_INFO, gson.toJson(user))
     }
 
-    fun getUser():User {
-        val userInfo = keyValueStorage.getData(USER_INFO)
+    fun getUser(): User? {
+        val userInfo = keyValueStorage.getString(USER_INFO)
+        if (userInfo.isEmpty()) return null
         return gson.fromJson(userInfo, User::class.java)
     }
 
     fun clearUser() {
-        keyValueStorage.clearData(USER_INFO)
+        keyValueStorage.remove(USER_INFO)
     }
 
     companion object {

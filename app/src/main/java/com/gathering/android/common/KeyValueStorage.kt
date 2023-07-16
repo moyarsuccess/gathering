@@ -7,15 +7,15 @@ class KeyValueStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) {
 
-    fun saveData(key: String, value: String?) {
-        sharedPreferences.edit().putString(key, value ?: "").apply()
+    fun save(key: String, value: String) {
+        sharedPreferences.edit().putString(key, value).apply()
     }
 
-    fun getData(key: String): String? {
-        return sharedPreferences.getString(key, null)
+    fun getString(key: String): String {
+        return sharedPreferences.getString(key, "") ?: ""
     }
 
-    fun clearData(key: String) {
+    fun remove(key: String) {
         sharedPreferences.edit().remove(key).apply()
     }
 }

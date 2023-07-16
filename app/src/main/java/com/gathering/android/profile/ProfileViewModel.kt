@@ -19,10 +19,6 @@ class ProfileViewModel @Inject constructor(
         showMostRecentUserInfo()
     }
 
-    fun onViewResumed() {
-        showMostRecentUserInfo()
-    }
-
     fun onFavoriteEventLayoutClicked() {
         _viewState.setValue(ProfileViewState.NavigateToFavoriteEvent)
     }
@@ -38,9 +34,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun showMostRecentUserInfo() {
-        val user = userRepo.getUser()
+        val user = userRepo.getUser() ?: return
         _viewState.setValue(ProfileViewState.SetEmail(user.email))
-        _viewState.setValue(ProfileViewState.ShowImage(user.imageUrl))
+        _viewState.setValue(ProfileViewState.ShowImage(user.photoName))
         _viewState.setValue(ProfileViewState.SetDisplayName(user.displayName))
     }
 }

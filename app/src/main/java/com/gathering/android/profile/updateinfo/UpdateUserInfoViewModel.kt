@@ -2,6 +2,7 @@ package com.gathering.android.profile.updateinfo
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.gathering.android.auth.model.User
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserRepo
@@ -11,8 +12,8 @@ import javax.inject.Inject
 class UpdateUserInfoViewModel @Inject constructor(
     private val userRepo: UserRepo,
     private val profileRepository: ProfileRepository
-) :
-    ViewModel() {
+) : ViewModel() {
+
     private var isDisplayNameFilled: Boolean = false
     private var isImageUrlFilled: Boolean = false
     private var photoUrl = ""
@@ -21,8 +22,8 @@ class UpdateUserInfoViewModel @Inject constructor(
     val viewState: LiveData<UpdateUserInfoViewState> by ::_viewState
 
     fun onViewCreated() {
-        val user = userRepo.getUser()
-        _viewState.setValue(UpdateUserInfoViewState.ShowImage(user.imageUrl))
+        val user = userRepo.getUser() ?: return
+        _viewState.setValue(UpdateUserInfoViewState.ShowImage(user.photoName))
         _viewState.setValue(UpdateUserInfoViewState.ShowDisplayName(user.displayName))
         _viewState.setValue(UpdateUserInfoViewState.ShowEmailAddress(user.email))
     }
@@ -41,12 +42,19 @@ class UpdateUserInfoViewModel @Inject constructor(
                 )
 
                 is ResponseState.Success<*> -> {
-                    _viewState.setValue(UpdateUserInfoViewState.NavigateToProfile)
+                    _viewState.setValue(
+                        UpdateUserInfoViewState.NavigateToProfile(
+                            User(
+                                displayName,
+                                photoUrl
+                            )
+                        )
+                    )
                 }
 
                 is ResponseState.SuccessWithError<*> -> _viewState.setValue(
                     UpdateUserInfoViewState.ShowError(
-                        "update successfully with error"
+                        UPDATE_SUCCESSFULLY_WITH_ERROR
                     )
                 )
             }
@@ -60,9 +68,9 @@ class UpdateUserInfoViewModel @Inject constructor(
         checkAllFieldsReady()
     }
 
-    fun onImageURLChanged(imgUrl: String) {
-        isImageUrlFilled = isImageUrlFilled(imgUrl)
-        photoUrl = imgUrl
+    fun onImageURLChanged(photo_Url: String) {
+        isImageUrlFilled = isImageUrlFilled(photo_Url)
+        photoUrl = photo_Url
         val errorMessage = if (isImageUrlFilled) null else IMAGE_NOT_FILLED_MESSAGE
         _viewState.setValue(UpdateUserInfoViewState.ShowError(errorMessage))
         checkAllFieldsReady()
@@ -88,5 +96,6 @@ class UpdateUserInfoViewModel @Inject constructor(
     companion object {
         private const val IMAGE_NOT_FILLED_MESSAGE = "Please pick or take a picture"
         private const val DISPLAY_NAME_NOT_FILLED_MESSAGE = "Please enter display name"
+        private const val UPDATE_SUCCESSFULLY_WITH_ERROR = "UPDATE_SUCCESSFULLY_WITH_ERROR"
     }
 }
