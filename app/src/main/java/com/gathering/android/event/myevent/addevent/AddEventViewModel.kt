@@ -1,19 +1,20 @@
 package com.gathering.android.event.myevent.addevent
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.event.model.Event
-import com.gathering.android.event.model.EventRepository
 import com.gathering.android.common.ResponseState
+import com.gathering.android.event.model.Event
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
+import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
 import javax.inject.Inject
 
 class AddEventViewModel @Inject constructor(
-    private val eventRepository: EventRepository
+    private val eventRepository: AddEventRepository
 ) : ViewModel() {
 
     private val _viewState = ActiveMutableLiveData<AddEventViewState>()
-    val viewState: ActiveMutableLiveData<AddEventViewState> by ::_viewState
+    val viewState: LiveData<AddEventViewState> by ::_viewState
 
     private var isImageFilled: Boolean = false
     private var isEventNameFilled: Boolean = false
@@ -62,14 +63,17 @@ class AddEventViewModel @Inject constructor(
         _viewState.setValue(AddEventViewState.MorphAddEventButtonToProgress)
         eventRepository.addEvent(event) { eventRequest ->
             when (eventRequest) {
-                is ResponseState.Failure -> viewState.setValue(AddEventViewState.ShowError(""))
+                is ResponseState.Failure -> {
+                    _viewState.setValue(AddEventViewState.ShowError(EVENT_REQUEST_FAILED))
+                }
+
                 is ResponseState.Success<*> -> {
                     _viewState.setValue(AddEventViewState.RevertAddEventProgressToButton)
                     _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
                 }
 
                 is ResponseState.SuccessWithError<*> -> {
-                    // TODO show proper error
+                    _viewState.setValue(AddEventViewState.ShowError(UPDATE_SUCCESSFULLY_WITH_ERROR))
                 }
             }
         }
@@ -131,10 +135,6 @@ class AddEventViewModel @Inject constructor(
         return eventName.isNotEmpty() && eventName.isNotBlank()
     }
 
-    private fun isHostNameFiled(host: String): Boolean {
-        return host.isNotEmpty() && host.isNotBlank()
-    }
-
     private fun isDescriptionFiled(description: String): Boolean {
         return description.isNotEmpty() && description.isNotBlank()
     }
@@ -176,5 +176,7 @@ class AddEventViewModel @Inject constructor(
         private const val TIME_NOT_FILLED_MESSAGE = "Please select a valid time"
         private const val ADDRESS_NOT_FILLED_MESSAGE = "Please select a address"
         private const val ATTENDEES_NOT_FILLED_MESSAGE = "Please select attendees"
+        private const val UPDATE_SUCCESSFULLY_WITH_ERROR = "UPDATE_SUCCESSFULLY_WITH_ERROR"
+        private const val EVENT_REQUEST_FAILED = "EVENT_REQUEST_FAILED"
     }
 }

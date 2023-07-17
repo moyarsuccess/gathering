@@ -80,4 +80,5 @@
     <string name="personal_data">Personal Data</string>
     <string name="favorite_event">Favorite Event</string>
     <string name="sign_out">Sign out</string>
+    <string name="attendees_count_hint_text">%s people invited to this event</string>
 </resources>

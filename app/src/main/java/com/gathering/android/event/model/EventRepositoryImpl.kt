@@ -11,20 +11,6 @@ class EventRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : EventRepository {
 
-    override fun addEvent(
-        event: Event,
-        onEventRequestReady: (eventRequest: ResponseState) -> Unit
-    ) {
-        fireStore.collection(EVENT_COLLECTION_NAME)
-            .add(event.toEventEntity())
-            .addOnSuccessListener {
-                onEventRequestReady(ResponseState.Success(true))
-            }
-            .addOnFailureListener {
-                onEventRequestReady(ResponseState.Failure(it))
-            }
-    }
-
     override fun getAllEvents(onEventRequestReady: (eventRequest: ResponseState) -> Unit) {
         fireStore.collection(EVENT_COLLECTION_NAME).get()
             .addOnSuccessListener { documentSnapshots ->

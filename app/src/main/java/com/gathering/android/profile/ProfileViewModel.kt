@@ -19,6 +19,10 @@ class ProfileViewModel @Inject constructor(
         showMostRecentUserInfo()
     }
 
+    fun onUserProfileUpdated() {
+        showMostRecentUserInfo()
+    }
+
     fun onFavoriteEventLayoutClicked() {
         _viewState.setValue(ProfileViewState.NavigateToFavoriteEvent)
     }

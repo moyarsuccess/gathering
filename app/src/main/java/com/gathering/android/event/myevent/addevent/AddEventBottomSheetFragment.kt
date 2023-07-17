@@ -26,7 +26,7 @@ import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -88,7 +88,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 is AddEventViewState.ShowError -> Log.d(
-                    "something wrong",
+                    SOMETHING_WRONG,
                     state.errorMessage.toString()
                 )
 
@@ -99,7 +99,10 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                         .split(",")
                         .count()
                         .toString()
-                    binding.tvAttendees.text = "$attendeeNum $INVITE_PEOPLE"
+                    binding.tvAttendees.text = getString(
+                        R.string.attendees_count_hint_text,
+                        attendeeNum
+                    )
 
                 }
 
@@ -253,6 +256,6 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        const val INVITE_PEOPLE = "people invited to this event"
+        const val SOMETHING_WRONG = "SOMETHING_WRONG"
     }
 }

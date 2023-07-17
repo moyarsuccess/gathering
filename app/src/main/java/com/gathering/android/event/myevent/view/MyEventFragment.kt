@@ -14,11 +14,11 @@ import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.FrgMyEventBinding
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
+import com.gathering.android.event.model.Event
 import com.gathering.android.event.myevent.viewmodel.MyEventViewModel
 import com.gathering.android.event.myevent.viewmodel.MyEventViewState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class MyEventFragment : Fragment() {

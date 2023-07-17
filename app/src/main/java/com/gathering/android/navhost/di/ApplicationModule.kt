@@ -8,6 +8,7 @@ import com.gathering.android.common.PicassoImageLoader
 import com.gathering.android.common.TokenRepo
 import com.gathering.android.common.UserRepo
 import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,16 +22,23 @@ import javax.inject.Singleton
 class ApplicationModule {
 
     @Provides
-    fun provideImageLoader(baseUrl: String): ImageLoader {
-        return PicassoImageLoader(baseUrl)
+    @Singleton
+    fun provideImageLoader(baseUrl: String, picasso: Picasso): ImageLoader {
+        return PicassoImageLoader(baseUrl, picasso)
     }
 
     @Provides
+    @Singleton
+    fun providePicasso(): Picasso = Picasso.get()
+
+    @Provides
+    @Singleton
     fun provideLocale(): Locale {
         return Locale.getDefault()
     }
 
     @Provides
+    @Singleton
     fun provideSharedPreferences(
         @ApplicationContext context: Context
     ): SharedPreferences {
