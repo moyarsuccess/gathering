@@ -56,7 +56,7 @@ class HomeFragment : Fragment() {
                 EventViewState.ShowNoData -> binding.tvNoData.isVisible = true
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
                 EventViewState.NavigateToIntroScreen -> {
-                    if (R.id.showEmailVerificationSent != findNavController().currentDestination?.id) {
+                    if (R.id.verificationFragment != findNavController().currentDestination?.id) {
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)
                     }
                 }

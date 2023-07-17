@@ -3,7 +3,8 @@ package com.gathering.android.auth.verification.repo
 import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.ResponseState
-import com.gathering.android.common.TokenManager
+import com.gathering.android.common.TokenRepo
+import com.gathering.android.common.UserRepo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 class ApiVerificationRepository @Inject constructor(
     private val verificationRemoteService: VerificationRemoteService,
-    private val tokenManager: TokenManager
+    private val tokenRepo: TokenRepo,
+    private val userRepo: UserRepo
 ) : VerificationRepository {
 
     override fun sendEmailVerification(email: String, onResponseReady: (ResponseState) -> Unit) {
@@ -41,13 +43,16 @@ class ApiVerificationRepository @Inject constructor(
                     call: Call<AuthorizedResponse>,
                     response: Response<AuthorizedResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        val token = response.body()?.jwt
-                        tokenManager.saveToken(token)
-
-                        onResponseReady(ResponseState.Success(response.body()))
-                    } else {
+                    if (!response.isSuccessful) {
                         onResponseReady(ResponseState.SuccessWithError(response.body()))
+                        return
+                    }
+                    response.body()?.also { body ->
+                        userRepo.saveUser(body.user)
+                        tokenRepo.saveToken(body.jwt)
+                        onResponseReady(ResponseState.Success(response.body()))
+                    } ?: run {
+                        onResponseReady(ResponseState.SuccessWithError(response.message()))
                     }
                 }
 
@@ -58,6 +63,6 @@ class ApiVerificationRepository @Inject constructor(
     }
 
     override fun isUserVerified(): Boolean {
-        return tokenManager.isTokenValid()
+        return tokenRepo.isTokenValid()
     }
 }

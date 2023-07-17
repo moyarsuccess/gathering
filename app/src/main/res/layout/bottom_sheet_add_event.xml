@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/et_margin_start"
             android:layout_marginTop="@dimen/et_margin_top"
-            android:layout_marginEnd="@dimen/tv_margin_end"
             android:background="@drawable/custom_edit_text"
             android:hint="@string/event_name"
             android:padding="@dimen/et_padding"

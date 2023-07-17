@@ -19,8 +19,7 @@ class EventListViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val eventLocationComparator: EventLocationComparator,
     private val eventDateComparator: EventDateComparator
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _viewState = ActiveMutableLiveData<EventViewState>()
     val viewState: LiveData<EventViewState> by ::_viewState
@@ -29,7 +28,6 @@ class EventListViewModel @Inject constructor(
     private var lastFilter = Filter()
     fun onViewCreated() {
         if (!verificationRepository.isUserVerified()) {
-
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {
             loadEventList(lastFilter, lastSortType)

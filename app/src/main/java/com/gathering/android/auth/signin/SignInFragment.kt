@@ -100,7 +100,7 @@ class SignInFragment : DialogFragment() {
 
                 SignInViewState.NavigateToHome -> {
                     findNavController().navigate(
-                        R.id.action_signInFragment_to_navigation_home
+                        R.id.action_signInFragment_to_navigation_homeFragment
                     )
                 }
                 SignInViewState.NavigateToPasswordReset -> {

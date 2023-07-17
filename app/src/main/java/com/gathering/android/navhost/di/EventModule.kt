@@ -1,4 +1,4 @@
-package com.gathering.android.di
+package com.gathering.android.navhost.di
 
 import com.gathering.android.event.model.EventRepository
 import com.gathering.android.event.model.EventRepositoryImpl

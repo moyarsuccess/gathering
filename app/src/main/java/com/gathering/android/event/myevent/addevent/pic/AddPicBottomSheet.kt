@@ -11,11 +11,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.setNavigationResult
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.BottomSheetAddPicBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -57,9 +57,7 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
                     if (allGranted) {
                         viewModel.onCameraClicked()
                     } else {
-                        Toast.makeText(
-                            requireContext(), "camera permission denied.", Toast.LENGTH_LONG
-                        ).show()
+                        showErrorText(CAMERA_PERMISSION_DENIED)
                     }
                 }
         }
@@ -108,7 +106,7 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
                 }
 
                 is AddPicViewState.Error -> {
-                    Toast.makeText(requireContext(), state.error, Toast.LENGTH_LONG).show()
+                    showErrorText(state.error)
                 }
             }
         }
@@ -121,13 +119,14 @@ class AddPicBottomSheet : BottomSheetDialogFragment() {
         } else if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             viewModel.onImageSelectedFromCamera(data)
         } else {
-            Toast.makeText(requireContext(), "Operation cancelled by user", Toast.LENGTH_LONG)
-                .show()
+            showErrorText(OPERATION_CANCELED_BY_USER)
         }
     }
 
     companion object {
         private const val GALLERY_REQUEST_CODE = 1001
         private const val CAMERA_REQUEST_CODE = 1002
+        private const val OPERATION_CANCELED_BY_USER = "Operation cancelled by user"
+        private const val CAMERA_PERMISSION_DENIED = "camera permission denied"
     }
 }

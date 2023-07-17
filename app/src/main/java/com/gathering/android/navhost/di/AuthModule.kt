@@ -1,7 +1,5 @@
-package com.gathering.android.di
+package com.gathering.android.navhost.di
 
-import android.content.Context
-import com.gathering.android.Application
 import com.gathering.android.auth.password.repo.ApiPasswordRepository
 import com.gathering.android.auth.password.repo.PasswordRemoteService
 import com.gathering.android.auth.password.repo.PasswordRepository
@@ -14,11 +12,11 @@ import com.gathering.android.auth.signup.repo.SignUpRepository
 import com.gathering.android.auth.verification.repo.ApiVerificationRepository
 import com.gathering.android.auth.verification.repo.VerificationRemoteService
 import com.gathering.android.auth.verification.repo.VerificationRepository
-import com.gathering.android.common.TokenManager
+import com.gathering.android.common.TokenRepo
+import com.gathering.android.common.UserRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -30,7 +28,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun providePasswordRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): PasswordRemoteService {
         return retrofit.create(PasswordRemoteService::class.java)
     }
@@ -46,7 +44,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignInRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): SignInRemoteService {
         return retrofit.create(SignInRemoteService::class.java)
     }
@@ -62,7 +60,7 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignUpRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): SignUpRemoteService {
         return retrofit.create(SignUpRemoteService::class.java)
     }
@@ -78,25 +76,18 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideVerificationRemoteService(
-        retrofit: Retrofit
+        @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): VerificationRemoteService {
         return retrofit.create(VerificationRemoteService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTokenManager(
-        @ApplicationContext context: Context
-    ): TokenManager {
-        return TokenManager(context)
-    }
-
-    @Provides
-    @Singleton
     fun provideVerificationRepository(
         passwordRemoteService: VerificationRemoteService,
-        tokenManager: TokenManager
+        tokenRepo: TokenRepo,
+        userRepo: UserRepo
     ): VerificationRepository {
-        return ApiVerificationRepository(passwordRemoteService, tokenManager)
+        return ApiVerificationRepository(passwordRemoteService, tokenRepo, userRepo)
     }
 }

@@ -72,5 +72,12 @@
     <string name="reset_pass_info3">If the email address you entered does not match an existing account, you will not receive an email.</string>
     <string name="reset_pass_info4">You should also check your spam folder.</string>
     <string name="send_link">Send link</string>
-
+    <string name="display_name">Display name</string>
+    <string name="phone">Phone Number</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save_changes">Save changes</string>
+    <string name="favorite_events">Favorite Events</string>
+    <string name="personal_data">Personal Data</string>
+    <string name="favorite_event">Favorite Event</string>
+    <string name="sign_out">Sign out</string>
 </resources>
