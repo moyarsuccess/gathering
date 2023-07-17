@@ -80,7 +80,7 @@ class ProfileFragment : Fragment() {
         }
 
         getNavigationResultLiveData<User>(KEY_ARGUMENT_UPDATE_USER)?.observe(viewLifecycleOwner) {
-            viewModel.onViewCreated()
+            viewModel.onUserProfileUpdated()
         }
 
         viewModel.onViewCreated()

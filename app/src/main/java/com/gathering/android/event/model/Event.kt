@@ -1,6 +1,7 @@
 package com.gathering.android.event.model
 
 import com.gathering.android.auth.model.User
+import com.google.gson.Gson
 import java.io.Serializable
 
 data class Event(
@@ -14,4 +15,9 @@ data class Event(
     val isMyEvent: Boolean = false,
     val attendees: List<String> = listOf(),
     val eventCost: Int = 0
-) : Serializable
+) : Serializable {
+
+    fun getAttendeesJson(): String {
+        return Gson().toJson(attendees)
+    }
+}

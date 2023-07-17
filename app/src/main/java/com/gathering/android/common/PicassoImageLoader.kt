@@ -5,14 +5,15 @@ import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
 class PicassoImageLoader @Inject constructor(
-    private val baseurl: String
+    private val baseurl: String,
+    private val picasso: Picasso,
 ) : ImageLoader {
 
     override fun loadImage(imageName: String?, imageView: ImageView) {
-
         if (imageName.isNullOrEmpty()) return
 
-        Picasso.get().load(imageName.toImageUrl()).into(imageView)
+        val imageUrl = imageName.toImageUrl()
+        picasso.load(imageUrl).into(imageView)
     }
 
     private fun String.toImageUrl(): String {

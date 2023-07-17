@@ -3,7 +3,7 @@ package com.gathering.android.navhost.di
 import android.content.Context
 import com.gathering.android.event.model.EventRepository
 import com.gathering.android.event.model.EventRepositoryImpl
-import com.gathering.android.event.myevent.addevent.repo.APIAddEventRepository
+import com.gathering.android.event.myevent.addevent.repo.ApiAddEventRepository
 import com.gathering.android.event.myevent.addevent.repo.AddEventRemoteService
 import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -37,7 +37,7 @@ class EventModule {
         @ApplicationContext context: Context,
         addEventRemoteService: AddEventRemoteService
     ): AddEventRepository {
-        return APIAddEventRepository(context, addEventRemoteService)
+        return ApiAddEventRepository(context, addEventRemoteService)
     }
 
     @Provides

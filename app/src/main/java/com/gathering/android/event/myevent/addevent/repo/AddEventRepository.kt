@@ -5,6 +5,5 @@ import com.gathering.android.event.model.Event
 
 interface AddEventRepository {
 
-    fun addEvent(event: Event, onEventRequestReady: (eventRequest: ResponseState) -> Unit)
-
+    fun addEvent(event: Event, onResponseReady: (eventRequest: ResponseState) -> Unit)
 }

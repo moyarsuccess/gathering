@@ -19,7 +19,7 @@ interface AddEventRemoteService {
         @Part("latitude") latitude: RequestBody,
         @Part("longitude") longitude: RequestBody,
         @Part("date_time") dateTime: RequestBody,
-        @Part("attendees") attendees: List<RequestBody>,
+        @Part("attendees") attendees: RequestBody,
         @Part photo: MultipartBody.Part,
     ): Call<GeneralApiResponse>
 }
