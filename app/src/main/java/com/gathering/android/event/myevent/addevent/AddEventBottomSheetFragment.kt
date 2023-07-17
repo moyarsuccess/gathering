@@ -75,7 +75,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 is AddEventViewState.NavigateToMyEvent -> {
-                    setNavigationResult(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST, true)
+                    setNavigationResult(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST, state.event)
                     findNavController().popBackStack()
                 }
 

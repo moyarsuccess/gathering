@@ -2,14 +2,14 @@ package com.gathering.android.event.myevent.addevent
 
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
-import com.gathering.android.event.model.Event
-import com.gathering.android.event.model.EventRepository
 import com.gathering.android.common.ResponseState
+import com.gathering.android.event.model.Event
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
+import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
 import javax.inject.Inject
 
 class AddEventViewModel @Inject constructor(
-    private val eventRepository: EventRepository
+    private val eventRepository: AddEventRepository
 ) : ViewModel() {
 
     private val _viewState = ActiveMutableLiveData<AddEventViewState>()
@@ -62,7 +62,7 @@ class AddEventViewModel @Inject constructor(
         _viewState.setValue(AddEventViewState.MorphAddEventButtonToProgress)
         eventRepository.addEvent(event) { eventRequest ->
             when (eventRequest) {
-                is ResponseState.Failure -> viewState.setValue(AddEventViewState.ShowError(""))
+                is ResponseState.Failure -> viewState.setValue(AddEventViewState.ShowError("Event Request failed "))
                 is ResponseState.Success<*> -> {
                     _viewState.setValue(AddEventViewState.RevertAddEventProgressToButton)
                     _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
@@ -129,10 +129,6 @@ class AddEventViewModel @Inject constructor(
 
     private fun isEventNameFiled(eventName: String): Boolean {
         return eventName.isNotEmpty() && eventName.isNotBlank()
-    }
-
-    private fun isHostNameFiled(host: String): Boolean {
-        return host.isNotEmpty() && host.isNotBlank()
     }
 
     private fun isDescriptionFiled(description: String): Boolean {
