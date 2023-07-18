@@ -1,4 +1,4 @@
-package com.gathering.android.navhost.di
+package com.gathering.android.di
 
 import android.content.Context
 import com.gathering.android.event.myevent.addevent.invitation.model.ContactRepository

@@ -1,11 +1,7 @@
 package com.gathering.android.event.model.repo
 
 import android.util.Log
-import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.MyEventResponse
-import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.*
 import com.gathering.android.event.model.EventModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,7 +14,7 @@ class ApiEventRepository @Inject constructor(
 ) : EventRepository {
 
     override fun getAllEvents(onEventRequestReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
-        TODO("Not yet implemented")
+        onEventRequestReady(ResponseState.Success(listOf()))
     }
 
     override fun getMyEvents(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
