@@ -3,10 +3,11 @@ package com.gathering.android.event.myevent.addevent.repo
 import android.content.Context
 import com.gathering.android.common.FAIL_TO_CREATE_FILE_PART
 import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.createRequestPartFromUri
 import com.gathering.android.common.requestBody
-import com.gathering.android.event.model.Event
+import com.gathering.android.event.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -20,12 +21,12 @@ class ApiAddEventRepository @Inject constructor(
 
     override fun addEvent(
         event: Event,
-        onResponseReady: (eventRequest: ResponseState) -> Unit
+        onResponseReady: (eventRequest: ResponseState<String>) -> Unit
     ) {
         val eventName: RequestBody = event.eventName.requestBody()
         val eventDescription: RequestBody = event.description.requestBody()
-        val latitude = event.location.lat.requestBody()
-        val longitude = event.location.lon.requestBody()
+        val latitude = event.location.lat?.requestBody()
+        val longitude = event.location.lon?.requestBody()
         val dateTime = event.dateAndTime.requestBody()
         val attendees = event.getAttendeesJson().requestBody()
         val filePart = context.createRequestPartFromUri(event.photoUrl)
@@ -48,10 +49,14 @@ class ApiAddEventRepository @Inject constructor(
                 response: Response<GeneralApiResponse>
             ) {
                 if (!response.isSuccessful) {
-                    onResponseReady(ResponseState.SuccessWithError(response.body()))
+                    onResponseReady(
+                        ResponseState.Failure(
+                            Exception(RESPONSE_IS_NOT_SUCCESSFUL)
+                        )
+                    )
                     return
                 }
-                onResponseReady(ResponseState.Success(response.body()))
+                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
             }
 
             override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {

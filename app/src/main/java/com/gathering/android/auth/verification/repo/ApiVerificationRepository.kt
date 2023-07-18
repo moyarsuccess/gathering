@@ -2,6 +2,7 @@ package com.gathering.android.auth.verification.repo
 
 import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.TokenRepo
 import com.gathering.android.common.UserRepo
@@ -16,18 +17,21 @@ class ApiVerificationRepository @Inject constructor(
     private val userRepo: UserRepo
 ) : VerificationRepository {
 
-    override fun sendEmailVerification(email: String, onResponseReady: (ResponseState) -> Unit) {
+    override fun sendEmailVerification(
+        email: String,
+        onResponseReady: (ResponseState<String>) -> Unit
+    ) {
         verificationRemoteService.sendEmailVerification(email = email)
             .enqueue(object : Callback<GeneralApiResponse> {
                 override fun onResponse(
                     call: Call<GeneralApiResponse>,
                     response: Response<GeneralApiResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        onResponseReady(ResponseState.Success(response.body()))
-                    } else {
-                        onResponseReady(ResponseState.SuccessWithError(response.body()))
+                    if (!response.isSuccessful) {
+                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
+                        return
                     }
+                    onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
                 }
 
                 override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
@@ -36,7 +40,10 @@ class ApiVerificationRepository @Inject constructor(
             })
     }
 
-    override fun emailVerify(token: String, onResponseReady: (ResponseState) -> Unit) {
+    override fun emailVerify(
+        token: String,
+        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
+    ) {
         verificationRemoteService.emailVerify(token)
             .enqueue(object : Callback<AuthorizedResponse> {
                 override fun onResponse(
@@ -44,15 +51,27 @@ class ApiVerificationRepository @Inject constructor(
                     response: Response<AuthorizedResponse>
                 ) {
                     if (!response.isSuccessful) {
-                        onResponseReady(ResponseState.SuccessWithError(response.body()))
+                        onResponseReady(
+                            ResponseState.Failure(
+                                Exception(
+                                    RESPONSE_IS_NOT_SUCCESSFUL
+                                )
+                            )
+                        )
                         return
                     }
                     response.body()?.also { body ->
                         userRepo.saveUser(body.user)
                         tokenRepo.saveToken(body.jwt)
-                        onResponseReady(ResponseState.Success(response.body()))
+                        onResponseReady(ResponseState.Success(body))
                     } ?: run {
-                        onResponseReady(ResponseState.SuccessWithError(response.message()))
+                        onResponseReady(
+                            ResponseState.Failure(
+                                Exception(
+                                    RESPONSE_IS_NOT_SUCCESSFUL
+                                )
+                            )
+                        )
                     }
                 }
 

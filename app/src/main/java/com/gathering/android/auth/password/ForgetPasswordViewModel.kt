@@ -31,11 +31,6 @@ class ForgetPasswordViewModel @Inject constructor(
                     Log.d("ResetEmail", "reset password email was sent successfully.")
                     _viewState.value = ForgetPasswordViewState.NavigateToResetPassInfoBottomSheet
                 }
-
-                is ResponseState.SuccessWithError<*> -> {
-                    _viewState.value =
-                        ForgetPasswordViewState.Message("Failed to send reset password link.")
-                }
             }
         }
     }

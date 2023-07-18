@@ -1,7 +1,9 @@
 package com.gathering.android.auth.password.repo
 
 import com.gathering.android.common.AuthorizedResponse
+import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,18 +14,18 @@ class ApiPasswordRepository @Inject constructor(
     private val passwordRemoteService: PasswordRemoteService,
 ) : PasswordRepository {
 
-    override fun forgetPassword(email: String, onResponseReady: (ResponseState) -> Unit) {
+    override fun forgetPassword(email: String, onResponseReady: (ResponseState<String>) -> Unit) {
         passwordRemoteService.forgetPassword(email)
             .enqueue(object : Callback<GeneralApiResponse> {
                 override fun onResponse(
                     call: Call<GeneralApiResponse>,
                     response: Response<GeneralApiResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        onResponseReady(ResponseState.Success(response.body()))
-                    } else {
-                        onResponseReady(ResponseState.SuccessWithError(response.body()))
+                    if (!response.isSuccessful) {
+                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
+                        return
                     }
+                    onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
                 }
 
                 override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
@@ -35,7 +37,7 @@ class ApiPasswordRepository @Inject constructor(
     override fun resetPassword(
         token: String,
         password: String,
-        onResponseReady: (ResponseState) -> Unit
+        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
     ) {
         passwordRemoteService.resetPassword(token, password)
             .enqueue(object : Callback<AuthorizedResponse> {
@@ -43,12 +45,16 @@ class ApiPasswordRepository @Inject constructor(
                     call: Call<AuthorizedResponse>,
                     response: Response<AuthorizedResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        // TODO Save the JWT in shared pref to be used in future API calls
-                        onResponseReady(ResponseState.Success(response.body()))
-                    } else {
-                        onResponseReady(ResponseState.SuccessWithError(response.body()))
+                    if (!response.isSuccessful) {
+                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
+                        return
                     }
+                    val body = response.body()
+                    if (body == null) {
+                        onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
+                        return
+                    }
+                    onResponseReady(ResponseState.Success(body))
                 }
 
                 override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {

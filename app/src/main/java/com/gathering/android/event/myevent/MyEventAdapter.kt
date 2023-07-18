@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.view
+package com.gathering.android.event.myevent
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.ItemMyEventBinding
-import com.gathering.android.event.model.Event
+import com.gathering.android.event.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject

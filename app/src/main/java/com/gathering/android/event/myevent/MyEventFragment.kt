@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.view
+package com.gathering.android.event.myevent
 
 import android.os.Bundle
 import android.util.Log
@@ -14,9 +14,6 @@ import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.FrgMyEventBinding
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
-import com.gathering.android.event.model.Event
-import com.gathering.android.event.myevent.viewmodel.MyEventViewModel
-import com.gathering.android.event.myevent.viewmodel.MyEventViewState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -70,16 +67,9 @@ class MyEventFragment : Fragment() {
         getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(
             viewLifecycleOwner
         ) {
-            viewModel.onResume()
+            viewModel.onViewCreated()
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("WTF", "return")
-        viewModel.onResume()
-    }
-
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.signup.repo.SignUpRepository
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -54,11 +55,6 @@ class SignUpViewModel @Inject constructor(
                 is ResponseState.Success<*> -> {
                     _viewState.value = SignUpViewState.NavigateToVerification(email)
                 }
-
-                is ResponseState.SuccessWithError<*> -> {
-                    SignUpViewState.Error.ShowSuccessWithError("SignUp success with error")
-
-                }
             }
         }
     }
@@ -92,7 +88,6 @@ class SignUpViewModel @Inject constructor(
         private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "Please enter a valid password"
         private const val INVALID_CONFIRMED_PASS_FORMAT_ERROR_MESSAGE =
             "Please enter matched Password"
-
         private const val PASSWORD_REGEX =
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
     }

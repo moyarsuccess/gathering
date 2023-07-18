@@ -61,7 +61,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_eventFragment"
-        android:name="com.gathering.android.event.myevent.view.MyEventFragment"
+        android:name="com.gathering.android.event.myevent.MyEventFragment"
         android:label="MyEventFragment"
         tools:layout="@layout/frg_my_event">
         <action

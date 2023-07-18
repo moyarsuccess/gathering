@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.FrgEventDetailBinding
-import com.gathering.android.event.model.Event
+import com.gathering.android.event.Event
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -48,7 +48,7 @@ class EventDetailFragment : Fragment() {
                 is EventDetailViewState.ShowEventDetail -> {
                     imageLoader.loadImage(state.event.photoUrl, binding.imgEvent)
                     binding.tvEventTitle.text = state.event.eventName
-                    binding.tvEventHost.text = state.event.host?.toString()
+                    binding.tvEventHost.text = state.event.eventHostEmail?.toString()
                     binding.tvEventDescription.text = state.event.description
                     binding.tvEventAddress.text = state.event.location.addressLine
                     binding.tvEventDate.text = state.event.dateAndTime.toString()
