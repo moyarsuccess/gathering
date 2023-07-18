@@ -1,7 +1,9 @@
 package com.gathering.android.event.model.repo
 
-import android.util.Log
-import com.gathering.android.common.*
+import com.gathering.android.common.BODY_WAS_NULL
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
+import com.gathering.android.common.ResponseState
+import com.gathering.android.common.UserRepo
 import com.gathering.android.event.model.EventModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,12 +21,12 @@ class ApiEventRepository @Inject constructor(
 
     override fun getMyEvents(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
         val user = userRepo.getUser()
-        eventRemoteService.getEvent(true, user?.email, 1, 15)
-            .enqueue(object : Callback<MyEventResponse> {
+        eventRemoteService.getMyEvents(pageNumber = 1, pageSize = 15)
+            .enqueue(object : Callback<List<EventModel>> {
 
                 override fun onResponse(
-                    call: Call<MyEventResponse>,
-                    response: Response<MyEventResponse>
+                    call: Call<List<EventModel>>,
+                    response: Response<List<EventModel>>
                 ) {
                     if (!response.isSuccessful) {
                         onResponseReady(
@@ -39,11 +41,11 @@ class ApiEventRepository @Inject constructor(
                         onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
                         return
                     }
-                    Log.i("WTF", "${body.eventList}")
-                    onResponseReady(ResponseState.Success(body.eventList))
+
+                    onResponseReady(ResponseState.Success(body))
                 }
 
-                override fun onFailure(call: Call<MyEventResponse>, t: Throwable) {
+                override fun onFailure(call: Call<List<EventModel>>, t: Throwable) {
                     onResponseReady(ResponseState.Failure(t))
                 }
             })

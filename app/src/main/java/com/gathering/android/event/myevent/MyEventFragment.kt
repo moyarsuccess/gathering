@@ -1,7 +1,6 @@
 package com.gathering.android.event.myevent
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,7 +68,14 @@ class MyEventFragment : Fragment() {
         ) {
             viewModel.onViewCreated()
         }
+
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onViewCreated()
+    }
+
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
