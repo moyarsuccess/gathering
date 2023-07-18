@@ -15,6 +15,7 @@ sealed interface SignInViewState {
         class ShowInvalidPassError(errorMessage: String?) : Error(errorMessage)
         class ShowEmptyEmailError(errorMessage: String?) : Error(errorMessage)
         class ShowEmptyPassError(errorMessage: String?) : Error(errorMessage)
+        class ShowUserNotVerifiedError(errorMessage: String) : Error(errorMessage)
     }
 }
 

@@ -4,9 +4,12 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.gathering.android.auth.signin.repo.ApiSignInRepository
 import com.gathering.android.auth.signin.repo.SignInRepository
 import com.gathering.android.auth.signup.SignUpViewState
 import com.gathering.android.common.ResponseState
+import com.gathering.android.common.UserNotVerifiedException
+import com.gathering.android.common.WrongCredentialsException
 import javax.inject.Inject
 
 
@@ -38,8 +41,23 @@ class SignInViewModel @Inject constructor(
         signInRepository.signInUser(email, pass, onResponseReady = { state ->
             when (state) {
                 is ResponseState.Failure -> {
-                    _viewState.value =
-                        SignInViewState.Error.ShowGeneralError("can not reach the server")
+                    when(state.throwable) {
+                        is WrongCredentialsException -> {
+                            _viewState.value =
+                                SignInViewState.Error.ShowAuthenticationFailedError("Sign in failed")
+                        }
+                        is UserNotVerifiedException -> {
+                            _viewState.value =
+                                SignInViewState.Error.ShowUserNotVerifiedError("email not verified")
+                            _viewState.value =
+                                SignInViewState.NavigateToVerification
+                        }
+                        else -> {
+                            _viewState.value =
+                                SignInViewState.Error.ShowGeneralError("can not reach the server")
+                        }
+                    }
+
                 }
 
                 is ResponseState.Success<*> -> {

@@ -10,5 +10,5 @@ interface SignInRemoteService {
     fun signIn(
         @Query("email") email: String,
         @Query("password") password: String
-    ): Call<AuthorizedResponse>
+    ): Call<String>
 }
