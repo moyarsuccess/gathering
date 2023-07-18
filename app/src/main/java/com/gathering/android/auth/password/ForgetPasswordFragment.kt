@@ -8,14 +8,14 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.databinding.FrgPasswordResetBinding
+import com.gathering.android.databinding.FrgEmailInputResetPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ForgetPasswordFragment : DialogFragment() {
 
-    private lateinit var binding: FrgPasswordResetBinding
+    private lateinit var binding: FrgEmailInputResetPasswordBinding
 
     @Inject
     lateinit var viewModel: ForgetPasswordViewModel
@@ -33,7 +33,7 @@ class ForgetPasswordFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FrgPasswordResetBinding.inflate(layoutInflater)
+        binding = FrgEmailInputResetPasswordBinding.inflate(layoutInflater)
         return binding.root
     }
 

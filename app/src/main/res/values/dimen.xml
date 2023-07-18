@@ -74,6 +74,7 @@
     <dimen name="btn_verification_frg_width">150dp</dimen>
     <dimen name="pass_reset_btn_margin">40dp</dimen>
     <dimen name="tv1_reset_pass">18sp</dimen>
+    <dimen name="new_pass_tv_margin">50dp</dimen>
 
     <dimen name="circle_image_view_width">150dp</dimen>
     <dimen name="circle_image_view_height">150dp</dimen>

@@ -1,10 +1,6 @@
 package com.gathering.android.auth.password.repo
 
-import com.gathering.android.common.AuthorizedResponse
-import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.GeneralApiResponse
-import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
-import com.gathering.android.common.ResponseState
+import com.gathering.android.common.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -12,6 +8,7 @@ import javax.inject.Inject
 
 class ApiPasswordRepository @Inject constructor(
     private val passwordRemoteService: PasswordRemoteService,
+    private val tokenRepo: TokenRepo
 ) : PasswordRepository {
 
     override fun forgetPassword(email: String, onResponseReady: (ResponseState<String>) -> Unit) {
@@ -54,7 +51,10 @@ class ApiPasswordRepository @Inject constructor(
                         onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
                         return
                     }
+                    val jwt = body.jwt
+                    tokenRepo.saveToken(jwt)
                     onResponseReady(ResponseState.Success(body))
+
                 }
 
                 override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
