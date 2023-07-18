@@ -23,10 +23,10 @@ class NetworkModule {
     @Singleton
     @Provides
     @UnauthorizedRetrofitQualifier
-    fun provideUnauthorizedRetrofit(baseUrl: String): Retrofit {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-
+    fun provideUnauthorizedRetrofit(
+        baseUrl: String,
+        loggingInterceptor: HttpLoggingInterceptor
+    ): Retrofit {
         val client = OkHttpClient
             .Builder()
             .addInterceptor(loggingInterceptor)
@@ -40,14 +40,23 @@ class NetworkModule {
     }
 
     @Provides
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            setLevel(HttpLoggingInterceptor.Level.BODY)
+        }
+    }
+
+    @Provides
     @AuthorizedRetrofitQualifier
     fun provideAuthorizedRetrofit(
         baseUrl: String,
-        interceptor: HeaderInterceptor
+        interceptor: HeaderInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
     ): Retrofit {
         val client = OkHttpClient
             .Builder()
             .addInterceptor(interceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
         return Retrofit.Builder()
             .baseUrl(baseUrl)
