@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.model.User
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
+import com.gathering.android.common.UpdateProfileResponse
 import com.gathering.android.common.UserRepo
 import com.gathering.android.profile.repo.ProfileRepository
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class UpdateUserInfoViewModel @Inject constructor(
                     )
                 )
 
-                is ResponseState.Success<*> -> {
+                is ResponseState.Success<UpdateProfileResponse> -> {
                     _viewState.setValue(
                         UpdateUserInfoViewState.NavigateToProfile(
                             User(
@@ -51,12 +52,6 @@ class UpdateUserInfoViewModel @Inject constructor(
                         )
                     )
                 }
-
-                is ResponseState.SuccessWithError<*> -> _viewState.setValue(
-                    UpdateUserInfoViewState.ShowError(
-                        UPDATE_SUCCESSFULLY_WITH_ERROR
-                    )
-                )
             }
         }
     }
@@ -96,6 +91,5 @@ class UpdateUserInfoViewModel @Inject constructor(
     companion object {
         private const val IMAGE_NOT_FILLED_MESSAGE = "Please pick or take a picture"
         private const val DISPLAY_NAME_NOT_FILLED_MESSAGE = "Please enter display name"
-        private const val UPDATE_SUCCESSFULLY_WITH_ERROR = "UPDATE_SUCCESSFULLY_WITH_ERROR"
     }
 }

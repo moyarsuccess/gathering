@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.verification.repo.VerificationRepository
+import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.ResponseState
 import javax.inject.Inject
 
@@ -33,13 +34,9 @@ class VerificationViewModel @Inject constructor(
                         VerificationViewState.ShowError("Failed to send Email Verification, try again!")
                 }
 
-                is ResponseState.Success<*> -> {
+                is ResponseState.Success<String> -> {
                     Log.d("verificationEmail", "email verification sent successfully.")
                     _viewState.value = VerificationViewState.ButtonState(true)
-                }
-
-                is ResponseState.SuccessWithError<*> -> {
-                    VerificationViewState.ShowError("VerificationEMAIL SEND WITH ERROR, something went WRONG!")
                 }
             }
         }
@@ -52,19 +49,11 @@ class VerificationViewModel @Inject constructor(
                     _viewState.value = VerificationViewState.ShowError("Failed to verify user")
                 }
 
-                is ResponseState.Success<*> -> {
+                is ResponseState.Success<AuthorizedResponse> -> {
                     Log.d("Email verify", "User verified successfully.")
                     _viewState.value = VerificationViewState.NavigateToHomeScreen
-                }
-
-                is ResponseState.SuccessWithError<*> -> {
                 }
             }
         }
     }
-
-    companion object {
-        private const val seconds: Int = 60
-    }
-
 }

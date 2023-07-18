@@ -21,7 +21,7 @@ import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
-import com.gathering.android.event.model.Event
+import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -188,7 +188,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     private fun makeCurrentEvent(): Event {
         return Event(
             eventName = binding.etEventName.text.toString(),
-            host = null,
+            eventHostEmail = "",
             description = binding.etDescription.text.toString(),
             photoUrl = photoUrl,
             location = locationFromAddressLine(binding.tvLocation.text.toString()),

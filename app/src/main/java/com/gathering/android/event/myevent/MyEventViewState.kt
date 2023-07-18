@@ -1,6 +1,6 @@
-package com.gathering.android.event.myevent.viewmodel
+package com.gathering.android.event.myevent
 
-import com.gathering.android.event.model.Event
+import com.gathering.android.event.Event
 
 sealed interface MyEventViewState {
 

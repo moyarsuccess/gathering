@@ -2,7 +2,9 @@ package com.gathering.android.profile.repo
 
 import android.content.Context
 import android.util.Log
+import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.FAIL_TO_CREATE_FILE_PART
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UpdateProfileResponse
 import com.gathering.android.common.UserRepo
@@ -25,7 +27,7 @@ class ApiProfileRepository @Inject constructor(
     override fun updateProfile(
         displayName: String,
         photoUri: String,
-        onResponseReady: (ResponseState) -> Unit
+        onResponseReady: (ResponseState<UpdateProfileResponse>) -> Unit
     ) {
         val filePart = context.createRequestPartFromUri(photoUri)
         if (filePart == null) {
@@ -42,12 +44,18 @@ class ApiProfileRepository @Inject constructor(
                     response: Response<UpdateProfileResponse>
                 ) {
                     if (!response.isSuccessful) {
-                        onResponseReady(ResponseState.SuccessWithError(response.body()))
+                        onResponseReady(
+                            ResponseState.Failure(
+                                Exception(
+                                    RESPONSE_IS_NOT_SUCCESSFUL
+                                )
+                            )
+                        )
                         return
                     }
                     val body = response.body()
                     if (body == null) {
-                        onResponseReady(ResponseState.SuccessWithError(Exception(BODY_WAS_NULL)))
+                        onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
                         return
                     }
                     userRepo.saveUser(body.user)
@@ -59,9 +67,5 @@ class ApiProfileRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
-    }
-
-    companion object {
-        const val BODY_WAS_NULL = "BODY_WAS_NULL"
     }
 }

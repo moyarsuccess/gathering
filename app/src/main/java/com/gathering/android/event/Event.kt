@@ -1,16 +1,16 @@
-package com.gathering.android.event.model
+package com.gathering.android.event
 
-import com.gathering.android.auth.model.User
+import com.gathering.android.event.model.EventLocation
 import com.google.gson.Gson
 import java.io.Serializable
 
 data class Event(
-    val eventName: String,
-    val host: User?,
-    val description: String,
-    val photoUrl: String,
+    val eventName: String = "",
+    val eventHostEmail: String = "",
+    val description: String = "",
+    val photoUrl: String = "",
     val location: EventLocation,
-    val dateAndTime: Long,
+    val dateAndTime: Long = 0,
     val isContactEvent: Boolean = false,
     val isMyEvent: Boolean = false,
     val attendees: List<String> = listOf(),
@@ -21,3 +21,5 @@ data class Event(
         return Gson().toJson(attendees)
     }
 }
+
+

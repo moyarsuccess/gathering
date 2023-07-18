@@ -4,9 +4,8 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.auth.signin.repo.ApiSignInRepository
 import com.gathering.android.auth.signin.repo.SignInRepository
-import com.gathering.android.auth.signup.SignUpViewState
+import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.WrongCredentialsException
@@ -41,7 +40,7 @@ class SignInViewModel @Inject constructor(
         signInRepository.signInUser(email, pass, onResponseReady = { state ->
             when (state) {
                 is ResponseState.Failure -> {
-                    when(state.throwable) {
+                    when (state.throwable) {
                         is WrongCredentialsException -> {
                             _viewState.value =
                                 SignInViewState.Error.ShowAuthenticationFailedError("Sign in failed")
@@ -60,14 +59,9 @@ class SignInViewModel @Inject constructor(
 
                 }
 
-                is ResponseState.Success<*> -> {
+                is ResponseState.Success<AuthorizedResponse> -> {
                     _viewState.value =
                         SignInViewState.NavigateToHome
-                }
-
-                is ResponseState.SuccessWithError<*> -> {
-                    _viewState.value =
-                        SignInViewState.Error.ShowAuthenticationFailedError("Sign in failed")
                 }
             }
         })

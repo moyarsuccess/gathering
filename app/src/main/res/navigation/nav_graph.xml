@@ -57,11 +57,11 @@
             app:destination="@id/eventDetailFragment" />
         <argument
             android:name="Event"
-            app:argType="com.gathering.android.event.model.Event" />
+            app:argType="com.gathering.android.event.Event" />
     </fragment>
     <fragment
         android:id="@+id/navigation_eventFragment"
-        android:name="com.gathering.android.event.myevent.view.MyEventFragment"
+        android:name="com.gathering.android.event.myevent.MyEventFragment"
         android:label="MyEventFragment"
         tools:layout="@layout/frg_my_event">
         <action
@@ -90,7 +90,7 @@
         tools:layout="@layout/frg_event_detail">
         <argument
             android:name="Event"
-            app:argType="com.gathering.android.event.model.Event" />
+            app:argType="com.gathering.android.event.Event" />
     </fragment>
     <dialog
         android:id="@+id/addEventBottomSheetFragment"

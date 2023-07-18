@@ -1,11 +1,13 @@
-package com.gathering.android.navhost.di
+package com.gathering.android.di
 
 import android.content.Context
-import com.gathering.android.event.model.EventRepository
-import com.gathering.android.event.model.EventRepositoryImpl
-import com.gathering.android.event.myevent.addevent.repo.ApiAddEventRepository
+import com.gathering.android.common.UserRepo
+import com.gathering.android.event.model.repo.ApiEventRepository
+import com.gathering.android.event.model.repo.EventRemoteService
+import com.gathering.android.event.model.repo.EventRepository
 import com.gathering.android.event.myevent.addevent.repo.AddEventRemoteService
 import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
+import com.gathering.android.event.myevent.addevent.repo.ApiAddEventRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,10 +27,18 @@ class EventModule {
     @Provides
     @Singleton
     fun provideEventRepository(
-        firebaseFirestore: FirebaseFirestore,
-        auth: FirebaseAuth
+        eventRemoteService: EventRemoteService,
+        userRepo: UserRepo
     ): EventRepository {
-        return EventRepositoryImpl(firebaseFirestore, auth)
+        return ApiEventRepository(eventRemoteService, userRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventRemoteService(
+        @AuthorizedRetrofitQualifier retrofit: Retrofit
+    ): EventRemoteService {
+        return retrofit.create(EventRemoteService::class.java)
     }
 
     @Provides

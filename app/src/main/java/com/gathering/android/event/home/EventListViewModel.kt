@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.verification.repo.VerificationRepository
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
+import com.gathering.android.event.Event
 import com.gathering.android.event.home.view.Filter
 import com.gathering.android.event.home.view.SortType
 import com.gathering.android.event.home.viewmodel.EventViewState
-import com.gathering.android.event.model.Event
-import com.gathering.android.event.model.EventRepository
+import com.gathering.android.event.model.EventModel
+import com.gathering.android.event.model.repo.EventRepository
+import com.gathering.android.event.toEvent
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
@@ -76,32 +78,28 @@ class EventListViewModel @Inject constructor(
     ) {
         eventRepository.getAllEvents { request ->
             when (request) {
-                // TODO check this block later
-                is ResponseState.SuccessWithError<*> -> hideProgress()
                 is ResponseState.Failure -> hideProgress()
-                is ResponseState.Success<*> -> {
-                    (request.data as? List<Event>)?.also { eventList ->
-                        val filteredList = eventList
-                            .filter { event ->
-                                if (!filter.isContactsFilterOn) true
-                                else event.isContactEvent
-                            }.filter { event ->
-                                if (!filter.isMyEventsFilterOn) true
-                                else event.isMyEvent
-                            }.filter { event ->
-                                if (!filter.isTodayFilterOn) true
-                                else DateUtils.isToday(event.dateAndTime)
-                            }.sortedWith(sortType.getProperComparator())
+                is ResponseState.Success<List<EventModel>> -> {
+                    val filteredList = request.data
+                        .filter { event ->
+                            if (!filter.isContactsFilterOn) true
+                            else !event.isMyEvent
+                        }.filter { event ->
+                            if (!filter.isMyEventsFilterOn) true
+                            else event.isMyEvent
+                        }.filter { event ->
+                            if (!filter.isTodayFilterOn) true
+                            else DateUtils.isToday(event.dateTime ?: 0)
+                        }.sortedWith(sortType.getProperComparator())
 
-                        onFilteredEventsReady(filteredList)
-                    }
+                    onFilteredEventsReady(filteredList.map { it.toEvent() })
                 }
 
             }
         }
     }
 
-    private fun SortType.getProperComparator(): Comparator<Event> {
+    private fun SortType.getProperComparator(): Comparator<EventModel> {
         return when (this) {
             SortType.SORT_BY_LOCATION -> eventLocationComparator
             SortType.SORT_BY_DATE -> eventDateComparator
