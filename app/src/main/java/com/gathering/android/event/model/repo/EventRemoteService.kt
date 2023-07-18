@@ -9,8 +9,7 @@ interface EventRemoteService {
 
     @GET("event")
     fun getEvents(
-        @Query("my_own_events") isMyEvent: Boolean,
-        @Query("host_email") hostEmail: String?,
+        @Query("my_own_events") isMyEvent: Boolean = false,
         @Query("page_size") pageSize: Int,
         @Query("page_number") pageNumber: Int,
     ): Call<List<EventModel>>
