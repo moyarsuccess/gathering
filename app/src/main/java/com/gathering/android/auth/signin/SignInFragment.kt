@@ -25,15 +25,12 @@ class SignInFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            STYLE_NORMAL,
-            android.R.style.Theme_Light_NoTitleBar_Fullscreen
+            STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
         )
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FrgSignInBinding.inflate(layoutInflater)
         return binding.root
@@ -108,6 +105,7 @@ class SignInFragment : DialogFragment() {
                         R.id.action_signInFragment_to_forgetPasswordFragment
                     )
                 }
+                is SignInViewState.Error.ShowUserNotVerifiedError -> showToast(state.errorMessage)
             }
         }
     }

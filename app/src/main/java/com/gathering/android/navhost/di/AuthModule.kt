@@ -30,7 +30,8 @@ class AuthModule {
     fun providePasswordRemoteService(
         @UnauthorizedRetrofitQualifier retrofit: Retrofit
     ): PasswordRemoteService {
-        return retrofit.create(PasswordRemoteService::class.java)
+        return retrofit
+            .create(PasswordRemoteService::class.java)
     }
 
     @Provides
@@ -52,9 +53,10 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignInRepository(
-        passwordRemoteService: SignInRemoteService
+        passwordRemoteService: SignInRemoteService,
+        tokenRepo: TokenRepo
     ): SignInRepository {
-        return ApiSignInRepository(passwordRemoteService)
+        return ApiSignInRepository(passwordRemoteService, tokenRepo)
     }
 
     @Provides
