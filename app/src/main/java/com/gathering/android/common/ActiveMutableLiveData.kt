@@ -3,7 +3,8 @@ package com.gathering.android.common
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.MutableLiveData
 import java.lang.reflect.Modifier.PRIVATE
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
 
 class ActiveMutableLiveData<T> : MutableLiveData<T>() {
 

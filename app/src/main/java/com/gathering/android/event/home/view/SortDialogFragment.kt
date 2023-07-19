@@ -31,6 +31,7 @@ class SortDialogFragment(private val eventListViewModel: EventListViewModel) : D
                 R.id.sort_date -> {
                     eventListViewModel.onSortChanged(SortType.SORT_BY_DATE)
                 }
+
                 R.id.sort_location -> {
                     eventListViewModel.onSortChanged(SortType.SORT_BY_LOCATION)
                 }

@@ -5,7 +5,10 @@ import com.gathering.android.common.ResponseState
 
 interface PasswordRepository {
 
-    fun forgetPassword(email: String, onResponseReady: (ResponseState<String>) -> Unit)
+    fun forgetPassword(
+        email: String,
+        onResponseReady: (ResponseState<String>) -> Unit
+    )
 
     fun resetPassword(
         token: String,

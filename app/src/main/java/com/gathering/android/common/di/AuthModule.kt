@@ -1,4 +1,4 @@
-package com.gathering.android.di
+package com.gathering.android.common.di
 
 import com.gathering.android.auth.password.repo.ApiPasswordRepository
 import com.gathering.android.auth.password.repo.PasswordRemoteService

@@ -17,11 +17,11 @@ import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddEventBinding
+import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
-import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

@@ -100,11 +100,13 @@ class SignInFragment : DialogFragment() {
                         R.id.action_signInFragment_to_navigation_homeFragment
                     )
                 }
+
                 SignInViewState.NavigateToPasswordReset -> {
                     findNavController().navigate(
                         R.id.action_signInFragment_to_forgetPasswordFragment
                     )
                 }
+
                 is SignInViewState.Error.ShowUserNotVerifiedError -> showToast(state.errorMessage)
             }
         }

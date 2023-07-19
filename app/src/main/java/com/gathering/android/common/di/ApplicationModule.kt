@@ -1,4 +1,4 @@
-package com.gathering.android.di
+package com.gathering.android.common.di
 
 import android.content.Context
 import android.content.SharedPreferences
