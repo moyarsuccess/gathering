@@ -1,6 +1,11 @@
 package com.gathering.android.auth.signin.repo
 
-import com.gathering.android.common.*
+import com.gathering.android.common.AuthorizedResponse
+import com.gathering.android.common.BODY_WAS_NULL
+import com.gathering.android.common.ResponseState
+import com.gathering.android.common.TokenRepo
+import com.gathering.android.common.UserNotVerifiedException
+import com.gathering.android.common.WrongCredentialsException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,7 +39,7 @@ class ApiSignInRepository @Inject constructor(
                     return
                 }
                 val body = response.body()
-                if (body == null){
+                if (body == null) {
                     onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
                     return
                 }

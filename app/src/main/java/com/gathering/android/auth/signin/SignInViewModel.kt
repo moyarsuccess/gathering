@@ -11,7 +11,6 @@ import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.WrongCredentialsException
 import javax.inject.Inject
 
-
 class SignInViewModel @Inject constructor(
     private val signInRepository: SignInRepository
 ) : ViewModel() {
@@ -45,18 +44,19 @@ class SignInViewModel @Inject constructor(
                             _viewState.value =
                                 SignInViewState.Error.ShowAuthenticationFailedError("Sign in failed")
                         }
+
                         is UserNotVerifiedException -> {
                             _viewState.value =
                                 SignInViewState.Error.ShowUserNotVerifiedError("email not verified")
                             _viewState.value =
                                 SignInViewState.NavigateToVerification
                         }
+
                         else -> {
                             _viewState.value =
                                 SignInViewState.Error.ShowGeneralError("can not reach the server")
                         }
                     }
-
                 }
 
                 is ResponseState.Success<AuthorizedResponse> -> {

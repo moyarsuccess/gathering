@@ -39,7 +39,8 @@ class FilterDialogFragment(private val eventListViewModel: EventListViewModel) :
         return dialog
     }
 
-     companion object { const val TAG = "filter_dialog"
+    companion object {
+        const val TAG = "filter_dialog"
     }
 }
 

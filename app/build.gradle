@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
@@ -65,21 +64,6 @@ dependencies {
     //Hilt
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
-
-    // Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:32.1.1')
-
-    //Firebase Authentication
-    implementation 'com.google.firebase:firebase-auth-ktx'
-
-    //Firebase Analytics
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-
-    //Firebase Store
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.6.1'
-
-    //Firebase storage
-    implementation("com.google.firebase:firebase-storage-ktx")
 
     // ImageLoader
     implementation 'com.squareup.picasso:picasso:2.71828'

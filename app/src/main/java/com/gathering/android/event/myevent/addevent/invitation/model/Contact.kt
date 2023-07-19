@@ -6,7 +6,7 @@ data class Contact(
     val photoUrl: String? = "",
     val name: String? = "",
     val number: String? = ""
-): Serializable {
+) : Serializable {
     override fun toString(): String {
         return name ?: ""
     }

@@ -4,5 +4,5 @@ sealed interface ForgetPasswordViewState {
 
     class Message(val text: String?) : ForgetPasswordViewState
 
-    object NavigateToResetPassInfoBottomSheet: ForgetPasswordViewState
+    object NavigateToResetPassInfoBottomSheet : ForgetPasswordViewState
 }
