@@ -8,15 +8,14 @@ import javax.inject.Inject
 
 class ApiPasswordRepository @Inject constructor(
     private val passwordRemoteService: PasswordRemoteService,
-    private val tokenRepo: TokenRepo
+    private val tokenRepo: TokenRepo,
+    private val userRepo: UserRepo
 ) : PasswordRepository {
 
     override fun forgetPassword(email: String, onResponseReady: (ResponseState<String>) -> Unit) {
-        passwordRemoteService.forgetPassword(email)
-            .enqueue(object : Callback<GeneralApiResponse> {
+        passwordRemoteService.forgetPassword(email).enqueue(object : Callback<GeneralApiResponse> {
                 override fun onResponse(
-                    call: Call<GeneralApiResponse>,
-                    response: Response<GeneralApiResponse>
+                    call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
                 ) {
                     if (!response.isSuccessful) {
                         onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
@@ -39,8 +38,7 @@ class ApiPasswordRepository @Inject constructor(
         passwordRemoteService.resetPassword(token, password)
             .enqueue(object : Callback<AuthorizedResponse> {
                 override fun onResponse(
-                    call: Call<AuthorizedResponse>,
-                    response: Response<AuthorizedResponse>
+                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
                 ) {
                     if (!response.isSuccessful) {
                         onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
@@ -53,6 +51,7 @@ class ApiPasswordRepository @Inject constructor(
                     }
                     val jwt = body.jwt
                     tokenRepo.saveToken(jwt)
+                    userRepo.saveUser(body.user)
                     onResponseReady(ResponseState.Success(body))
 
                 }

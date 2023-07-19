@@ -7,15 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.verification.VerificationFragment
 import com.gathering.android.databinding.FrgNewPasswordInputBinding
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class InputNewPasswordFragment : DialogFragment() {
 
     private lateinit var binding: FrgNewPasswordInputBinding
@@ -26,15 +27,12 @@ class InputNewPasswordFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            STYLE_NORMAL,
-            android.R.style.Theme_Light_NoTitleBar_Fullscreen
+            STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
         )
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FrgNewPasswordInputBinding.inflate(layoutInflater)
         return binding.root
@@ -42,11 +40,10 @@ class InputNewPasswordFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.btnSubmit.setOnClickListener {
             val password = binding.etPassInput.text.toString()
             val confirmPassword = binding.etConfirmPassInput.text.toString()
-            viewModel.onSubmitBtnClicked(password,confirmPassword)
+            viewModel.onSubmitBtnClicked(extractToken(), password, confirmPassword)
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
@@ -54,9 +51,9 @@ class InputNewPasswordFragment : DialogFragment() {
                 is InputNewPasswordViewState.Message -> {
                     showToast(state.text)
                 }
-                InputNewPasswordViewState.NavigateToSignInPage -> {
+                InputNewPasswordViewState.NavigateToHomeFragment -> {
                     findNavController().navigate(
-                        R.id.action_forgetPasswordFragment_to_resetPassInfoBottomSheet
+                        R.id.action_newPasswordInputFragment_to_navigation_homeFragment
                     )
                 }
             }
@@ -64,15 +61,6 @@ class InputNewPasswordFragment : DialogFragment() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.onViewResumed(extractToken())
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun extractToken(): String? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT, Intent::class.java)
@@ -80,7 +68,6 @@ class InputNewPasswordFragment : DialogFragment() {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT)
         }?.data?.getQueryParameter(VerificationFragment.TOKEN_PARAM)
     }
-
 
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()

@@ -4,5 +4,5 @@ sealed interface InputNewPasswordViewState {
 
     class Message(val text: String?) : InputNewPasswordViewState
 
-    object NavigateToSignInPage : InputNewPasswordViewState
+    object NavigateToHomeFragment : InputNewPasswordViewState
 }

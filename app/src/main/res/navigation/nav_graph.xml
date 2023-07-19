@@ -184,21 +184,14 @@
         android:name="com.gathering.android.auth.password.newPassword.InputNewPasswordFragment"
         android:label="newPasswordInputFragment"
         tools:layout="@layout/frg_new_password_input">
-        <action
-            android:id="@+id/action_newPasswordInputFragment_to_navigateUserToSignInBottomSheet"
-            app:destination="@id/navigateUserToSignInBottomSheet" />
         <deepLink
             android:id="@+id/sendLinkForPassword"
             android:autoVerify="true"
             app:action="android.intent.action.VIEW"
-            app:uri="gathering://gathering.com/password/forget" />
+            app:uri="gathering://gathering.com/password/reset" />
+        <action
+            android:id="@+id/action_newPasswordInputFragment_to_navigation_homeFragment"
+            app:destination="@id/navigation_homeFragment" />
+
     </dialog>
-    <dialog
-        android:id="@+id/navigateUserToSignInBottomSheet"
-        android:name="com.gathering.android.auth.password.newPassword.NavigateUserToSignInBottomSheet"
-        android:label="navigateUserToSignInBottomSheet"
-        tools:layout="@layout/bottom_sheet_navigate_user_to_sign_in" />
-    <action
-        android:id="@+id/action_navigateUserToSignInBottomSheet_to_signInFragment"
-        app:destination="@id/signInFragment" />
 </navigation>

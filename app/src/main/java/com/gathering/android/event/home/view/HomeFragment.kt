@@ -56,7 +56,9 @@ class HomeFragment : Fragment() {
                 EventViewState.ShowNoData -> binding.tvNoData.isVisible = true
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
                 EventViewState.NavigateToIntroScreen -> {
-                    if (R.id.verificationFragment != findNavController().currentDestination?.id) {
+                    // TODO: we need to find a better way to handle this
+                    if (R.id.verificationFragment != findNavController().currentDestination?.id &&
+                        R.id.newPasswordInputFragment != findNavController().currentDestination?.id) {
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)
                     }
                 }
