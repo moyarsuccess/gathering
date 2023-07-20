@@ -1,11 +1,6 @@
 package com.gathering.android.auth.signin.repo
 
-import com.gathering.android.common.AuthorizedResponse
-import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserNotVerifiedException
-import com.gathering.android.common.WrongCredentialsException
+import com.gathering.android.common.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,7 +8,8 @@ import javax.inject.Inject
 
 class ApiSignInRepository @Inject constructor(
     private val signInRemoteService: SignInRemoteService,
-    private val tokenRepo: TokenRepo
+    private val tokenRepo: TokenRepo,
+    private val userRepo: UserRepo
 ) : SignInRepository {
 
     override fun signInUser(
@@ -44,6 +40,7 @@ class ApiSignInRepository @Inject constructor(
                     return
                 }
                 tokenRepo.saveToken(body.jwt)
+                userRepo.saveUser(body.user)
                 onResponseReady(ResponseState.Success(body))
             }
 
