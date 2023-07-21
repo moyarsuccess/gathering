@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.verification.VerificationFragment
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgNewPasswordInputBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -49,7 +49,10 @@ class InputNewPasswordFragment : DialogFragment() {
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is InputNewPasswordViewState.Message -> {
-                    showToast(state.text)
+                    state.text?.let {
+                        showErrorText(it)
+                    }
+
                 }
                 InputNewPasswordViewState.NavigateToHomeFragment -> {
                     findNavController().navigate(
@@ -67,9 +70,5 @@ class InputNewPasswordFragment : DialogFragment() {
         } else {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT)
         }?.data?.getQueryParameter(VerificationFragment.TOKEN_PARAM)
-    }
-
-    private fun showToast(errorMessage: String?) {
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }
 }
