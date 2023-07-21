@@ -81,4 +81,11 @@
     <string name="favorite_event">Favorite Event</string>
     <string name="sign_out">Sign out</string>
     <string name="attendees_count_hint_text">%s people invited to this event</string>
+    <string name="enter_new_password">Enter a new password to reset the password on your account. we\'ll ask for this password whenever you sign in.</string>
+    <string name="btn_submit">submit</string>
+    <string name="reset_your_password">Reset your password?</string>
+    <string name="check_spam">check your spam folder.</string>
+    <string name="back_to_sign_in_page">Back to Sign In page</string>
+    <string name="tv_reset_pass">You have successfully Reset your Password.</string>
+
 </resources>

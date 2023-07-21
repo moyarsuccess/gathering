@@ -37,9 +37,11 @@ class AuthModule {
     @Provides
     @Singleton
     fun providePasswordRepository(
-        passwordRemoteService: PasswordRemoteService
+        passwordRemoteService: PasswordRemoteService,
+        tokenRepo: TokenRepo,
+        userRepo: UserRepo
     ): PasswordRepository {
-        return ApiPasswordRepository(passwordRemoteService)
+        return ApiPasswordRepository(passwordRemoteService, tokenRepo, userRepo)
     }
 
     @Provides

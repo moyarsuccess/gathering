@@ -67,7 +67,6 @@ class VerificationFragment : DialogFragment() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
 
@@ -75,7 +74,6 @@ class VerificationFragment : DialogFragment() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun extractToken(): String? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT, Intent::class.java)

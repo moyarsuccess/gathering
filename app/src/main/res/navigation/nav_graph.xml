@@ -147,15 +147,15 @@
             app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/email/verified" />
     </dialog>
-    <fragment
+    <dialog
         android:id="@+id/forgetPasswordFragment"
         android:name="com.gathering.android.auth.password.ForgetPasswordFragment"
         android:label="forgetPasswordFragment"
-        tools:layout="@layout/frg_password_reset">
+        tools:layout="@layout/frg_email_input_reset_password">
         <action
             android:id="@+id/action_forgetPasswordFragment_to_resetPassInfoBottomSheet"
             app:destination="@id/forgetPassInfoBottomSheet" />
-    </fragment>
+    </dialog>
     <dialog
         android:id="@+id/forgetPassInfoBottomSheet"
         android:name="com.gathering.android.auth.password.ResetPassInfoBottomSheet"
@@ -179,4 +179,19 @@
         android:label="FavoriteEvent"
         tools:layout="@layout/bottom_sheet_favorite_event" />
 
+    <dialog
+        android:id="@+id/newPasswordInputFragment"
+        android:name="com.gathering.android.auth.password.newPassword.InputNewPasswordFragment"
+        android:label="newPasswordInputFragment"
+        tools:layout="@layout/frg_new_password_input">
+        <deepLink
+            android:id="@+id/sendLinkForPassword"
+            android:autoVerify="true"
+            app:action="android.intent.action.VIEW"
+            app:uri="gathering://gathering.com/password/reset" />
+        <action
+            android:id="@+id/action_newPasswordInputFragment_to_navigation_homeFragment"
+            app:destination="@id/navigation_homeFragment" />
+
+    </dialog>
 </navigation>
