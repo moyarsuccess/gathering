@@ -1,4 +1,4 @@
-package com.gathering.android.common.di
+package com.gathering.android.di
 
 import android.content.Context
 import android.location.Geocoder

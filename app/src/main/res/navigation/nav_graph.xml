@@ -126,12 +126,12 @@
     </dialog>
     <dialog
         android:id="@+id/inviteFriendBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.invitation.InviteFriendBottomSheet"
+        android:name="com.gathering.android.event.myevent.addevent.invitation.AddAttendeeBottomSheet"
         android:label="InviteFriendBottomSheet"
-        tools:layout="@layout/bottom_sheet_invitation">
+        tools:layout="@layout/bottom_sheet_add_attendees">
         <argument
-            android:name="Contact"
-            app:argType="com.gathering.android.event.myevent.addevent.invitation.model.Contact" />
+            android:name="AttendeesEmail"
+            app:argType="string" />
     </dialog>
     <dialog
         android:id="@+id/verificationFragment"

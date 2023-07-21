@@ -52,7 +52,7 @@
     <string name="rotate_right">rotate right</string>
     <string name="rotate_left">rotate left</string>
     <string name="delete">delete</string>
-    <string name="contact">contact</string>
+    <string name="attendee_email">Attendee email</string>
     <string name="event_name">Event name</string>
     <string name="start">Start</string>
     <string name="end">End</string>
@@ -87,5 +87,5 @@
     <string name="check_spam">check your spam folder.</string>
     <string name="back_to_sign_in_page">Back to Sign In page</string>
     <string name="tv_reset_pass">You have successfully Reset your Password.</string>
-
+    <string name="add_attendee">Add Attendee</string>
 </resources>

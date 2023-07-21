@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
-import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
 import javax.inject.Inject
 
@@ -24,7 +23,7 @@ class AddEventViewModel @Inject constructor(
     private var isAddressFilled: Boolean = false
     private var isAttendeeListFilled: Boolean = false
 
-    private val contactList = mutableListOf<Contact>()
+    private val attendeesEmailList = mutableListOf<String>()
 
     fun onViewCreated() {
         _viewState.setValue(AddEventViewState.AddEventButtonVisibility(false))
@@ -56,7 +55,7 @@ class AddEventViewModel @Inject constructor(
     }
 
     fun onInvitationButtonClicked() {
-        _viewState.setValue(AddEventViewState.NavigateToInviteFriend(contactList))
+        _viewState.setValue(AddEventViewState.NavigateToInviteFriend(attendeesEmailList))
     }
 
     fun onAddEventButtonClicked(event: Event) {
@@ -111,9 +110,9 @@ class AddEventViewModel @Inject constructor(
         checkAllFieldsReady()
     }
 
-    fun onAttendeeListChanged(contacts: List<Contact>) {
-        contactList.clear()
-        contactList.addAll(contacts)
+    fun onAttendeeListChanged(contacts: List<String>) {
+        attendeesEmailList.clear()
+        attendeesEmailList.addAll(contacts)
         val attendee = contacts.joinToString(",")
         _viewState.setValue(AddEventViewState.SetAttendeeList(attendee))
 
@@ -172,7 +171,6 @@ class AddEventViewModel @Inject constructor(
         private const val TIME_NOT_FILLED_MESSAGE = "Please select a valid time"
         private const val ADDRESS_NOT_FILLED_MESSAGE = "Please select a address"
         private const val ATTENDEES_NOT_FILLED_MESSAGE = "Please select attendees"
-        private const val UPDATE_SUCCESSFULLY_WITH_ERROR = "UPDATE_SUCCESSFULLY_WITH_ERROR"
         private const val EVENT_REQUEST_FAILED = "EVENT_REQUEST_FAILED"
     }
 }
