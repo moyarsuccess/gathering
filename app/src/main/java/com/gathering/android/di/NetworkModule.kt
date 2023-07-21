@@ -1,4 +1,4 @@
-package com.gathering.android.common.di
+package com.gathering.android.di
 
 import com.gathering.android.common.HeaderInterceptor
 import dagger.Module

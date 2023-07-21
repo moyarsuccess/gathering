@@ -8,18 +8,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <AutoCompleteTextView
-            android:id="@+id/et_contact"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/et_margin"
-            android:background="@color/bottom_sheet_background"
-            android:hint="@string/my_contacts"
-            android:padding="@dimen/et_padding"
             app:layout_constraintBottom_toBottomOf="@id/guide_20_percent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/et_attendee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/et_margin"
+                android:layout_marginTop="@dimen/et_margin"
+                android:layout_marginEnd="@dimen/et_margin"
+                android:layout_marginBottom="@dimen/et_margin"
+                android:background="@color/bottom_sheet_background"
+                android:ems="12"
+                android:hint="@string/my_contacts"
+                android:inputType="textEmailAddress"
+                android:padding="@dimen/et_padding" />
+
+            <Button
+                android:id="@+id/btn_add_attendee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/btn_margin"
+                android:layout_marginEnd="@dimen/btn_margin"
+                android:layout_marginBottom="@dimen/btn_margin"
+                android:layout_toEndOf="@id/et_attendee"
+                android:background="@drawable/custom_button"
+                android:text="@string/add_attendee" />
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvContact"
@@ -30,8 +50,7 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guide_20_percent"
-            app:spanCount="2" />
+            app:layout_constraintTop_toBottomOf="@id/guide_20_percent" />
 
         <Button
             android:id="@+id/btn_ok"
@@ -51,6 +70,5 @@
             app:layout_constraintGuide_percent="0.2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

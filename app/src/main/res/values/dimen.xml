@@ -2,6 +2,7 @@
 <resources>
     <dimen name="margin">15dp</dimen>
     <dimen name="padding">15dp</dimen>
+    <dimen name="image_button_padding">10dp</dimen>
     <dimen name="tv_filter_margin">15dp</dimen>
     <dimen name="tv_text_size_small">16sp</dimen>
     <dimen name="tv_text_size_medium">20sp</dimen>
@@ -38,7 +39,7 @@
     <dimen name="btn_text_size_small">16sp</dimen>
     <dimen name="btn_text_size_medium">20sp</dimen>
     <dimen name="btn_text_size_large">24sp</dimen>
-    <dimen name="cardView_height">160dp</dimen>
+    <dimen name="cardView_height">180dp</dimen>
     <dimen name="imageView_height">76dp</dimen>
     <dimen name="imageView_width">120dp</dimen>
     <dimen name="tv_padding">5dp</dimen>
@@ -64,7 +65,7 @@
     <dimen name="fab_margin_End">16dp</dimen>
 
     <dimen name="img_view_margin_start">16dp</dimen>
-    <dimen name="img_view_margin_top">16dp</dimen>
+    <dimen name="img_view_margin_top">20dp</dimen>
     <dimen name="img_height">256dp</dimen>
 
     <dimen name="btn_sheet_imageView">256dp</dimen>

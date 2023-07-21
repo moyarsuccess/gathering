@@ -14,6 +14,9 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.ATTENDEE_LIST
+import com.gathering.android.common.SEPARATOR
+import com.gathering.android.common.SOMETHING_WRONG
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddEventBinding
@@ -23,7 +26,6 @@ import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.event.model.EventLocation
-import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -80,7 +82,8 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 is AddEventViewState.NavigateToInviteFriend -> {
-                    val bundle = bundleOf("contact_list" to state.contactList)
+                    val attendees = state.attendeeList.joinToString(SEPARATOR) { it }
+                    val bundle = bundleOf(ATTENDEE_LIST to attendees)
                     findNavController().navigate(
                         R.id.action_addEventBottomSheetFragment_to_inviteFriendBottomSheet,
                         bundle
@@ -176,7 +179,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onImageSelected(image)
         }
 
-        getNavigationResultLiveData<List<Contact>>(KEY_ARGUMENT_SELECTED_ATTENDEE_LIST)?.observe(
+        getNavigationResultLiveData<List<String>>(KEY_ARGUMENT_SELECTED_ATTENDEE_LIST)?.observe(
             viewLifecycleOwner
         ) { attendeeList ->
             viewModel.onAttendeeListChanged(attendeeList)
@@ -253,9 +256,5 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             day
         )
         datePickerDialog.show()
-    }
-
-    companion object {
-        const val SOMETHING_WRONG = "SOMETHING_WRONG"
     }
 }

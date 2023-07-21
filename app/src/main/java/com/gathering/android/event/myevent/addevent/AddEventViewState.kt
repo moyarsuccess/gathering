@@ -1,7 +1,6 @@
 package com.gathering.android.event.myevent.addevent
 
 import com.gathering.android.event.Event
-import com.gathering.android.event.myevent.addevent.invitation.model.Contact
 
 sealed interface AddEventViewState {
 
@@ -10,7 +9,7 @@ sealed interface AddEventViewState {
     class SetAddress(val address: String) : AddEventViewState
     class SetImage(val image: String) : AddEventViewState
     class SetAttendeeList(val attendees: String) : AddEventViewState
-    class NavigateToInviteFriend(val contactList: List<Contact>) : AddEventViewState
+    class NavigateToInviteFriend(val attendeeList: List<String>) : AddEventViewState
     class NavigateToMyEvent(val event: Event) : AddEventViewState
 
     object NavigateToAddPic : AddEventViewState
