@@ -1,4 +1,4 @@
-package com.gathering.android.di
+package com.gathering.android.common.di
 
 import com.gathering.android.auth.password.repo.ApiPasswordRepository
 import com.gathering.android.auth.password.repo.PasswordRemoteService
@@ -56,9 +56,10 @@ class AuthModule {
     @Singleton
     fun provideSignInRepository(
         passwordRemoteService: SignInRemoteService,
-        tokenRepo: TokenRepo
+        tokenRepo: TokenRepo,
+        userRepo: UserRepo
     ): SignInRepository {
-        return ApiSignInRepository(passwordRemoteService, tokenRepo)
+        return ApiSignInRepository(passwordRemoteService, tokenRepo, userRepo)
     }
 
     @Provides

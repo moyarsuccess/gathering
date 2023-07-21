@@ -1,4 +1,4 @@
-package com.gathering.android.di
+package com.gathering.android.common.di
 
 import android.content.Context
 import com.gathering.android.common.UserRepo
@@ -8,10 +8,6 @@ import com.gathering.android.event.model.repo.EventRepository
 import com.gathering.android.event.myevent.addevent.repo.AddEventRemoteService
 import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
 import com.gathering.android.event.myevent.addevent.repo.ApiAddEventRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,15 +52,5 @@ class EventModule {
         @AuthorizedRetrofitQualifier retrofit: Retrofit
     ): AddEventRemoteService {
         return retrofit.create(AddEventRemoteService::class.java)
-    }
-
-    @Provides
-    fun provideFirebaseFirestore(): FirebaseFirestore {
-        return FirebaseFirestore.getInstance()
-    }
-
-    @Provides
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return Firebase.auth
     }
 }

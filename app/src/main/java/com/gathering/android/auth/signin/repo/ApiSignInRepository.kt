@@ -8,7 +8,8 @@ import javax.inject.Inject
 
 class ApiSignInRepository @Inject constructor(
     private val signInRemoteService: SignInRemoteService,
-    private val tokenRepo: TokenRepo
+    private val tokenRepo: TokenRepo,
+    private val userRepo: UserRepo
 ) : SignInRepository {
 
     override fun signInUser(
@@ -34,11 +35,12 @@ class ApiSignInRepository @Inject constructor(
                     return
                 }
                 val body = response.body()
-                if (body == null){
+                if (body == null) {
                     onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
                     return
                 }
                 tokenRepo.saveToken(body.jwt)
+                userRepo.saveUser(body.user)
                 onResponseReady(ResponseState.Success(body))
             }
 

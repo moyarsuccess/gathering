@@ -50,6 +50,7 @@ class ForgetPasswordFragment : DialogFragment() {
                 is ForgetPasswordViewState.Message -> {
                     showToast(state.text)
                 }
+
                 ForgetPasswordViewState.NavigateToResetPassInfoBottomSheet -> {
                     findNavController().navigate(
                         R.id.action_forgetPasswordFragment_to_resetPassInfoBottomSheet
@@ -59,6 +60,7 @@ class ForgetPasswordFragment : DialogFragment() {
         }
 
     }
+
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
     }

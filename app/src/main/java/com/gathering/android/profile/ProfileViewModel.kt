@@ -31,7 +31,7 @@ class ProfileViewModel @Inject constructor(
         _viewState.setValue(ProfileViewState.NavigateToPersonalData)
     }
 
-    fun onSignUpButtonClicked() {
+    fun onSignOutButtonClicked() {
         userRepo.clearUser()
         tokenRepo.clearToken()
         _viewState.setValue(ProfileViewState.NavigateToIntro)

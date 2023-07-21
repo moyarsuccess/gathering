@@ -76,7 +76,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnSignOut.setOnClickListener {
-            viewModel.onSignUpButtonClicked()
+            viewModel.onSignOutButtonClicked()
         }
 
         getNavigationResultLiveData<User>(KEY_ARGUMENT_UPDATE_USER)?.observe(viewLifecycleOwner) {
