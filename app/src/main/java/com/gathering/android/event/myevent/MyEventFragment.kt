@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.FrgMyEventBinding
@@ -31,6 +30,12 @@ class MyEventFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FrgMyEventBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.rvEvent.adapter = adapter
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -44,23 +49,18 @@ class MyEventFragment : Fragment() {
                 MyEventViewState.ShowNoData -> binding.tvNoData.isVisible = true
                 MyEventViewState.ShowProgress -> binding.prg.isVisible = true
                 is MyEventViewState.ShowUserEventList -> adapter.setEventItem(state.myEventList.toMutableList())
+                is MyEventViewState.UpdateEvent -> {
+                    adapter.updateEvent(state.event)
+                }
             }
         }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.rvEvent.adapter = adapter
-        binding.rvEvent.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
 
         binding.btnFab.setOnClickListener {
             viewModel.onFabButtonClicked()
+        }
+
+        adapter.setOnFavoriteImageClick { event ->
+            viewModel.onEventLikeClicked(event)
         }
 
         getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(

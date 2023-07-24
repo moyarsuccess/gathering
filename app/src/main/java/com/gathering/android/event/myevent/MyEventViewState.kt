@@ -7,6 +7,7 @@ sealed interface MyEventViewState {
     class ShowUserEventList(val myEventList: List<Event>) : MyEventViewState
 
     object NavigateToAddEvent : MyEventViewState
+    class UpdateEvent(val event: Event) : MyEventViewState
 
     class ShowError(val errorMessage: String) : MyEventViewState
 
