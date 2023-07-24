@@ -68,6 +68,7 @@ class EventListAdapter @Inject constructor(
         fun bind(event: Event) {
             itemBinding.tvEventTitle.text = event.eventName
             itemBinding.tvEventDescription.text = event.description
+            itemBinding.tvEventHost.text = event.eventHostEmail
             imageLoader.loadImage(event.photoUrl, itemBinding.imgEvent)
             itemBinding.cardView.setOnClickListener {
                 onEventClickListener(event)

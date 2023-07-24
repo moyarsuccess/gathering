@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
+import com.gathering.android.event.Event
+import com.gathering.android.event.home.EventListViewModel
+import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.model.repo.EventRepository
 import com.gathering.android.event.toEvent
@@ -49,11 +52,31 @@ class MyEventViewModel @Inject constructor(
         }
     }
 
+    fun onEventLikeClicked(event: Event) {
+        val liked = !event.liked
+        val eventId = event.eventId
+        eventRepository.likeEvent(eventId, liked) { request ->
+            when (request) {
+                is ResponseState.Failure -> {
+                    _viewState.setValue(MyEventViewState.ShowError(LIKE_EVENT_REQUEST_FAILED))
+                }
+
+                is ResponseState.Success -> {
+                    _viewState.setValue(MyEventViewState.UpdateEvent(event.copy(liked = !event.liked)))
+                }
+            }
+        }
+    }
+
     private fun hideProgress() {
         _viewState.setValue(MyEventViewState.HideProgress)
     }
 
     fun onFabButtonClicked() {
         _viewState.setValue(MyEventViewState.NavigateToAddEvent)
+    }
+
+    companion object {
+        const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
     }
 }

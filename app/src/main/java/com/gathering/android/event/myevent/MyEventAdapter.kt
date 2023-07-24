@@ -5,8 +5,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
-import com.gathering.android.databinding.ItemMyEventBinding
+import com.gathering.android.databinding.ItemEventBinding
 import com.gathering.android.event.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
@@ -19,6 +20,7 @@ class MyEventAdapter @Inject constructor(
 ) : RecyclerView.Adapter<MyEventAdapter.ViewHolder>() {
 
     private var myEventItemList: MutableList<Event> = mutableListOf()
+    private var onFavoriteImageClickListener: (event: Event) -> Unit = {}
     private var onMyEventClicked: (event: Event) -> Unit = {}
     private val li = LayoutInflater.from(context)
 
@@ -30,9 +32,22 @@ class MyEventAdapter @Inject constructor(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemMyEventBinding.inflate(li), onMyEventClicked)
+    fun updateEvent(event: Event) {
+        val indexOfItem = this.myEventItemList.indexOfFirst { it.eventId == event.eventId }
+        this.myEventItemList[indexOfItem] = event
+        notifyItemChanged(indexOfItem)
+    }
 
+    fun setOnFavoriteImageClick(onFavoriteImageClickListener: (event: Event) -> Unit) {
+        this.onFavoriteImageClickListener = onFavoriteImageClickListener
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(
+            ItemEventBinding.inflate(li),
+            onMyEventClicked,
+            onFavoriteImageClickListener
+        )
     }
 
     override fun getItemCount(): Int = myEventItemList.size
@@ -42,19 +57,25 @@ class MyEventAdapter @Inject constructor(
     }
 
     inner class ViewHolder(
-        private val itemBinding: ItemMyEventBinding,
+        private val itemBinding: ItemEventBinding,
         private val onMyEventEventClickListener: (event: Event) -> Unit,
+        private val onFavoriteImageClickListener: (event: Event) -> Unit,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(event: Event) {
             itemBinding.cardView.setOnClickListener {
                 onMyEventEventClickListener(event)
             }
-            itemBinding.tvEventName.text = event.eventName
-            itemBinding.tvAddress.text = event.location.addressLine
+            itemBinding.tvEventTitle.text = event.eventName
             itemBinding.tvEventDescription.text = event.description
-            itemBinding.tvEventDateTime.text = event.dateAndTime.toString()
             imageLoader.loadImage(event.photoUrl, itemBinding.imgEvent)
+            itemBinding.tvEventHost.text = event.eventHostEmail
+
+            itemBinding.imgFavorite.setOnClickListener {
+                onFavoriteImageClickListener(event)
+            }
+            val resId = if (event.liked) R.drawable.ic_liked else R.drawable.ic_unliked
+            itemBinding.imgFavorite.setImageResource(resId)
         }
     }
 }
