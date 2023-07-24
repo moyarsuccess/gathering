@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import java.io.Serializable
 
 data class Event(
+    val eventId: Long,
     val eventName: String = "",
     val eventHostEmail: String = "",
     val description: String = "",
@@ -14,7 +15,8 @@ data class Event(
     val isContactEvent: Boolean = false,
     val isMyEvent: Boolean = false,
     val attendees: List<String> = listOf(),
-    val eventCost: Int = 0
+    val eventCost: Int = 0,
+    val liked: Boolean,
 ) : Serializable {
 
     fun getAttendeesJson(): String {

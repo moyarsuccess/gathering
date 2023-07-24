@@ -3,15 +3,16 @@ package com.gathering.android.event.model
 import com.google.gson.annotations.SerializedName
 
 data class EventModel(
-    @SerializedName("id") var id: Int? = null,
-    @SerializedName("eventName") var eventName: String? = null,
-    @SerializedName("eventHostEmail") var eventHostEmail: String? = null,
-    @SerializedName("eventDescription") var eventDescription: String? = null,
-    @SerializedName("photoName") var photoName: String? = null,
-    @SerializedName("latitude") var latitude: Double? = null,
-    @SerializedName("longitude") var longitude: Double? = null,
-    @SerializedName("dateTime") var dateTime: Long? = null,
-    @SerializedName("attendees") var attendees: ArrayList<Attendees> = arrayListOf(),
+    @SerializedName("id") var id: Long,
+    @SerializedName("eventName") var eventName: String?,
+    @SerializedName("eventHostEmail") var eventHostEmail: String?,
+    @SerializedName("eventDescription") var eventDescription: String?,
+    @SerializedName("photoName") var photoName: String?,
+    @SerializedName("latitude") var latitude: Double?,
+    @SerializedName("longitude") var longitude: Double?,
+    @SerializedName("dateTime") var dateTime: Long?,
+    @SerializedName("attendees") var attendees: ArrayList<Attendees>,
+    @SerializedName("liked") var liked: Boolean,
 ) {
     val isMyEvent: Boolean = false
 }

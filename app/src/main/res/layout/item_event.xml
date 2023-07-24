@@ -2,67 +2,80 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="@dimen/cardView_height">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/cardView_height"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/cardView_margin"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/img_event"
-                android:layout_width="@dimen/imageView_width"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/imageView_height"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/tv_margin_start"
-                android:scaleType="centerInside"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_launcher_foreground" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_event_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/tv_margin_start"
                 android:layout_marginTop="@dimen/tv_margin"
-                android:layout_toEndOf="@id/img_event"
-                android:orientation="vertical">
+                android:padding="@dimen/tv_padding"
+                android:text="@string/event_title"
+                android:textSize="@dimen/tv_text_size_medium"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_event" />
 
-                <TextView
-                    android:id="@+id/tv_event_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/tv_padding"
-                    android:text="@string/event_title"
-                    android:textSize="@dimen/tv_text_size_small" />
+            <TextView
+                android:id="@+id/tv_event_host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tv_margin_start"
+                android:padding="@dimen/tv_padding"
+                android:text="@string/event_host"
+                android:textSize="@dimen/tv_text_size_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_event_title" />
 
-                <TextView
-                    android:id="@+id/tv_event_host"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/tv_padding"
-                    android:text="@string/event_host"
-                    android:textSize="@dimen/tv_text_size_small" />
+            <TextView
+                android:id="@+id/tv_event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tv_margin_start"
+                android:padding="@dimen/tv_padding"
+                android:text="@string/event_description"
+                android:textSize="@dimen/tv_text_size_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_event_host" />
 
-                <TextView
-                    android:id="@+id/tv_event_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/tv_padding"
-                    android:text="@string/event_description"
-                    android:textSize="@dimen/tv_text_size_small" />
+            <ImageView
+                android:id="@+id/img_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:src="@drawable/ic_unliked"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            </LinearLayout>
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

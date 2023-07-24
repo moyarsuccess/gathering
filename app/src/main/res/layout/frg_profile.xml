@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/img_favorite_margin"
             android:layout_marginTop="@dimen/img_favorite_margin"
-            android:src="@drawable/ic_favorite"
+            android:src="@drawable/ic_unliked"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

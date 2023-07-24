@@ -190,6 +190,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun makeCurrentEvent(): Event {
         return Event(
+            eventId = 0,
             eventName = binding.etEventName.text.toString(),
             eventHostEmail = "",
             description = binding.etDescription.text.toString(),
@@ -198,7 +199,8 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             dateAndTime = currentTimestamp(),
             isContactEvent = false,
             isMyEvent = true,
-            attendees = attendees.split(",")
+            attendees = attendees.split(","),
+            liked = false
         )
     }
 

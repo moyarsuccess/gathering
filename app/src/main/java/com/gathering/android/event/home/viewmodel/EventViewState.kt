@@ -10,6 +10,8 @@ sealed interface EventViewState {
 
     class ShowError(val errorMessage: String) : EventViewState
 
+    class UpdateEvent(val event: Event) : EventViewState
+
     object ShowProgress : EventViewState
 
     object HideProgress : EventViewState
