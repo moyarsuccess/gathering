@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.R
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgHomeBinding
 import com.gathering.android.event.home.EventListViewModel
 import com.gathering.android.event.home.view.FilterDialogFragment.Companion.TAG
@@ -33,9 +32,12 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FrgHomeBinding.inflate(layoutInflater)
-        adapter.setOnEventClickListener {
-            viewModel.onEventItemClicked(it)
-        }
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.rvEvent.adapter = adapter
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -48,7 +50,7 @@ class HomeFragment : Fragment() {
                     )
                 }
 
-                is EventViewState.ShowError -> showToast(state.errorMessage)
+                is EventViewState.ShowError -> showErrorText(state.errorMessage)
                 is EventViewState.ShowEventList -> {
                     adapter.setEventItem(state.eventList.toMutableList())
                 }
@@ -57,27 +59,27 @@ class HomeFragment : Fragment() {
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
                 EventViewState.NavigateToIntroScreen -> {
                     // TODO: we need to find a better way to handle this
-                    if (R.id.verificationFragment != findNavController().currentDestination?.id &&
-                        R.id.newPasswordInputFragment != findNavController().currentDestination?.id) {
+                    if (com.gathering.android.R.id.verificationFragment != findNavController().currentDestination?.id &&
+                        R.id.newPasswordInputFragment != findNavController().currentDestination?.id
+                    ) {
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)
                     }
                 }
+
+                is EventViewState.UpdateEvent -> {
+                   adapter.updateEvent(state.event)
+                }
             }
         }
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.rvEvent.adapter = adapter
-        binding.rvEvent.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-        viewModel.onViewCreated()
 
+        adapter.setOnEventClickListener {
+            viewModel.onEventItemClicked(it)
+        }
+
+        adapter.setOnFavoriteImageClick { event ->
+            viewModel.onEventLikeClicked(event)
+        }
 
         binding.sortButton.setOnClickListener {
             val dialog = SortDialogFragment(viewModel)
@@ -88,13 +90,7 @@ class HomeFragment : Fragment() {
             val dialog = FilterDialogFragment(viewModel)
             dialog.show(parentFragmentManager, TAG)
         }
-    }
 
-    private fun showToast(text: String) {
-        Toast.makeText(
-            requireContext(),
-            text,
-            Toast.LENGTH_LONG
-        ).show()
+        viewModel.onViewCreated()
     }
 }

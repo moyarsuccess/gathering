@@ -1,6 +1,7 @@
 package com.gathering.android.event.model.repo
 
 import com.gathering.android.common.BODY_WAS_NULL
+import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserRepo
@@ -77,5 +78,28 @@ class ApiEventRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+    }
+
+    override fun likeEvent(
+        eventId: Long,
+        like: Boolean,
+        onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+    ) {
+        eventRemoteService.likeEvent(eventId, like).enqueue(object : Callback<GeneralApiResponse> {
+            override fun onResponse(
+                call: Call<GeneralApiResponse>,
+                response: Response<GeneralApiResponse>
+            ) {
+                if (!response.isSuccessful) {
+                    onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
+                    return
+                }
+                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
+            }
+
+            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
+                onResponseReady(ResponseState.Failure(t))
+            }
+        })
     }
 }

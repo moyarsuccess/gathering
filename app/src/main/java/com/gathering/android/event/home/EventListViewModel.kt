@@ -70,6 +70,22 @@ class EventListViewModel @Inject constructor(
         _viewState.setValue(EventViewState.NavigateToEventDetail(event))
     }
 
+    fun onEventLikeClicked(event: Event) {
+        val liked = !event.liked
+        val eventId = event.eventId
+        eventRepository.likeEvent(eventId, liked) { request ->
+            when (request) {
+                is ResponseState.Failure -> {
+                    _viewState.setValue(EventViewState.ShowError(LIKE_EVENT_REQUEST_FAILED))
+                }
+
+                is ResponseState.Success -> {
+                    _viewState.setValue(EventViewState.UpdateEvent(event.copy(liked = !event.liked)))
+                }
+            }
+        }
+    }
+
     @Suppress("UNCHECK_CAST")
     private fun getRefinedEventList(
         filter: Filter,
@@ -108,6 +124,10 @@ class EventListViewModel @Inject constructor(
 
     private fun hideProgress() {
         _viewState.setValue(EventViewState.HideProgress)
+    }
+
+    companion object {
+        private const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
     }
 }
 
