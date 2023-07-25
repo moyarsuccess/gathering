@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.FrgEventDetailBinding
+import com.gathering.android.event.EVENT
 import com.gathering.android.event.Event
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,9 +38,9 @@ class EventDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable("event", Event::class.java)
+            arguments?.getSerializable(EVENT, Event::class.java)
         } else {
-            arguments?.getSerializable("event") as Event
+            arguments?.getSerializable(EVENT) as Event
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->

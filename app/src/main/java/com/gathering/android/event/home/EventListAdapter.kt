@@ -1,6 +1,5 @@
-package com.gathering.android.event.home.view
+package com.gathering.android.event.home
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -24,11 +23,16 @@ class EventListAdapter @Inject constructor(
     private var onFavoriteImageClickListener: (event: Event) -> Unit = {}
     private val li = LayoutInflater.from(context)
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setEventItem(eventItemList: MutableList<Event>) {
+    fun setEventItem(eventItemList: List<Event>) {
         this.eventItemList.clear()
         this.eventItemList.addAll(eventItemList)
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, eventItemList.size)
+    }
+
+    fun appendEventItems(eventItemList: List<Event>) {
+        val startPosition = this.eventItemList.size
+        this.eventItemList.addAll(eventItemList)
+        notifyItemRangeInserted(startPosition, this.eventItemList.size)
     }
 
     fun setOnEventClickListener(onEventClicked: (event: Event) -> Unit) {

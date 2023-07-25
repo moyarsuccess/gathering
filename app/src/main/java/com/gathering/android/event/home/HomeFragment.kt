@@ -1,4 +1,4 @@
-package com.gathering.android.event.home.view
+package com.gathering.android.event.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,14 +8,15 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgHomeBinding
-import com.gathering.android.event.home.EventListViewModel
-import com.gathering.android.event.home.view.FilterDialogFragment.Companion.TAG
-import com.gathering.android.event.home.viewmodel.EventViewState
+import com.gathering.android.event.EVENT
+import com.gathering.android.event.home.FilterDialogFragment.Companion.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -37,14 +38,22 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val linearLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvEvent.layoutManager = linearLayoutManager
         binding.rvEvent.adapter = adapter
+
+        binding.rvEvent.addOnScrollListener(EndlessScrollListener {
+            viewModel.onLastItemReached()
+        })
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 EventViewState.HideNoData -> binding.tvNoData.isVisible = false
                 EventViewState.HideProgress -> binding.prg.isVisible = false
                 is EventViewState.NavigateToEventDetail -> {
-                    val bundle = bundleOf("event" to state.event)
+                    val bundle = bundleOf(EVENT to state.event)
                     findNavController().navigate(
                         R.id.action_navigation_home_to_eventDetailFragment, bundle
                     )
@@ -53,6 +62,10 @@ class HomeFragment : Fragment() {
                 is EventViewState.ShowError -> showErrorText(state.errorMessage)
                 is EventViewState.ShowEventList -> {
                     adapter.setEventItem(state.eventList.toMutableList())
+                }
+
+                is EventViewState.AppendEventList -> {
+                    adapter.appendEventItems(state.eventList.toMutableList())
                 }
 
                 EventViewState.ShowNoData -> binding.tvNoData.isVisible = true
@@ -67,7 +80,7 @@ class HomeFragment : Fragment() {
                 }
 
                 is EventViewState.UpdateEvent -> {
-                   adapter.updateEvent(state.event)
+                    adapter.updateEvent(state.event)
                 }
             }
         }

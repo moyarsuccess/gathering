@@ -1,10 +1,12 @@
-package com.gathering.android.event.home.viewmodel
+package com.gathering.android.event.home
 
 import com.gathering.android.event.Event
 
 sealed interface EventViewState {
 
     class ShowEventList(val eventList: List<Event>) : EventViewState
+
+    class AppendEventList(val eventList: List<Event>) : EventViewState
 
     class NavigateToEventDetail(val event: Event) : EventViewState
 

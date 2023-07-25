@@ -1,7 +1,6 @@
 package com.gathering.android.di
 
 import android.content.Context
-import com.gathering.android.common.UserRepo
 import com.gathering.android.event.model.repo.ApiEventRepository
 import com.gathering.android.event.model.repo.EventRemoteService
 import com.gathering.android.event.model.repo.EventRepository
@@ -24,9 +23,8 @@ class EventModule {
     @Singleton
     fun provideEventRepository(
         eventRemoteService: EventRemoteService,
-        userRepo: UserRepo
     ): EventRepository {
-        return ApiEventRepository(eventRemoteService, userRepo)
+        return ApiEventRepository(eventRemoteService)
     }
 
     @Provides

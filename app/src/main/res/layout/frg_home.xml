@@ -50,8 +50,7 @@
         android:id="@+id/rvEvent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/btn_height"
-        app:layoutManager="LinearLayoutManager" />
+        android:paddingTop="@dimen/btn_height" />
 
     <ProgressBar
         android:id="@+id/prg"
