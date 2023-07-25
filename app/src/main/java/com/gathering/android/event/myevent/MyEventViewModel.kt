@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
-import com.gathering.android.event.home.EventListViewModel
-import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.model.repo.EventRepository
 import com.gathering.android.event.toEvent

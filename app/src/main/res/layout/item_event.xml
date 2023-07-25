@@ -7,14 +7,14 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/cardView_margin"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/imageView_height"
                 android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@id/guideline_65"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -41,6 +42,7 @@
                 android:text="@string/event_title"
                 android:textSize="@dimen/tv_text_size_medium"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/guideline_65"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/img_event" />
 
@@ -52,6 +54,7 @@
                 android:padding="@dimen/tv_padding"
                 android:text="@string/event_host"
                 android:textSize="@dimen/tv_text_size_small"
+                app:layout_constraintEnd_toStartOf="@id/guideline_65"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_event_title" />
 
@@ -63,17 +66,34 @@
                 android:padding="@dimen/tv_padding"
                 android:text="@string/event_description"
                 android:textSize="@dimen/tv_text_size_small"
+                app:layout_constraintEnd_toStartOf="@id/guideline_65"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_event_host" />
 
             <ImageView
                 android:id="@+id/img_favorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="30dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="32dp"
                 android:src="@drawable/ic_unliked"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline_80" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_65"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.65" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_80"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.80" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

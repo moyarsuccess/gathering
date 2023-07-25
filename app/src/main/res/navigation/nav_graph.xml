@@ -46,7 +46,7 @@
     </dialog>
     <fragment
         android:id="@+id/navigation_homeFragment"
-        android:name="com.gathering.android.event.home.view.HomeFragment"
+        android:name="com.gathering.android.event.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/frg_home">
         <action

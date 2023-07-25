@@ -1,6 +1,5 @@
 package com.gathering.android.event.home
 
-
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -8,9 +7,6 @@ import com.gathering.android.auth.verification.repo.VerificationRepository
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
-import com.gathering.android.event.home.view.Filter
-import com.gathering.android.event.home.view.SortType
-import com.gathering.android.event.home.viewmodel.EventViewState
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.model.repo.EventRepository
 import com.gathering.android.event.toEvent
@@ -32,38 +28,71 @@ class EventListViewModel @Inject constructor(
         if (!verificationRepository.isUserVerified()) {
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {
-            loadEventList(lastFilter, lastSortType)
+            loadFirstPage()
         }
     }
 
+    private fun loadFirstPage() {
+        eventRepository.getFirstPage { request ->
+            when (request) {
+                is ResponseState.Failure -> {
+                    _viewState.setValue(EventViewState.HideProgress)
+                    _viewState.setValue(EventViewState.ShowNoData)
+                }
+
+                is ResponseState.Success<List<EventModel>> -> {
+                    val filteredList = request.data.applySortAndFilter()
+                    if (filteredList.isEmpty()) {
+                        _viewState.setValue(EventViewState.HideProgress)
+                        return@getFirstPage
+                    }
+                    _viewState.setValue(EventViewState.HideProgress)
+                    _viewState.setValue(EventViewState.ShowEventList(filteredList.map { it.toEvent() }))
+                }
+            }
+        }
+    }
+
+    fun onLastItemReached() {
+        eventRepository.getNextPage { request ->
+            when (request) {
+                is ResponseState.Failure -> {
+                    _viewState.setValue(EventViewState.HideProgress)
+                }
+
+                is ResponseState.Success<List<EventModel>> -> {
+                    val filteredList = request.data.applySortAndFilter()
+                    if (filteredList.isEmpty()) {
+                        _viewState.setValue(EventViewState.HideProgress)
+                        return@getNextPage
+                    }
+                    _viewState.setValue(EventViewState.AppendEventList(filteredList.map { it.toEvent() }))
+                }
+            }
+        }
+    }
+
+    private fun List<EventModel>.applySortAndFilter(): List<EventModel> {
+        return filter { event ->
+            if (!lastFilter.isContactsFilterOn) true
+            else !event.isMyEvent
+        }.filter { event ->
+            if (!lastFilter.isMyEventsFilterOn) true
+            else event.isMyEvent
+        }.filter { event ->
+            if (!lastFilter.isTodayFilterOn) true
+            else DateUtils.isToday(event.dateTime ?: 0)
+        }.sortedWith(lastSortType.getProperComparator())
+    }
+
     fun onSortChanged(sortType: SortType) {
-        loadEventList(sortType = sortType, filter = lastFilter)
+//        loadEventList(sortType = sortType, filter = lastFilter)
         lastSortType = sortType
     }
 
     fun onFilterChanged(filter: Filter) {
-        loadEventList(filter = filter, lastSortType)
+//        loadEventList(filter = filter, lastSortType)
         lastFilter = filter
-    }
-
-    private fun loadEventList(
-        filter: Filter,
-        sortType: SortType
-    ) {
-        _viewState.setValue(EventViewState.ShowProgress)
-        getRefinedEventList(
-            filter, sortType
-        ) {
-            _viewState.setValue(EventViewState.ShowEventList(it))
-
-            if (it.isEmpty()) {
-                _viewState.setValue(EventViewState.ShowNoData)
-            } else {
-                _viewState.setValue(EventViewState.HideNoData)
-            }
-
-            _viewState.setValue(EventViewState.HideProgress)
-        }
     }
 
     fun onEventItemClicked(event: Event) {
@@ -86,44 +115,11 @@ class EventListViewModel @Inject constructor(
         }
     }
 
-    @Suppress("UNCHECK_CAST")
-    private fun getRefinedEventList(
-        filter: Filter,
-        sortType: SortType,
-        onFilteredEventsReady: (eventList: List<Event>) -> Unit
-    ) {
-        eventRepository.getAllEvents { request ->
-            when (request) {
-                is ResponseState.Failure -> hideProgress()
-                is ResponseState.Success<List<EventModel>> -> {
-                    val filteredList = request.data
-                        .filter { event ->
-                            if (!filter.isContactsFilterOn) true
-                            else !event.isMyEvent
-                        }.filter { event ->
-                            if (!filter.isMyEventsFilterOn) true
-                            else event.isMyEvent
-                        }.filter { event ->
-                            if (!filter.isTodayFilterOn) true
-                            else DateUtils.isToday(event.dateTime ?: 0)
-                        }.sortedWith(sortType.getProperComparator())
-
-                    onFilteredEventsReady(filteredList.map { it.toEvent() })
-                }
-
-            }
-        }
-    }
-
     private fun SortType.getProperComparator(): Comparator<EventModel> {
         return when (this) {
             SortType.SORT_BY_LOCATION -> eventLocationComparator
             SortType.SORT_BY_DATE -> eventDateComparator
         }
-    }
-
-    private fun hideProgress() {
-        _viewState.setValue(EventViewState.HideProgress)
     }
 
     companion object {
