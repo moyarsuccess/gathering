@@ -31,8 +31,9 @@
     <string name="filter_by">Filter by</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
-    <string name="accept">I\'m in</string>
-    <string name="decline">I\'m out</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="maybe">maybe</string>
     <string name="date">Date</string>
     <string name="address">Address</string>
     <string name="location">Location</string>
@@ -87,6 +88,8 @@
     <string name="check_spam">check your spam folder.</string>
     <string name="back_to_sign_in_page">Back to Sign In page</string>
     <string name="tv_reset_pass">You have successfully Reset your Password.</string>
+    <string name="attendees_count">0</string>
+
     <string name="add_attendee">Add Attendee</string>
     <string name="when_does_it_start">when does it start?</string>
     <string name="when_does_it_take_place">when does it take place?</string>

@@ -71,38 +71,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_event_address" />
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/tvAttendeesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_margin_start"
+        android:layout_marginTop="@dimen/tv_margin_top"
+        android:text="@string/attendees_count"
+        android:textSize="@dimen/tv_text_size_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_event_date" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_event_date">
 
-        <Button
-            android:id="@+id/btn_accept_event"
-            style="@style/buttonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/btn_margin_start"
-            android:layout_marginTop="@dimen/btn_margin_top"
-            android:background="@drawable/custom_button"
-            android:padding="@dimen/btn_padding"
-            android:text="@string/accept"
-            app:layout_constraintBottom_toBottomOf="parent" />
 
         <Button
-            android:id="@+id/btn_decline_event"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/btn_yes"
+            android:text="@string/yes"
             style="@style/buttonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/btn_margin_start"
-            android:layout_marginTop="@dimen/btn_margin_top"
-            android:layout_toEndOf="@+id/btn_accept_event"
             android:background="@drawable/custom_button"
-            android:padding="@dimen/btn_padding"
-            android:text="@string/decline"
-            app:layout_constraintBottom_toBottomOf="parent" />
-    </RelativeLayout>
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/btn_no"
+            android:text="@string/no"
+            style="@style/buttonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button"
+            app:layout_constraintStart_toEndOf="@id/btn_yes" />
+
+        <Button
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/btn_maybe"
+            style="@style/buttonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button"
+            android:text="@string/maybe"
+            app:layout_constraintStart_toEndOf="@id/btn_no"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

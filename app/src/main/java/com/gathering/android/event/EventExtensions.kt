@@ -15,7 +15,7 @@ fun EventModel.toEvent(): Event {
         dateAndTime = this.dateTime ?: 0,
         isContactEvent = false,
         isMyEvent = true,
-        attendees = this.attendees.map { it.email ?: "" },
+        attendees = this.attendees,
         liked = this.liked,
     )
 }

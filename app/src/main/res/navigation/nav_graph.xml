@@ -91,6 +91,9 @@
         <argument
             android:name="Event"
             app:argType="com.gathering.android.event.Event" />
+        <action
+            android:id="@+id/action_eventDetailFragment_to_attendeesDetailBottomSheet"
+            app:destination="@id/attendeesDetailBottomSheet" />
     </fragment>
     <dialog
         android:id="@+id/putEventBottomSheetFragment"
@@ -194,4 +197,9 @@
             app:destination="@id/navigation_homeFragment" />
 
     </dialog>
+    <dialog
+        android:id="@+id/attendeesDetailBottomSheet"
+        android:name="com.gathering.android.event.eventdetail.AttendeesDetailBottomSheet"
+        android:label="attendeesDetailBottomSheet"
+        tools:layout="@layout/bottom_sheet_attendees_detail" />
 </navigation>

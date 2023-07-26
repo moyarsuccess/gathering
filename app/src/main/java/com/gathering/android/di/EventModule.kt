@@ -1,6 +1,10 @@
 package com.gathering.android.di
 
 import android.content.Context
+import com.gathering.android.common.UserRepo
+import com.gathering.android.event.AcceptTypeRemoteService
+import com.gathering.android.event.AcceptTypeRepository
+import com.gathering.android.event.ApiAcceptTypeRepository
 import com.gathering.android.event.model.repo.ApiEventRepository
 import com.gathering.android.event.model.repo.EventRemoteService
 import com.gathering.android.event.model.repo.EventRepository
@@ -50,5 +54,20 @@ class EventModule {
         @AuthorizedRetrofitQualifier retrofit: Retrofit
     ): PutEventRemoteService {
         return retrofit.create(PutEventRemoteService::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideAcceptTypeRemoteService(
+        @AuthorizedRetrofitQualifier retrofit: Retrofit
+    ): AcceptTypeRemoteService {
+        return retrofit.create(AcceptTypeRemoteService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAcceptTypeRepository(
+        acceptTypeRemoteService: AcceptTypeRemoteService
+    ): AcceptTypeRepository {
+        return ApiAcceptTypeRepository(acceptTypeRemoteService)
     }
 }

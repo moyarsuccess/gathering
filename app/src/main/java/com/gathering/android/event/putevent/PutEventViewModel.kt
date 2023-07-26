@@ -7,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.SEPARATOR
 import com.gathering.android.event.Event
+import com.gathering.android.event.model.Attendee
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.putevent.repo.PutEventModel
 import com.gathering.android.event.putevent.repo.PutEventRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -44,7 +44,7 @@ class PutEventViewModel @Inject constructor(
         val minute: Int = 0,
         val lat: Double? = null,
         val lon: Double? = null,
-        val eventAttendees: List<String>? = null,
+        val eventAttendees: List<Attendee>? = null,
         val actionButtonText: String? = null,
         val actionButtonEnable: Boolean? = false,
         val stateMode: StateMode = StateMode.ADD,
@@ -221,10 +221,10 @@ class PutEventViewModel @Inject constructor(
         )
     }
 
-    fun onNewAttendeeListSelected(attendees: List<String>) {
+    fun onNewAttendeeListSelected(attendeesEmails: List<String>) {
         update { currentState ->
             currentState.copy(
-                eventAttendees = attendees,
+                eventAttendees = attendeesEmails.map { attendeeEmail -> Attendee(email = attendeeEmail) },
             )
         }
     }
@@ -297,7 +297,7 @@ class PutEventViewModel @Inject constructor(
             lat = eventLocation.lat ?: 0.0,
             lon = eventLocation.lon ?: 0.0,
             dateAndTime = viewModelState.value.getDate(),
-            attendees = viewModelState.value.eventAttendees ?: listOf()
+            attendees = viewModelState.value.eventAttendees?.map { it.email ?: "" } ?: emptyList()
         )
     }
 
@@ -355,8 +355,8 @@ class PutEventViewModel @Inject constructor(
             return get(Calendar.MINUTE)
         }
 
-        private fun List<String>?.toCommaSeparatedString(): String {
-            return this?.joinToString(SEPARATOR) { it } ?: ""
+        private fun List<Attendee>?.toCommaSeparatedString(): String {
+            return this?.joinToString(SEPARATOR) { it.email ?: "" } ?: ""
         }
     }
 }

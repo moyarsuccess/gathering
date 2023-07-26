@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgEventDetailBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
@@ -36,7 +38,6 @@ class EventDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable(KEY_ARGUMENT_EVENT, Event::class.java)
         } else {
@@ -45,28 +46,49 @@ class EventDetailFragment : Fragment() {
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is EventDetailViewState.ShowError -> showToast(state.errorMessage)
+                is EventDetailViewState.ShowError -> showErrorText(state.errorMessage)
                 is EventDetailViewState.ShowEventDetail -> {
                     imageLoader.loadImage(state.event.photoUrl, binding.imgEvent)
                     binding.tvEventTitle.text = state.event.eventName
-                    binding.tvEventHost.text = state.event.eventHostEmail?.toString()
+                    binding.tvEventHost.text = state.event.eventHostEmail
                     binding.tvEventDescription.text = state.event.description
                     binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
                     binding.tvEventDate.text = state.event.dateAndTime.toString()
+                    binding.tvAttendeesCount.text = state.event.attendeesCount.toString()
+                }
+                EventDetailViewState.NavigateToAttendeesDetailBottomSheet -> {
+                    findNavController().navigate(
+                        R.id.action_eventDetailFragment_to_attendeesDetailBottomSheet
+                    )
+                }
+                EventDetailViewState.MaybeSelected -> {
+                    TODO()
+                }
+                EventDetailViewState.NoSelected -> {
+                    TODO()
+                }
+                EventDetailViewState.YesSelected -> {
+                    TODO()
                 }
             }
         }
 
-        event?.also { event ->
+        event?.let { event ->
             viewModel.onViewCreated(event)
         }
-    }
+        binding.btnYes.setOnClickListener {
+            val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
+            viewModel.onYesButtonClicked(currentUserId)
+        }
 
-    private fun showToast(text: String) {
-        Toast.makeText(
-            requireContext(),
-            text,
-            Toast.LENGTH_LONG
-        ).show()
+        binding.btnNo.setOnClickListener {
+            val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
+            viewModel.onNoButtonClicked(currentUserId)
+        }
+
+        binding.btnMaybe.setOnClickListener {
+            val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
+            viewModel.onMaybeButtonClicked(currentUserId)
+        }
     }
 }
