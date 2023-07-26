@@ -4,6 +4,7 @@ import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
+import com.gathering.android.event.model.Attendees
 import com.gathering.android.event.model.EventModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +35,14 @@ class ApiEventRepository @Inject constructor(
     override fun getMyEvents(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
         eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = 1)
             .enqueue(handleGetEventResponse(onResponseReady))
+    }
+
+    override fun getFirstFavoriteEvent(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
+        onResponseReady(ResponseState.Success(provideMockData()))
+    }
+
+    override fun getNextFavoriteEvent(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
+        onResponseReady(ResponseState.Success(provideMockData()))
     }
 
     override fun likeEvent(
@@ -85,6 +94,28 @@ class ApiEventRepository @Inject constructor(
                 onResponseReady(ResponseState.Failure(t))
             }
         }
+
+    private fun provideMockData(): List<EventModel> {
+        val attendee1 = Attendees(
+            id = "1",
+            email = "animansoubi@gmail.com",
+            displayName = "animan",
+            imageName = "268e332c-517b-4ff2-8eb8-4ab1ea2343f8.jpg",
+        )
+        val event1 = EventModel(
+            id = 7,
+            eventName = "Test1",
+            eventHostEmail = "animansoubi@gmail.com",
+            eventDescription = "This is my test1 event",
+            photoName = "cc3ba2c0-725a-4b96-a78b-7465ccfdaafe.jpg",
+            latitude = 43.6585076,
+            longitude = -79.3822429,
+            dateTime = 1690538340342,
+            attendees = arrayListOf(attendee1),
+            liked = false
+        )
+        return listOf(event1)
+    }
 
     companion object {
         const val PAGE_SIZE = 5

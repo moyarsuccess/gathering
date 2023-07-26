@@ -11,6 +11,8 @@ interface EventRepository {
 
     fun getMyEvents(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit)
 
+    fun getFirstFavoriteEvent(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit)
+    fun getNextFavoriteEvent(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit)
     fun likeEvent(
         eventId: Long,
         like: Boolean,

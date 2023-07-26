@@ -1,6 +1,7 @@
 package com.gathering.android.event.home
 
 import android.text.format.DateUtils
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.auth.verification.repo.VerificationRepository
@@ -25,6 +26,7 @@ class EventListViewModel @Inject constructor(
     private var lastSortType = SortType.SORT_BY_DATE
     private var lastFilter = Filter()
     fun onViewCreated() {
+        Log.d("WTF","onViewCreated")
         if (!verificationRepository.isUserVerified()) {
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {

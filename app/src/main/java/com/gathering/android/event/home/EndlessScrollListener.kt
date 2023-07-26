@@ -3,7 +3,7 @@ package com.gathering.android.event.home
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-internal class EndlessScrollListener(
+class EndlessScrollListener(
     private val onLastItemReached: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
