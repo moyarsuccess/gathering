@@ -18,5 +18,8 @@ sealed interface MyEventViewState {
     object ShowNoData : MyEventViewState
 
     object HideNoData : MyEventViewState
+
+    object NavigateToEditMYEvent : MyEventViewState
+
 }
 

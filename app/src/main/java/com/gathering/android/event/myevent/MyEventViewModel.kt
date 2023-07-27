@@ -18,6 +18,8 @@ class MyEventViewModel @Inject constructor(
     private val _viewState = ActiveMutableLiveData<MyEventViewState>()
     val viewState: MutableLiveData<MyEventViewState> by ::_viewState
 
+    private var deletedEvent: Event? = null
+
     fun onViewCreated() {
         _viewState.setValue(MyEventViewState.ShowProgress)
         eventRepository.getMyEvents { request ->
@@ -74,7 +76,34 @@ class MyEventViewModel @Inject constructor(
         _viewState.setValue(MyEventViewState.NavigateToAddEvent)
     }
 
+    fun onDeleteEvent(event: Event) {
+        eventRepository.deleteEvent(event.eventId) { request ->
+            when (request) {
+                is ResponseState.Failure -> {
+                    _viewState.setValue(MyEventViewState.ShowError(DELETE_EVENT_REQUEST_FAILED))
+                }
+                is ResponseState.Success -> {
+                    deletedEvent = event
+                    _viewState.setValue(MyEventViewState.UpdateEvent(event))
+                }
+            }
+        }
+    }
+
+    fun onUndoDeleteEvent() {
+        deletedEvent?.let { event ->
+            _viewState.setValue(MyEventViewState.UpdateEvent(event))
+            deletedEvent = null
+        }
+    }
+
+    fun onEditEvent(it: Event) {
+        // this is just for sake of being able to see something when swiped right to edit.
+        _viewState.setValue(MyEventViewState.NavigateToEditMYEvent)
+    }
+
     companion object {
         const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
+        const val DELETE_EVENT_REQUEST_FAILED = "DELETE_EVENT_REQUEST_FAILED"
     }
 }

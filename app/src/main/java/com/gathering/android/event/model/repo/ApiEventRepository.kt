@@ -4,6 +4,7 @@ import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
+import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,8 +44,7 @@ class ApiEventRepository @Inject constructor(
     ) {
         eventRemoteService.likeEvent(eventId, like).enqueue(object : Callback<GeneralApiResponse> {
             override fun onResponse(
-                call: Call<GeneralApiResponse>,
-                response: Response<GeneralApiResponse>
+                call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
             ) {
                 if (!response.isSuccessful) {
                     onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
@@ -59,11 +59,37 @@ class ApiEventRepository @Inject constructor(
         })
     }
 
+    override fun deleteEvent(
+        eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+    ) {
+        eventRemoteService.deleteEvent(eventId).enqueue(object : Callback<GeneralApiResponse> {
+            override fun onResponse(
+                call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
+            ) {
+                if (!response.isSuccessful) {
+                    onResponseReady(ResponseState.Success("Event deleted successfully"))
+                    return
+                }
+                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
+            }
+
+            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
+                onResponseReady(ResponseState.Failure(t))
+            }
+        })
+    }
+
+    override fun editEvent(
+        event: Event,
+        onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
     private fun handleGetEventResponse(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) =
         object : Callback<List<EventModel>> {
             override fun onResponse(
-                call: Call<List<EventModel>>,
-                response: Response<List<EventModel>>
+                call: Call<List<EventModel>>, response: Response<List<EventModel>>
             ) {
                 if (!response.isSuccessful) {
                     onResponseReady(

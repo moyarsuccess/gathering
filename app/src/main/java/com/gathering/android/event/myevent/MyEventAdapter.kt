@@ -23,7 +23,14 @@ class MyEventAdapter @Inject constructor(
     private var onFavoriteImageClickListener: (event: Event) -> Unit = {}
     private var onMyEventClicked: (event: Event) -> Unit = {}
     private val li = LayoutInflater.from(context)
+    private var onEditClickListener: (event: Event) -> Unit = {}
 
+    fun getEventAtPosition(position: Int): Event? {
+        if (position in 0 until myEventItemList.size) {
+            return myEventItemList[position]
+        }
+        return null
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setEventItem(myEventItemList: MutableList<Event>) {
@@ -43,10 +50,9 @@ class MyEventAdapter @Inject constructor(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val itemBinding = ItemEventBinding.inflate(li, parent, false)
         return ViewHolder(
-            ItemEventBinding.inflate(li),
-            onMyEventClicked,
-            onFavoriteImageClickListener
+            itemBinding, onMyEventClicked, onFavoriteImageClickListener, onEditClickListener
         )
     }
 
@@ -56,10 +62,19 @@ class MyEventAdapter @Inject constructor(
         return holder.bind(myEventItemList[position])
     }
 
+    fun deleteEvent(event: Event) {
+        val position = myEventItemList.indexOfFirst { it.eventId == event.eventId }
+        if (position != -1) {
+            myEventItemList.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
     inner class ViewHolder(
         private val itemBinding: ItemEventBinding,
         private val onMyEventEventClickListener: (event: Event) -> Unit,
         private val onFavoriteImageClickListener: (event: Event) -> Unit,
+        private val onEditClickListener: (event: Event) -> Unit
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(event: Event) {
@@ -76,6 +91,12 @@ class MyEventAdapter @Inject constructor(
             }
             val resId = if (event.liked) R.drawable.ic_liked else R.drawable.ic_unliked
             itemBinding.imgFavorite.setImageResource(resId)
+
+            // Set the click listener for the edit action
+            itemBinding.cardView.setOnLongClickListener {
+                onEditClickListener(event)
+                true
+            }
         }
     }
 }

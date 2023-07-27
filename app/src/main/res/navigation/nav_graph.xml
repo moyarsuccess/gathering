@@ -67,6 +67,10 @@
         <action
             android:id="@+id/action_navigation_event_to_addEventBottomSheetFragment"
             app:destination="@id/addEventBottomSheetFragment" />
+        <action
+            android:id="@+id/action_navigation_event_to_editMyEventBottomSheet"
+            app:destination="@id/editMyEventBottomSheet" />
+
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -194,4 +198,10 @@
             app:destination="@id/navigation_homeFragment" />
 
     </dialog>
+
+    <dialog
+        android:id="@+id/editMyEventBottomSheet"
+        android:name="com.gathering.android.event.myevent.editMyEvent.EditMyEventBottomSheet"
+        android:label="editMyEventBottomSheet"
+        tools:layout="@layout/bottom_sheet_edit_my_event"></dialog>
 </navigation>
