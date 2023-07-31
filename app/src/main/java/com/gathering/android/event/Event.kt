@@ -1,5 +1,6 @@
 package com.gathering.android.event
 
+import com.gathering.android.event.model.Attendees
 import com.gathering.android.event.model.EventLocation
 import com.google.gson.Gson
 import java.io.Serializable

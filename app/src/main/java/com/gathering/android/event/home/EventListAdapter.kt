@@ -1,18 +1,20 @@
 package com.gathering.android.event.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.ItemEventBinding
 import com.gathering.android.event.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
-@ActivityScoped
+@FragmentScoped
 class EventListAdapter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val imageLoader: ImageLoader,
@@ -23,10 +25,19 @@ class EventListAdapter @Inject constructor(
     private var onFavoriteImageClickListener: (event: Event) -> Unit = {}
     private val li = LayoutInflater.from(context)
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setEventItem(eventItemList: List<Event>) {
         this.eventItemList.clear()
         this.eventItemList.addAll(eventItemList)
-        notifyItemRangeInserted(0, eventItemList.size)
+        notifyDataSetChanged()
+    }
+
+    fun setEventItem2(eventItemList: List<Event>) {
+        val diffCallback = EventDiffCallback(eventItemList, this.eventItemList)
+        val diffCourses = DiffUtil.calculateDiff(diffCallback)
+        this.eventItemList.clear()
+        this.eventItemList.addAll(eventItemList)
+        diffCourses.dispatchUpdatesTo(this)
     }
 
     fun appendEventItems(eventItemList: List<Event>) {
@@ -83,6 +94,39 @@ class EventListAdapter @Inject constructor(
             }
             val resId = if (event.liked) R.drawable.ic_liked else R.drawable.ic_unliked
             itemBinding.imgFavorite.setImageResource(resId)
+        }
+    }
+
+
+    class EventDiffCallback(private val oldList: List<Event>, private val newList: List<Event>) :
+        DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].eventId == newList[newItemPosition].eventId
+        }
+
+        override fun areContentsTheSame(oldCourse: Int, newPosition: Int): Boolean {
+            val old = oldList[oldCourse]
+            val new = newList[newPosition]
+            return old.isContentTheSame(new)
+        }
+
+        private fun Event.isContentTheSame(other: Event): Boolean {
+            if (other.eventId != eventId) return false
+            if (other.eventName != eventName) return false
+            if (other.eventHostEmail != eventHostEmail) return false
+            if (other.description != description) return false
+            if (other.photoUrl != photoUrl) return false
+            if (other.location != location) return false
+            if (other.dateAndTime != dateAndTime) return false
+            if (other.isContactEvent != isContactEvent) return false
+            if (other.isMyEvent != isMyEvent) return false
+            if (other.eventCost != eventCost) return false
+            if (other.liked != liked) return false
+            if (other.attendees.size != attendees.size) return false
+            return true
         }
     }
 }
