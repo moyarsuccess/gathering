@@ -19,7 +19,7 @@ import com.gathering.android.common.SEPARATOR
 import com.gathering.android.common.SOMETHING_WRONG
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.setNavigationResult
-import com.gathering.android.databinding.BottomSheetAddEventBinding
+import com.gathering.android.databinding.BottomSheetEditMyEventBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
@@ -34,7 +34,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
-    lateinit var binding: BottomSheetAddEventBinding
+    lateinit var binding: BottomSheetEditMyEventBinding
 
     @Inject
     lateinit var geocoder: Geocoder
@@ -56,7 +56,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetAddEventBinding.inflate(LayoutInflater.from(requireContext()))
+        binding = BottomSheetEditMyEventBinding.inflate(LayoutInflater.from(requireContext()))
         return binding.root
     }
 
@@ -102,10 +102,10 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                         .split(",")
                         .count()
                         .toString()
-                    binding.tvAttendees.text = getString(
+                    binding.etAttendees.setText(getString(
                         R.string.attendees_count_hint_text,
                         attendeeNum
-                    )
+                    ))
 
                 }
 
@@ -125,19 +125,19 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onImageButtonClicked()
         }
 
-        binding.btnDate.setOnClickListener {
+        binding.etDate.setOnClickListener {
             viewModel.onDateButtonClicked()
         }
 
-        binding.btnTime.setOnClickListener {
+        binding.etTime.setOnClickListener {
             viewModel.onTimeButtonClicked()
         }
 
-        binding.btnLocation.setOnClickListener {
+        binding.tvLocation.setOnClickListener {
             viewModel.onLocationButtonClicked()
         }
 
-        binding.btnInvitation.setOnClickListener {
+        binding.etAttendees.setOnClickListener {
             viewModel.onInvitationButtonClicked()
         }
 
@@ -154,11 +154,11 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.onDescriptionChanged(text.toString())
         }
 
-        binding.tvDate.doOnTextChanged { text, _, _, _ ->
+        binding.etDate.doOnTextChanged { text, _, _, _ ->
             viewModel.onDateChanged(text.toString())
         }
 
-        binding.tvTime.doOnTextChanged { text, _, _, _ ->
+        binding.etTime.doOnTextChanged { text, _, _, _ ->
             viewModel.onTimeChanged(text.toString())
         }
 
@@ -227,7 +227,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             requireContext(),
             { _, selectedHour, selectedMinute ->
                 val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                binding.tvTime.text = selectedTime
+                binding.etTime.setText(selectedTime)
                 calender.set(Calendar.HOUR_OF_DAY, selectedHour)
                 calender.set(Calendar.MINUTE, selectedMinute)
             },
@@ -248,7 +248,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-                binding.tvDate.text = selectedDate
+                binding.etDate.setText(selectedDate)
                 calender.set(Calendar.YEAR, selectedYear)
                 calender.set(Calendar.MONTH, selectedMonth)
                 calender.set(Calendar.DAY_OF_MONTH, selectedDay)
