@@ -1,19 +1,35 @@
 package com.gathering.android.event.myevent.addevent
 
-import androidx.lifecycle.LiveData
+import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
-import com.gathering.android.common.ActiveMutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
+import com.gathering.android.event.model.Attendees
 import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
+import com.gathering.android.event.toAttendeesString
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class PutEventViewModel @Inject constructor(
     private val eventRepository: AddEventRepository
 ) : ViewModel() {
 
-    private val _viewState = ActiveMutableLiveData<PutEventViewState>()
-    val viewState: LiveData<PutEventViewState> by ::_viewState
+    private val viewState: MutableStateFlow<PutEventViewState> =
+        MutableStateFlow(PutEventViewState.NotReadyToAction())
+    val uiState: Flow<PutEventUiState> = viewState.map(PutEventViewState::toUiState).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = PutEventUiState()
+    )
 
     private var isImageFilled: Boolean = false
     private var isEventNameFilled: Boolean = false
@@ -25,50 +41,138 @@ class PutEventViewModel @Inject constructor(
 
     private val attendeesEmailList = mutableListOf<String>()
 
-    fun onViewCreated() {
-        _viewState.setValue(PutEventViewState.PutEventButtonVisibility(false))
-    }
+    fun onViewCreated(event: Event?) {
+        viewState.update {
+            if (event == null) {
+                PutEventViewState.NotReadyToAction()
+            } else {
+                val cal = Calendar.getInstance()
+                cal.time = Date(event.dateAndTime)
+                PutEventViewState.ReadyToAction(
+                    id = event.eventId,
+                    name = event.eventName,
+                    description = event.description,
+                    phonePhotoUrl = null,
+                    networkPhotoUrl = event.photoUrl,
+                    address = event.location.addressLine ?: "",
+                    year = cal.get(Calendar.YEAR),
+                    month = cal.get(Calendar.MONTH),
+                    day = cal.get(Calendar.DAY_OF_MONTH),
+                    hour = cal.get(Calendar.HOUR_OF_DAY),
+                    minute = cal.get(Calendar.MINUTE),
+                    attendees = event.attendees
+                )
+            }
 
-    fun onImageSelected(imageUrl: String?) {
-        if (imageUrl == null) return
-        _viewState.setValue(PutEventViewState.SetImage(imageUrl))
-        isImageFilled = isImageFiled(imageUrl)
-        val errorMessage = if (isEventNameFilled) null else IMAGE_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
-        checkAllFieldsReady()
+        }
     }
 
     fun onImageButtonClicked() {
-        _viewState.setValue(PutEventViewState.NavigateToPutPic)
+        // TODO navigate to select image fragment
+    }
+
+    fun onImageSelected(imageUrl: String?) {
+        if (imageUrl == null) {
+            return
+        }
+
+        viewState.update { currentState ->
+            when (currentState) {
+                is PutEventViewState.NotReadyToAction -> {
+                    val newState = currentState.copy(phonePhotoUrl = imageUrl)
+                    if (newState.isReady()) {
+                        currentState.toReadyToAction()
+                    } else {
+                        newState
+                    }
+                }
+
+                is PutEventViewState.ReadyToAction -> {
+                    val newState = currentState.copy(phonePhotoUrl = imageUrl)
+                    if (newState.isReady()) {
+                        currentState
+                    } else {
+                        currentState.toNotReadyToAction()
+                    }
+                }
+            }
+        }
     }
 
     fun onDateButtonClicked() {
-        _viewState.setValue(PutEventViewState.OpenDatePickerDialog)
+        // TODO navigate to date picker dialog
+    }
+
+    fun onNewDateSelected(year: Int, month: Int, day: Int) {
+        viewState.update { currentState ->
+            when (currentState) {
+                is PutEventViewState.NotReadyToAction -> {
+                    val newState = currentState.copy(
+                        year = year,
+                        month = month,
+                        day = day
+                    )
+                    if (newState.isReady()) {
+                        currentState.toReadyToAction()
+                    } else {
+                        newState
+                    }
+                }
+
+                is PutEventViewState.ReadyToAction -> {
+                    val newState = currentState.copy(
+                        year = year,
+                        month = month,
+                        day = day
+                    )
+                    if (newState.isReady()) {
+                        currentState
+                    } else {
+                        currentState.toNotReadyToAction()
+                    }
+                }
+            }
+        }
     }
 
     fun onTimeButtonClicked() {
-        _viewState.setValue(PutEventViewState.OpenTimePickerDialog)
+        viewState.setValue(PutEventViewState.OpenTimePickerDialog)
+    }
+
+    fun onTimeChanged(time: String) {
+        isTimeFilled = isTimeFiled(time)
+        val errorMessage = if (isEventNameFilled) null else TIME_NOT_FILLED_MESSAGE
+        viewState.setValue(PutEventViewState.ShowError(errorMessage))
+        checkAllFieldsReady()
     }
 
     fun onLocationButtonClicked() {
-        _viewState.setValue(PutEventViewState.NavigateToPutLocation)
+        viewState.setValue(PutEventViewState.NavigateToPutLocation)
+    }
+
+    fun onAddressChanged(address: String) {
+        viewState.setValue(PutEventViewState.SetAddress(address))
+        isAddressFilled = isAddressFiled(address)
+        val errorMessage = if (isEventNameFilled) null else ADDRESS_NOT_FILLED_MESSAGE
+        viewState.setValue(PutEventViewState.ShowError(errorMessage))
+        checkAllFieldsReady()
     }
 
     fun onInvitationButtonClicked() {
-        _viewState.setValue(PutEventViewState.NavigateToInviteFriend(attendeesEmailList))
+        viewState.setValue(PutEventViewState.NavigateToInviteFriend(attendeesEmailList))
     }
 
     fun onAddEventButtonClicked(event: Event) {
-        _viewState.setValue(PutEventViewState.MorphPutEventButtonToProgress)
+        viewState.setValue(PutEventViewState.MorphPutEventButtonToProgress)
         eventRepository.addEvent(event) { eventRequest ->
             when (eventRequest) {
                 is ResponseState.Failure -> {
-                    _viewState.setValue(PutEventViewState.ShowError(EVENT_REQUEST_FAILED))
+                    viewState.setValue(PutEventViewState.ShowError(EVENT_REQUEST_FAILED))
                 }
 
                 is ResponseState.Success<String> -> {
-                    _viewState.setValue(PutEventViewState.RevertPutEventProgressToButton)
-                    _viewState.setValue(PutEventViewState.NavigateToMyEvent(event))
+                    viewState.setValue(PutEventViewState.RevertPutEventProgressToButton)
+                    viewState.setValue(PutEventViewState.NavigateToMyEvent(event))
                 }
             }
         }
@@ -77,36 +181,14 @@ class PutEventViewModel @Inject constructor(
     fun onEventNameChanged(eventName: String) {
         isEventNameFilled = isEventNameFiled(eventName)
         val errorMessage = if (isEventNameFilled) null else EVENT_NAME_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
+        viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
     fun onDescriptionChanged(description: String) {
         isDescriptionFilled = isDescriptionFiled(description)
         val errorMessage = if (isEventNameFilled) null else DESCRIPTION_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
-        checkAllFieldsReady()
-    }
-
-    fun onDateChanged(date: String) {
-        isDateFilled = isDateFiled(date)
-        val errorMessage = if (isEventNameFilled) null else DATE_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
-        checkAllFieldsReady()
-    }
-
-    fun onTimeChanged(time: String) {
-        isTimeFilled = isTimeFiled(time)
-        val errorMessage = if (isEventNameFilled) null else TIME_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
-        checkAllFieldsReady()
-    }
-
-    fun onAddressChanged(address: String) {
-        _viewState.setValue(PutEventViewState.SetAddress(address))
-        isAddressFilled = isAddressFiled(address)
-        val errorMessage = if (isEventNameFilled) null else ADDRESS_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
+        viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
@@ -114,11 +196,11 @@ class PutEventViewModel @Inject constructor(
         attendeesEmailList.clear()
         attendeesEmailList.addAll(contacts)
         val attendee = contacts.joinToString(",")
-        _viewState.setValue(PutEventViewState.SetAttendeeList(attendee))
+        viewState.setValue(PutEventViewState.SetAttendeeList(attendee))
 
         isAttendeeListFilled = isAttendeesFiled(attendee)
         val errorMessage = if (isEventNameFilled) null else ATTENDEES_NOT_FILLED_MESSAGE
-        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
+        viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
@@ -151,7 +233,7 @@ class PutEventViewModel @Inject constructor(
     }
 
     private fun checkAllFieldsReady() {
-        _viewState.setValue(PutEventViewState.PutEventButtonVisibility(isAllFieldsFilled()))
+        viewState.setValue(PutEventViewState.PutEventButtonVisibility(isAllFieldsFilled()))
     }
 
     private fun isAllFieldsFilled(): Boolean {
@@ -172,5 +254,172 @@ class PutEventViewModel @Inject constructor(
         private const val ADDRESS_NOT_FILLED_MESSAGE = "Please select a address"
         private const val ATTENDEES_NOT_FILLED_MESSAGE = "Please select attendees"
         private const val EVENT_REQUEST_FAILED = "EVENT_REQUEST_FAILED"
+    }
+
+    private sealed interface PutEventViewState {
+
+        val id: Long?
+        val name: String?
+        val description: String?
+        val phonePhotoUrl: String?
+        val networkPhotoUrl: String?
+        val address: String?
+        val year: Int?
+        val month: Int?
+        val day: Int?
+        val hour: Int?
+        val minute: Int?
+        val attendees: List<Attendees>?
+        val mode: Mode
+
+        fun toUiState(): PutEventUiState
+
+        fun isReady(): Boolean {
+            if (name.isNullOrEmpty()) return false
+            if (description.isNullOrEmpty()) return false
+            if (phonePhotoUrl.isNullOrEmpty() && networkPhotoUrl.isNullOrEmpty()) return false
+            if (address.isNullOrEmpty()) return false
+            if (attendees.isNullOrEmpty()) return false
+            if (getDate() == null) return false
+            return true
+        }
+
+        data class NotReadyToAction(
+            override val id: Long? = null,
+            override val name: String? = null,
+            override val description: String? = null,
+            override val phonePhotoUrl: String? = null,
+            override val networkPhotoUrl: String? = null,
+            override val address: String? = null,
+            override val year: Int? = 0,
+            override val month: Int? = 0,
+            override val day: Int? = 0,
+            override val hour: Int? = 0,
+            override val minute: Int? = 0,
+            override val attendees: List<Attendees>? = null,
+            override val mode: Mode = if (id == null) Mode.ADD else Mode.EDIT,
+        ) : PutEventViewState {
+
+            fun toReadyToAction(): ReadyToAction {
+                return ReadyToAction(
+                    id = id,
+                    name = name,
+                    description = description,
+                    phonePhotoUrl = phonePhotoUrl,
+                    networkPhotoUrl = networkPhotoUrl,
+                    address = address,
+                    year = year,
+                    month = month,
+                    day = day,
+                    hour = hour,
+                    minute = minute,
+                    attendees = attendees,
+                )
+            }
+
+            override fun toUiState(): PutEventUiState {
+                return PutEventUiState(
+                    phoneImageUri = phonePhotoUrl,
+                    networkImageUri = networkPhotoUrl,
+                    eventName = name ?: "",
+                    eventDescription = description ?: "",
+                    address = address ?: "",
+                    attendees = attendees?.toAttendeesString() ?: "",
+                    date = formattedDate() ?: "",
+                    time = formattedTime() ?: "",
+                    btnText = mode.value,
+                    enableActionButton = false
+                )
+            }
+        }
+
+        data class ReadyToAction(
+            override val id: Long? = null,
+            override val name: String? = null,
+            override val description: String? = null,
+            override val phonePhotoUrl: String? = null,
+            override val networkPhotoUrl: String? = null,
+            override val address: String? = null,
+            override val year: Int? = 0,
+            override val month: Int? = 0,
+            override val day: Int? = 0,
+            override val hour: Int? = 0,
+            override val minute: Int? = 0,
+            override val attendees: List<Attendees>? = null,
+            override val mode: Mode = if (id == null) Mode.ADD else Mode.EDIT,
+        ) : PutEventViewState {
+
+            fun toNotReadyToAction(): NotReadyToAction {
+                return NotReadyToAction(
+                    id = id,
+                    name = name,
+                    description = description,
+                    phonePhotoUrl = phonePhotoUrl,
+                    networkPhotoUrl = networkPhotoUrl,
+                    address = address,
+                    year = year,
+                    month = month,
+                    day = day,
+                    hour = hour,
+                    minute = minute,
+                    attendees = attendees,
+                )
+            }
+
+            override fun toUiState(): PutEventUiState {
+                return PutEventUiState(
+                    phoneImageUri = phonePhotoUrl,
+                    networkImageUri = networkPhotoUrl,
+                    eventName = name ?: "",
+                    eventDescription = description ?: "",
+                    address = address ?: "",
+                    attendees = attendees?.toAttendeesString() ?: "",
+                    date = formattedDate() ?: "",
+                    time = formattedTime() ?: "",
+                    btnText = mode.value,
+                    enableActionButton = true
+                )
+            }
+        }
+
+        fun formattedDate(): String? {
+            return try {
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                dateFormat.format(getDate())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+
+        fun formattedTime(): String? {
+            return try {
+                val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                dateFormat.format(getDate())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+
+        fun getDate(): Date? {
+            if (year == null) return null
+            if (month == null) return null
+            if (day == null) return null
+            if (hour == null) return null
+            if (minute == null) return null
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.YEAR, year!!)
+            cal.set(Calendar.MONTH, month!!)
+            cal.set(Calendar.DAY_OF_MONTH, day!!)
+            cal.set(Calendar.HOUR_OF_DAY, hour!!)
+            cal.set(Calendar.MINUTE, minute!!)
+            return cal.time
+        }
+    }
+
+    private enum class Mode(val value: String) {
+        EDIT("Edit"),
+        ADD("Add"),
     }
 }

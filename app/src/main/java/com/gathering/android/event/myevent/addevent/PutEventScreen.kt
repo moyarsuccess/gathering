@@ -12,9 +12,11 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
+import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.SEPARATOR
 import com.gathering.android.common.SOMETHING_WRONG
 import com.gathering.android.common.getNavigationResultLiveData
@@ -28,6 +30,8 @@ import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.event.model.EventLocation
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -41,6 +45,9 @@ class PutEventScreen : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var viewModel: PutEventViewModel
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     private var attendees: String = ""
 
@@ -62,6 +69,27 @@ class PutEventScreen : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { uiState ->
+                binding.etDate.setText(uiState.date)
+                binding.etTime.setText(uiState.time)
+                binding.etAttendees.setText(uiState.attendees)
+                binding.etDescription.setText(uiState.eventDescription)
+                binding.etEventName.setText(uiState.eventName)
+                binding.tvLocation.text = uiState.address
+                binding.btnAddEvent.text = uiState.btnText
+                if (uiState.phoneImageUri != null) {
+                    photoUrl = Uri.parse(uiState.phoneImageUri).toString()
+                    binding.imgEvent.setImageURI(Uri.parse(uiState.phoneImageUri))
+                    return@collectLatest
+                }
+                if (uiState.networkImageUri != null) {
+                    imageLoader.loadImage(uiState.networkImageUri, binding.imgEvent)
+                    return@collectLatest
+                }
+            }
+        }
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -102,10 +130,12 @@ class PutEventScreen : BottomSheetDialogFragment() {
                         .split(",")
                         .count()
                         .toString()
-                    binding.etAttendees.setText(getString(
-                        R.string.attendees_count_hint_text,
-                        attendeeNum
-                    ))
+                    binding.etAttendees.setText(
+                        getString(
+                            R.string.attendees_count_hint_text,
+                            attendeeNum
+                        )
+                    )
 
                 }
 
@@ -155,7 +185,7 @@ class PutEventScreen : BottomSheetDialogFragment() {
         }
 
         binding.etDate.doOnTextChanged { text, _, _, _ ->
-            viewModel.onDateChanged(text.toString())
+            viewModel.onNewDateSelected(text.toString())
         }
 
         binding.etTime.doOnTextChanged { text, _, _, _ ->
