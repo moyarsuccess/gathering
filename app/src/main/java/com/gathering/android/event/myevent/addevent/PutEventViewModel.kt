@@ -8,12 +8,12 @@ import com.gathering.android.event.Event
 import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
 import javax.inject.Inject
 
-class AddEventViewModel @Inject constructor(
+class PutEventViewModel @Inject constructor(
     private val eventRepository: AddEventRepository
 ) : ViewModel() {
 
-    private val _viewState = ActiveMutableLiveData<AddEventViewState>()
-    val viewState: LiveData<AddEventViewState> by ::_viewState
+    private val _viewState = ActiveMutableLiveData<PutEventViewState>()
+    val viewState: LiveData<PutEventViewState> by ::_viewState
 
     private var isImageFilled: Boolean = false
     private var isEventNameFilled: Boolean = false
@@ -26,49 +26,49 @@ class AddEventViewModel @Inject constructor(
     private val attendeesEmailList = mutableListOf<String>()
 
     fun onViewCreated() {
-        _viewState.setValue(AddEventViewState.AddEventButtonVisibility(false))
+        _viewState.setValue(PutEventViewState.PutEventButtonVisibility(false))
     }
 
     fun onImageSelected(imageUrl: String?) {
         if (imageUrl == null) return
-        _viewState.setValue(AddEventViewState.SetImage(imageUrl))
+        _viewState.setValue(PutEventViewState.SetImage(imageUrl))
         isImageFilled = isImageFiled(imageUrl)
         val errorMessage = if (isEventNameFilled) null else IMAGE_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
     fun onImageButtonClicked() {
-        _viewState.setValue(AddEventViewState.NavigateToAddPic)
+        _viewState.setValue(PutEventViewState.NavigateToPutPic)
     }
 
     fun onDateButtonClicked() {
-        _viewState.setValue(AddEventViewState.OpenDatePickerDialog)
+        _viewState.setValue(PutEventViewState.OpenDatePickerDialog)
     }
 
     fun onTimeButtonClicked() {
-        _viewState.setValue(AddEventViewState.OpenTimePickerDialog)
+        _viewState.setValue(PutEventViewState.OpenTimePickerDialog)
     }
 
     fun onLocationButtonClicked() {
-        _viewState.setValue(AddEventViewState.NavigateToAddLocation)
+        _viewState.setValue(PutEventViewState.NavigateToPutLocation)
     }
 
     fun onInvitationButtonClicked() {
-        _viewState.setValue(AddEventViewState.NavigateToInviteFriend(attendeesEmailList))
+        _viewState.setValue(PutEventViewState.NavigateToInviteFriend(attendeesEmailList))
     }
 
     fun onAddEventButtonClicked(event: Event) {
-        _viewState.setValue(AddEventViewState.MorphAddEventButtonToProgress)
+        _viewState.setValue(PutEventViewState.MorphPutEventButtonToProgress)
         eventRepository.addEvent(event) { eventRequest ->
             when (eventRequest) {
                 is ResponseState.Failure -> {
-                    _viewState.setValue(AddEventViewState.ShowError(EVENT_REQUEST_FAILED))
+                    _viewState.setValue(PutEventViewState.ShowError(EVENT_REQUEST_FAILED))
                 }
 
                 is ResponseState.Success<String> -> {
-                    _viewState.setValue(AddEventViewState.RevertAddEventProgressToButton)
-                    _viewState.setValue(AddEventViewState.NavigateToMyEvent(event))
+                    _viewState.setValue(PutEventViewState.RevertPutEventProgressToButton)
+                    _viewState.setValue(PutEventViewState.NavigateToMyEvent(event))
                 }
             }
         }
@@ -77,36 +77,36 @@ class AddEventViewModel @Inject constructor(
     fun onEventNameChanged(eventName: String) {
         isEventNameFilled = isEventNameFiled(eventName)
         val errorMessage = if (isEventNameFilled) null else EVENT_NAME_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
     fun onDescriptionChanged(description: String) {
         isDescriptionFilled = isDescriptionFiled(description)
         val errorMessage = if (isEventNameFilled) null else DESCRIPTION_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
     fun onDateChanged(date: String) {
         isDateFilled = isDateFiled(date)
         val errorMessage = if (isEventNameFilled) null else DATE_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
     fun onTimeChanged(time: String) {
         isTimeFilled = isTimeFiled(time)
         val errorMessage = if (isEventNameFilled) null else TIME_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
     fun onAddressChanged(address: String) {
-        _viewState.setValue(AddEventViewState.SetAddress(address))
+        _viewState.setValue(PutEventViewState.SetAddress(address))
         isAddressFilled = isAddressFiled(address)
         val errorMessage = if (isEventNameFilled) null else ADDRESS_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
@@ -114,11 +114,11 @@ class AddEventViewModel @Inject constructor(
         attendeesEmailList.clear()
         attendeesEmailList.addAll(contacts)
         val attendee = contacts.joinToString(",")
-        _viewState.setValue(AddEventViewState.SetAttendeeList(attendee))
+        _viewState.setValue(PutEventViewState.SetAttendeeList(attendee))
 
         isAttendeeListFilled = isAttendeesFiled(attendee)
         val errorMessage = if (isEventNameFilled) null else ATTENDEES_NOT_FILLED_MESSAGE
-        _viewState.setValue(AddEventViewState.ShowError(errorMessage))
+        _viewState.setValue(PutEventViewState.ShowError(errorMessage))
         checkAllFieldsReady()
     }
 
@@ -151,7 +151,7 @@ class AddEventViewModel @Inject constructor(
     }
 
     private fun checkAllFieldsReady() {
-        _viewState.setValue(AddEventViewState.AddEventButtonVisibility(isAllFieldsFilled()))
+        _viewState.setValue(PutEventViewState.PutEventButtonVisibility(isAllFieldsFilled()))
     }
 
     private fun isAllFieldsFilled(): Boolean {

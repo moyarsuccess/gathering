@@ -98,7 +98,7 @@
     </fragment>
     <dialog
         android:id="@+id/addEventBottomSheetFragment"
-        android:name="com.gathering.android.event.myevent.addevent.AddEventBottomSheetFragment"
+        android:name="com.gathering.android.event.myevent.addevent.PutEventScreen"
         android:label="AddEventBottomSheetFragment"
         tools:layout="@layout/bottom_sheet_add_event">
         <action
@@ -203,7 +203,7 @@
         android:id="@+id/editMyEventBottomSheet"
         android:name="com.gathering.android.event.myevent.editMyEvent.EditMyEventBottomSheet"
         android:label="editMyEventBottomSheet"
-        tools:layout="@layout/bottom_sheet_edit_my_event">
+        tools:layout="@layout/screen_put_event">
         <argument
             android:name="Event"
             app:argType="com.gathering.android.event.Event" />

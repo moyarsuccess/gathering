@@ -19,7 +19,7 @@ import com.gathering.android.common.SEPARATOR
 import com.gathering.android.common.SOMETHING_WRONG
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.setNavigationResult
-import com.gathering.android.databinding.BottomSheetEditMyEventBinding
+import com.gathering.android.databinding.ScreenPutEventBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
@@ -32,15 +32,15 @@ import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
+class PutEventScreen : BottomSheetDialogFragment() {
 
-    lateinit var binding: BottomSheetEditMyEventBinding
+    lateinit var binding: ScreenPutEventBinding
 
     @Inject
     lateinit var geocoder: Geocoder
 
     @Inject
-    lateinit var viewModel: AddEventViewModel
+    lateinit var viewModel: PutEventViewModel
 
     private var attendees: String = ""
 
@@ -56,7 +56,7 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetEditMyEventBinding.inflate(LayoutInflater.from(requireContext()))
+        binding = ScreenPutEventBinding.inflate(LayoutInflater.from(requireContext()))
         return binding.root
     }
 
@@ -65,23 +65,23 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is AddEventViewState.AddEventButtonVisibility -> binding.btnAddEvent.isEnabled =
+                is PutEventViewState.PutEventButtonVisibility -> binding.btnAddEvent.isEnabled =
                     state.isAddEventButtonEnabled
 
-                AddEventViewState.NavigateToAddLocation -> {
+                PutEventViewState.NavigateToPutLocation -> {
                     findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_addLocationBottomSheet)
                 }
 
-                AddEventViewState.NavigateToAddPic -> {
+                PutEventViewState.NavigateToPutPic -> {
                     findNavController().navigate(R.id.action_addEventBottomSheetFragment_to_addPicBottomSheet)
                 }
 
-                is AddEventViewState.NavigateToMyEvent -> {
+                is PutEventViewState.NavigateToMyEvent -> {
                     setNavigationResult(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST, true)
                     findNavController().popBackStack()
                 }
 
-                is AddEventViewState.NavigateToInviteFriend -> {
+                is PutEventViewState.NavigateToInviteFriend -> {
                     val attendees = state.attendeeList.joinToString(SEPARATOR) { it }
                     val bundle = bundleOf(ATTENDEE_LIST to attendees)
                     findNavController().navigate(
@@ -90,13 +90,13 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
                     )
                 }
 
-                is AddEventViewState.ShowError -> Log.d(
+                is PutEventViewState.ShowError -> Log.d(
                     SOMETHING_WRONG,
                     state.errorMessage.toString()
                 )
 
-                is AddEventViewState.SetAddress -> binding.tvLocation.text = state.address
-                is AddEventViewState.SetAttendeeList -> {
+                is PutEventViewState.SetAddress -> binding.tvLocation.text = state.address
+                is PutEventViewState.SetAttendeeList -> {
                     attendees = state.attendees
                     val attendeeNum = state.attendees
                         .split(",")
@@ -109,15 +109,15 @@ class AddEventBottomSheetFragment : BottomSheetDialogFragment() {
 
                 }
 
-                AddEventViewState.OpenDatePickerDialog -> openDatePickerDialog()
-                AddEventViewState.OpenTimePickerDialog -> openTimePickerDialog()
-                is AddEventViewState.SetImage -> {
+                PutEventViewState.OpenDatePickerDialog -> openDatePickerDialog()
+                PutEventViewState.OpenTimePickerDialog -> openTimePickerDialog()
+                is PutEventViewState.SetImage -> {
                     photoUrl = Uri.parse(state.image).toString()
                     binding.imgEvent.setImageURI(Uri.parse(state.image))
                 }
 
-                AddEventViewState.MorphAddEventButtonToProgress -> binding.btnAddEvent.startAnimation()
-                AddEventViewState.RevertAddEventProgressToButton -> binding.btnAddEvent.revertAnimation()
+                PutEventViewState.MorphPutEventButtonToProgress -> binding.btnAddEvent.startAnimation()
+                PutEventViewState.RevertPutEventProgressToButton -> binding.btnAddEvent.revertAnimation()
             }
         }
 
