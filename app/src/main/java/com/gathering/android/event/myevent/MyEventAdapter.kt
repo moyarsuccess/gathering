@@ -49,7 +49,12 @@ class MyEventAdapter @Inject constructor(
         this.onFavoriteImageClickListener = onFavoriteImageClickListener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    fun setOnEditImageClick(onEditImageClickListener: (event: Event) -> Unit) {
+        this.onEditClickListener = onEditImageClickListener
+    }
+
+    override fun onCreateViewHolder(parent:
+                                    ViewGroup, viewType: Int): ViewHolder {
         val itemBinding = ItemEventBinding.inflate(li, parent, false)
         return ViewHolder(
             itemBinding, onMyEventClicked, onFavoriteImageClickListener, onEditClickListener
@@ -92,10 +97,8 @@ class MyEventAdapter @Inject constructor(
             val resId = if (event.liked) R.drawable.ic_liked else R.drawable.ic_unliked
             itemBinding.imgFavorite.setImageResource(resId)
 
-            // Set the click listener for the edit action
-            itemBinding.cardView.setOnLongClickListener {
+            itemBinding.imgEdit.setOnClickListener {
                 onEditClickListener(event)
-                true
             }
         }
     }

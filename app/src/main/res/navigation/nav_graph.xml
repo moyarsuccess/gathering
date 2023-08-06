@@ -203,5 +203,9 @@
         android:id="@+id/editMyEventBottomSheet"
         android:name="com.gathering.android.event.myevent.editMyEvent.EditMyEventBottomSheet"
         android:label="editMyEventBottomSheet"
-        tools:layout="@layout/bottom_sheet_edit_my_event"></dialog>
+        tools:layout="@layout/bottom_sheet_edit_my_event">
+        <argument
+            android:name="Event"
+            app:argType="com.gathering.android.event.Event" />
+    </dialog>
 </navigation>

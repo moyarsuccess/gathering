@@ -21,16 +21,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/img_event"
+            <RelativeLayout
+                android:id="@+id/img_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/imageView_height"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toTopOf="@id/guideline_65"
+                app:layout_constraintBottom_toTopOf="@+id/tv_event_title"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_launcher_foreground" />
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/img_event"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/imageView_height"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher_foreground" />
+
+                <ImageView
+                    android:id="@+id/img_edit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_edit" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_event_title"
@@ -44,7 +58,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/guideline_65"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/img_event" />
+                app:layout_constraintTop_toBottomOf="@id/img_layout" />
 
             <TextView
                 android:id="@+id/tv_event_host"

@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgHomeBinding
-import com.gathering.android.event.EVENT
+import com.gathering.android.event.KEY_ARGUMENT_EVENT
 import com.gathering.android.event.home.FilterDialogFragment.Companion.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -53,7 +52,7 @@ class HomeFragment : Fragment() {
                 EventViewState.HideNoData -> binding.tvNoData.isVisible = false
                 EventViewState.HideProgress -> binding.prg.isVisible = false
                 is EventViewState.NavigateToEventDetail -> {
-                    val bundle = bundleOf(EVENT to state.event)
+                    val bundle = bundleOf(KEY_ARGUMENT_EVENT to state.event)
                     findNavController().navigate(
                         R.id.action_navigation_home_to_eventDetailFragment, bundle
                     )
@@ -72,7 +71,7 @@ class HomeFragment : Fragment() {
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
                 EventViewState.NavigateToIntroScreen -> {
                     // TODO: we need to find a better way to handle this
-                    if (com.gathering.android.R.id.verificationFragment != findNavController().currentDestination?.id &&
+                    if (R.id.verificationFragment != findNavController().currentDestination?.id &&
                         R.id.newPasswordInputFragment != findNavController().currentDestination?.id
                     ) {
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)

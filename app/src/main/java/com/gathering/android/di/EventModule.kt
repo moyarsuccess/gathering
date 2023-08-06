@@ -22,9 +22,10 @@ class EventModule {
     @Provides
     @Singleton
     fun provideEventRepository(
+        @ApplicationContext context: Context,
         eventRemoteService: EventRemoteService,
     ): EventRepository {
-        return ApiEventRepository(eventRemoteService)
+        return ApiEventRepository(context, eventRemoteService)
     }
 
     @Provides

@@ -1,18 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="edit your event here"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    </TextView>
+        <RelativeLayout
+            android:id="@+id/img_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_sheet_imageView"
+            app:layout_constraintBottom_toTopOf="@+id/et_event_Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/img_event"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add_event_capture_pic" />
+
+            <ImageView
+                android:id="@+id/img_edit"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_edit" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/et_event_Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:background="@drawable/custom_edit_text"
+            android:hint="@string/event_name"
+            android:padding="@dimen/et_padding"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_layout" />
+
+        <EditText
+            android:id="@+id/et_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/tv_margin_start"
+            android:layout_marginTop="@dimen/tv_margin_top"
+            android:layout_weight="@dimen/tv_add_event_weight"
+            android:background="@drawable/custom_edit_text"
+            android:hint="@string/when_does_it_take_place"
+            android:padding="@dimen/et_padding"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_event_Name" />
+
+        <EditText
+            android:id="@+id/et_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_weight="@dimen/tv_add_event_weight"
+            android:background="@drawable/custom_edit_text"
+            android:hint="@string/when_does_it_start"
+            android:padding="@dimen/et_padding"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_date" />
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_weight="@dimen/tv_add_event_weight"
+            android:background="@drawable/custom_edit_text"
+            android:hint="@string/where_is_the_location"
+            android:padding="@dimen/et_padding"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_time" />
+
+        <EditText
+            android:id="@+id/et_attendees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_weight="@dimen/tv_add_event_weight"
+            android:background="@drawable/custom_edit_text"
+            android:hint="@string/who_can_attend"
+            android:padding="@dimen/et_padding"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_location" />
+
+        <EditText
+            android:id="@+id/et_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/et_margin_start"
+            android:layout_marginTop="@dimen/et_margin_top"
+            android:layout_marginEnd="@dimen/tv_margin_end"
+            android:background="@drawable/custom_edit_text"
+            android:hint="@string/what_are_the_details"
+            android:padding="@dimen/et_padding"
+            android:textSize="@dimen/et_text_size_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_attendees" />
+
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/btn_add_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/btn_margin_top"
+            android:layout_marginBottom="@dimen/btn_margin_bottom"
+            android:background="@drawable/custom_button"
+            android:padding="@dimen/btn_padding"
+            android:text="@string/edit_event"
+            android:textSize="@dimen/btn_text_size_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_description"
+            app:spinning_bar_color="@color/spinning_bar"
+            app:spinning_bar_padding="@dimen/bar_padding"
+            app:spinning_bar_width="@dimen/bar_width" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

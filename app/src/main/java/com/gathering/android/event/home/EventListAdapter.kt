@@ -3,6 +3,7 @@ package com.gathering.android.event.home
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
@@ -71,6 +72,7 @@ class EventListAdapter @Inject constructor(
 
         fun bind(event: Event) {
             itemBinding.tvEventTitle.text = event.eventName
+            itemBinding.imgEdit.isVisible = false
             itemBinding.tvEventDescription.text = event.description
             itemBinding.tvEventHost.text = event.eventHostEmail
             imageLoader.loadImage(event.photoUrl, itemBinding.imgEvent)

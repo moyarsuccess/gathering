@@ -53,7 +53,7 @@ class AddAttendeeBottomSheet : BottomSheetDialogFragment() {
                 AddAttendeesViewState.HideKeyboard -> hideKeyboard()
                 AddAttendeesViewState.CleaEditText -> binding.etAttendee.setText("")
                 is AddAttendeesViewState.SetAttendee -> binding.etAttendee.setText(state.attendee)
-                is AddAttendeesViewState.ShowError -> showErrorText(state.errorMessage ?: "")
+                is AddAttendeesViewState.ShowError -> showErrorText(state.errorMessage)
                 is AddAttendeesViewState.AddAttendeeToRecyclerView -> adapter.addAttendeeItem(state.attendee)
                 is AddAttendeesViewState.RemoveAttendeeFromRecyclerView -> adapter.deleteAttendeeItem(
                     state.attendee

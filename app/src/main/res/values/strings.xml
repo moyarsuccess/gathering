@@ -88,4 +88,10 @@
     <string name="back_to_sign_in_page">Back to Sign In page</string>
     <string name="tv_reset_pass">You have successfully Reset your Password.</string>
     <string name="add_attendee">Add Attendee</string>
+    <string name="when_does_it_start">when does it start?</string>
+    <string name="when_does_it_take_place">when does it take place?</string>
+    <string name="what_are_the_details">What are the detail?</string>
+    <string name="where_is_the_location">Where is the location?</string>
+    <string name="edit_event">Edit event</string>
+    <string name="who_can_attend">who can attend?</string>
 </resources>

@@ -12,7 +12,8 @@ sealed interface AddAttendeesViewState {
 
     class RemoveAttendeeFromRecyclerView(val attendee: String) : AddAttendeesViewState
 
-    class AddAttendeeButtonVisibility(val isAddAttendeeButtonEnabled: Boolean) : AddAttendeesViewState
+    class AddAttendeeButtonVisibility(val isAddAttendeeButtonEnabled: Boolean) :
+        AddAttendeesViewState
 
     object CleaEditText : AddAttendeesViewState
 
