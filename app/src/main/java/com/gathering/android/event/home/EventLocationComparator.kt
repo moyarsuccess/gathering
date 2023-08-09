@@ -16,12 +16,10 @@ class EventLocationComparator @Inject constructor() : Comparator<EventModel> {
         val eventLocation1 = EventLocation(
             lat = event1.latitude,
             lon = event1.longitude,
-            addressLine = ""
         )
         val eventLocation2 = EventLocation(
             lat = event2.latitude,
             lon = event2.longitude,
-            addressLine = ""
         )
         val distA = eventLocation1.distanceTo(getCurrentLocation())
         val distB = eventLocation2.distanceTo(getCurrentLocation())

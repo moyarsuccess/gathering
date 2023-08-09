@@ -1,7 +1,6 @@
 package com.gathering.android.event
 
 import com.gathering.android.common.SEPARATOR
-import com.gathering.android.event.model.Attendees
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.model.EventModel
 
@@ -16,11 +15,11 @@ fun EventModel.toEvent(): Event {
         dateAndTime = this.dateTime ?: 0,
         isContactEvent = false,
         isMyEvent = true,
-        attendees = this.attendees,
+        attendees = this.attendees.map { it.email ?: "" },
         liked = this.liked,
     )
 }
 
-fun List<Attendees>.toAttendeesString(): String {
-    return joinToString(SEPARATOR) { it.displayName ?: "" }
+fun List<String>.toAttendeesString(): String {
+    return joinToString(SEPARATOR) { it }
 }

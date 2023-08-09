@@ -19,9 +19,4 @@ interface EventRepository {
     fun deleteEvent(
         eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
     )
-
-    fun editEvent(
-        event: Event,
-        onResponseReady: (eventRequest: ResponseState<String>) -> Unit
-    )
 }

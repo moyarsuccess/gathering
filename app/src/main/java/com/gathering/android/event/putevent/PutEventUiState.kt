@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent
+package com.gathering.android.event.putevent
 
 data class PutEventUiState(
     val phoneImageUri: String? = null,
@@ -11,4 +11,6 @@ data class PutEventUiState(
     val date: String = "",
     val time: String = "",
     val enableActionButton: Boolean = false,
+    val showProgress: Boolean = false,
+    val errorMessage: String? = null,
 )

@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.invitation.viewModel
+package com.gathering.android.event.putevent.invitation.viewModel
 
 sealed interface AddAttendeesViewState {
 

@@ -49,9 +49,9 @@ class EventDetailFragment : Fragment() {
                 is EventDetailViewState.ShowEventDetail -> {
                     imageLoader.loadImage(state.event.photoUrl, binding.imgEvent)
                     binding.tvEventTitle.text = state.event.eventName
-                    binding.tvEventHost.text = state.event.eventHostEmail.toString()
+                    binding.tvEventHost.text = state.event.eventHostEmail
                     binding.tvEventDescription.text = state.event.description
-                    binding.tvEventAddress.text = state.event.location.addressLine
+                    binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
                     binding.tvEventDate.text = state.event.dateAndTime.toString()
                 }
             }

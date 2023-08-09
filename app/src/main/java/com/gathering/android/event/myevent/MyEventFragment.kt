@@ -100,7 +100,7 @@ class MyEventFragment : Fragment() {
                     val event = state.event
                     val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
                     findNavController().navigate(
-                        R.id.action_navigation_event_to_editMyEventBottomSheet,
+                        R.id.action_navigation_event_to_addEventBottomSheetFragment,
                         bundle
                     )
                 }

@@ -67,10 +67,6 @@
         <action
             android:id="@+id/action_navigation_event_to_addEventBottomSheetFragment"
             app:destination="@id/addEventBottomSheetFragment" />
-        <action
-            android:id="@+id/action_navigation_event_to_editMyEventBottomSheet"
-            app:destination="@id/editMyEventBottomSheet" />
-
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -98,9 +94,9 @@
     </fragment>
     <dialog
         android:id="@+id/addEventBottomSheetFragment"
-        android:name="com.gathering.android.event.myevent.addevent.PutEventScreen"
+        android:name="com.gathering.android.event.putevent.PutEventScreen"
         android:label="AddEventBottomSheetFragment"
-        tools:layout="@layout/bottom_sheet_add_event">
+        tools:layout="@layout/screen_put_event">
         <action
             android:id="@+id/action_addEventBottomSheetFragment_to_addLocationBottomSheet"
             app:destination="@id/addLocationBottomSheet" />
@@ -116,12 +112,12 @@
     </dialog>
     <dialog
         android:id="@+id/addLocationBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.location.AddLocationBottomSheet"
+        android:name="com.gathering.android.event.putevent.location.AddLocationBottomSheet"
         android:label="AddLocationBottomSheet"
         tools:layout="@layout/bottom_sheet_add_location" />
     <dialog
         android:id="@+id/addPicBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.pic.AddPicBottomSheet"
+        android:name="com.gathering.android.event.putevent.pic.AddPicBottomSheet"
         android:label="AddPicBottomSheet"
         tools:layout="@layout/bottom_sheet_add_pic">
         <action
@@ -130,7 +126,7 @@
     </dialog>
     <dialog
         android:id="@+id/inviteFriendBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.invitation.AddAttendeeBottomSheet"
+        android:name="com.gathering.android.event.putevent.invitation.AddAttendeeBottomSheet"
         android:label="InviteFriendBottomSheet"
         tools:layout="@layout/bottom_sheet_add_attendees">
         <argument
@@ -197,15 +193,5 @@
             android:id="@+id/action_newPasswordInputFragment_to_navigation_homeFragment"
             app:destination="@id/navigation_homeFragment" />
 
-    </dialog>
-
-    <dialog
-        android:id="@+id/editMyEventBottomSheet"
-        android:name="com.gathering.android.event.myevent.editMyEvent.EditMyEventBottomSheet"
-        android:label="editMyEventBottomSheet"
-        tools:layout="@layout/screen_put_event">
-        <argument
-            android:name="Event"
-            app:argType="com.gathering.android.event.Event" />
     </dialog>
 </navigation>

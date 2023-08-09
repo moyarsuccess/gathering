@@ -33,16 +33,4 @@ interface EventRemoteService {
     fun deleteEvent(
         @Query("event_id") eventId: Long,
     ): Call<GeneralApiResponse>
-
-    @Multipart
-    @PUT("event")
-    fun editEvent(
-        @Part("event_name") eventName: RequestBody?,
-        @Part("event_description") eventDescription: RequestBody?,
-        @Part("latitude") latitude: RequestBody?,
-        @Part("longitude") longitude: RequestBody?,
-        @Part("date_time") dateTime: RequestBody?,
-        @Part("attendees") attendees: RequestBody?,
-        @Part photo: MultipartBody.Part,
-    ): Call<GeneralApiResponse>
 }

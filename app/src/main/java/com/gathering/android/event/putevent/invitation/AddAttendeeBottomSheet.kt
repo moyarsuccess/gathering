@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.invitation
+package com.gathering.android.event.putevent.invitation
 
 import android.content.Context
 import android.os.Bundle
@@ -7,23 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
+import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.BottomSheetAddAttendeesBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
-import com.gathering.android.event.myevent.addevent.invitation.viewModel.AddAttendeesViewModel
-import com.gathering.android.event.myevent.addevent.invitation.viewModel.AddAttendeesViewState
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.gathering.android.event.putevent.invitation.viewModel.AddAttendeesViewModel
+import com.gathering.android.event.putevent.invitation.viewModel.AddAttendeesViewState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddAttendeeBottomSheet : BottomSheetDialogFragment() {
+class AddAttendeeBottomSheet : FullScreenBottomSheet() {
 
     private lateinit var binding: BottomSheetAddAttendeesBinding
 
@@ -32,11 +30,6 @@ class AddAttendeeBottomSheet : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var viewModel: AddAttendeesViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenCustomBottomSheet)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
