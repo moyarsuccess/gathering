@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.invitation.viewModel
+package com.gathering.android.event.putevent.invitation.viewModel
 
 sealed interface AddAttendeesViewState {
 
@@ -12,7 +12,8 @@ sealed interface AddAttendeesViewState {
 
     class RemoveAttendeeFromRecyclerView(val attendee: String) : AddAttendeesViewState
 
-    class AddAttendeeButtonVisibility(val isAddAttendeeButtonEnabled: Boolean) : AddAttendeesViewState
+    class AddAttendeeButtonVisibility(val isAddAttendeeButtonEnabled: Boolean) :
+        AddAttendeesViewState
 
     object CleaEditText : AddAttendeesViewState
 

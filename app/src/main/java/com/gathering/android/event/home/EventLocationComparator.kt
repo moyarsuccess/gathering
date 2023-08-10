@@ -4,11 +4,7 @@ import android.location.Location
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.model.EventModel
 import javax.inject.Inject
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
 class EventLocationComparator @Inject constructor() : Comparator<EventModel> {
@@ -16,12 +12,10 @@ class EventLocationComparator @Inject constructor() : Comparator<EventModel> {
         val eventLocation1 = EventLocation(
             lat = event1.latitude,
             lon = event1.longitude,
-            addressLine = ""
         )
         val eventLocation2 = EventLocation(
             lat = event2.latitude,
             lon = event2.longitude,
-            addressLine = ""
         )
         val distA = eventLocation1.distanceTo(getCurrentLocation())
         val distB = eventLocation2.distanceTo(getCurrentLocation())

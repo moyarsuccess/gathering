@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.invitation
+package com.gathering.android.event.putevent.invitation
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -37,7 +37,7 @@ class AttendeeListAdapter @Inject constructor(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): AttendeeListAdapter.ViewHolder {
+    ): ViewHolder {
         return ViewHolder(ItemAttendeeBinding.inflate(li), onAttendeeRemoveClicked)
     }
 

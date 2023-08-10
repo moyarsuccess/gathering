@@ -4,9 +4,9 @@ import android.content.Context
 import com.gathering.android.event.model.repo.ApiEventRepository
 import com.gathering.android.event.model.repo.EventRemoteService
 import com.gathering.android.event.model.repo.EventRepository
-import com.gathering.android.event.myevent.addevent.repo.AddEventRemoteService
-import com.gathering.android.event.myevent.addevent.repo.AddEventRepository
-import com.gathering.android.event.myevent.addevent.repo.ApiAddEventRepository
+import com.gathering.android.event.putevent.repo.PutEventRemoteService
+import com.gathering.android.event.putevent.repo.PutEventRepository
+import com.gathering.android.event.putevent.repo.ApiPutEventRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,16 +39,16 @@ class EventModule {
     @Singleton
     fun provideAddEventRepository(
         @ApplicationContext context: Context,
-        addEventRemoteService: AddEventRemoteService
-    ): AddEventRepository {
-        return ApiAddEventRepository(context, addEventRemoteService)
+        putEventRemoteService: PutEventRemoteService
+    ): PutEventRepository {
+        return ApiPutEventRepository(context, putEventRemoteService)
     }
 
     @Provides
     @Singleton
     fun provideAddEventRemoteService(
         @AuthorizedRetrofitQualifier retrofit: Retrofit
-    ): AddEventRemoteService {
-        return retrofit.create(AddEventRemoteService::class.java)
+    ): PutEventRemoteService {
+        return retrofit.create(PutEventRemoteService::class.java)
     }
 }

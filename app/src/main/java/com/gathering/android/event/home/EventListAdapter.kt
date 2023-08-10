@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
@@ -73,6 +73,7 @@ class EventListAdapter @Inject constructor(
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(event: Event) {
+            itemBinding.imgEdit.isVisible = false
             itemBinding.tvEventTitle.text = event.eventName
             itemBinding.tvEventDescription.text = event.description
             itemBinding.tvEventHost.text = event.eventHostEmail

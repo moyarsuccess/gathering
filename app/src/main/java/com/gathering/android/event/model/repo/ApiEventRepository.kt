@@ -80,6 +80,26 @@ class ApiEventRepository @Inject constructor(
             }
         }
 
+    override fun deleteEvent(
+        eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+    ) {
+        eventRemoteService.deleteEvent(eventId).enqueue(object : Callback<GeneralApiResponse> {
+            override fun onResponse(
+                call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
+            ) {
+                if (!response.isSuccessful) {
+                    onResponseReady(ResponseState.Success("Event deleted successfully"))
+                    return
+                }
+                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
+            }
+
+            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
+                onResponseReady(ResponseState.Failure(t))
+            }
+        })
+    }
+
     companion object {
         const val PAGE_SIZE = 10
     }

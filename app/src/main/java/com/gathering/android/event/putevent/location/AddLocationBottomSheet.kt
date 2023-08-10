@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.location
+package com.gathering.android.event.putevent.location
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -16,9 +16,9 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.BottomSheetAddLocationBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
@@ -32,13 +32,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback {
+class AddLocationBottomSheet : FullScreenBottomSheet(), OnMapReadyCallback {
 
     private lateinit var binding: BottomSheetAddLocationBinding
 
@@ -52,11 +51,6 @@ class AddLocationBottomSheet : BottomSheetDialogFragment(), OnMapReadyCallback {
     private var cameraPosition: CameraPosition? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var lastKnownLocation: Location? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenCustomBottomSheet)
-    }
 
     @Suppress("DEPRECATION")
     override fun onCreateView(
