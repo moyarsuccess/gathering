@@ -14,25 +14,19 @@ class ApiEventRepository @Inject constructor(
     private val eventRemoteService: EventRemoteService,
 ) : EventRepository {
 
-    private var pageNumber = 1
-
-    override fun getFirstPage(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
-        eventRemoteService.getEvents(
-            pageSize = PAGE_SIZE,
-            pageNumber = pageNumber
-        ).enqueue(handleGetEventResponse(onResponseReady))
+    override fun getMyEvents(
+        page: Int,
+        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
+    ) {
+        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page, isMyEvent = true)
+            .enqueue(handleGetEventResponse(onResponseReady))
     }
 
-    override fun getNextPage(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
-        pageNumber++
-        eventRemoteService.getEvents(
-            pageSize = PAGE_SIZE,
-            pageNumber = pageNumber
-        ).enqueue(handleGetEventResponse(onResponseReady))
-    }
-
-    override fun getMyEvents(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) {
-        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = 1)
+    override fun getEvents(
+        page: Int,
+        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
+    ) {
+        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page, isMyEvent = false)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
