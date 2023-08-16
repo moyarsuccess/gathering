@@ -54,7 +54,6 @@ class EventDetailFragment : Fragment() {
                     binding.tvEventDescription.text = state.event.description
                     binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
                     binding.tvEventDate.text = state.event.dateAndTime.toString()
-                    binding.tvAttendeesCount.text = state.event.attendeesCount.toString()
                 }
                 EventDetailViewState.NavigateToAttendeesDetailBottomSheet -> {
                     findNavController().navigate(
@@ -62,7 +61,7 @@ class EventDetailFragment : Fragment() {
                     )
                 }
                 EventDetailViewState.MaybeSelected -> {
-                    TODO()
+                    // in ui show maybe btn is selected
                 }
                 EventDetailViewState.NoSelected -> {
                     TODO()
@@ -89,6 +88,10 @@ class EventDetailFragment : Fragment() {
         binding.btnMaybe.setOnClickListener {
             val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
             viewModel.onMaybeButtonClicked(currentUserId)
+        }
+
+        binding.tvAttendeesCount.setOnClickListener {
+            viewModel.onTvAttendeesCountClicked()
         }
     }
 }

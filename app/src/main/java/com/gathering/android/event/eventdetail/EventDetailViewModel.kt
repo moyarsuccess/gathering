@@ -1,11 +1,11 @@
 package com.gathering.android.event.eventdetail
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserRepo
-import com.gathering.android.event.AcceptTypeRepository
+import com.gathering.android.event.myevent.repo.AcceptTypeRepository
 import com.gathering.android.event.Event
 import com.gathering.android.event.myevent.AcceptType
 import javax.inject.Inject
@@ -15,9 +15,8 @@ class EventDetailViewModel @Inject constructor(
     private val userRepo: UserRepo
 ) : ViewModel() {
 
-
     private val _viewState = ActiveMutableLiveData<EventDetailViewState>()
-    val viewState: LiveData<EventDetailViewState> by ::_viewState
+    val viewState: MutableLiveData<EventDetailViewState> by ::_viewState
 
     private var event: Event? = null
     fun onViewCreated(event: Event) {
@@ -55,7 +54,7 @@ class EventDetailViewModel @Inject constructor(
                         // todo select the yes button
                     }
                     is ResponseState.Failure -> {
-                        //TODO() error state
+                        _viewState.setValue(EventDetailViewState.ShowError("failed to select yes"))
                     }
                 }
             }
@@ -72,5 +71,9 @@ class EventDetailViewModel @Inject constructor(
 
     fun onMaybeButtonClicked(currentUserId: String) {
         TODO("Not yet implemented")
+    }
+
+    fun onTvAttendeesCountClicked() {
+        _viewState.setValue(EventDetailViewState.NavigateToAttendeesDetailBottomSheet)
     }
 }

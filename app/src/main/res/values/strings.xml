@@ -91,6 +91,7 @@
     <string name="attendees_count">0</string>
 
     <string name="add_attendee">Add Attendee</string>
+    <string name="attendees_list">click to see attendees</string>
     <string name="when_does_it_start">when does it start?</string>
     <string name="when_does_it_take_place">when does it take place?</string>
     <string name="what_are_the_details">What are the detail?</string>

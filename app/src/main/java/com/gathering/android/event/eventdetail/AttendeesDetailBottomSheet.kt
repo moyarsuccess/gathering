@@ -8,7 +8,9 @@ import androidx.fragment.app.DialogFragment
 import com.gathering.android.R
 import com.gathering.android.databinding.BottomSheetAttendeesDetailBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AttendeesDetailBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetAttendeesDetailBinding

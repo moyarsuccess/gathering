@@ -1,4 +1,4 @@
-package com.gathering.android.event
+package com.gathering.android.event.myevent.repo
 
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.myevent.AcceptType
