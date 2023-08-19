@@ -24,18 +24,22 @@ class MyEventAdapter @Inject constructor(
     private var onMyEventClicked: (event: Event) -> Unit = {}
     private val li = LayoutInflater.from(context)
 
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setEventItem(myEventItemList: MutableList<Event>) {
-        this.myEventItemList.clear()
-        this.myEventItemList.addAll(myEventItemList)
-        notifyDataSetChanged()
-    }
-
     fun updateEvent(event: Event) {
         val indexOfItem = this.myEventItemList.indexOfFirst { it.eventId == event.eventId }
         this.myEventItemList[indexOfItem] = event
         notifyItemChanged(indexOfItem)
+    }
+
+    fun appendEventItems(eventItemList: List<Event>) {
+        val startPosition = this.myEventItemList.size
+        this.myEventItemList.addAll(eventItemList)
+        notifyItemRangeInserted(startPosition, eventItemList.size)
+    }
+
+    fun clearData() {
+        val size = this.myEventItemList.size
+        myEventItemList = mutableListOf()
+        notifyItemRangeRemoved(0, size)
     }
 
     fun setOnFavoriteImageClick(onFavoriteImageClickListener: (event: Event) -> Unit) {

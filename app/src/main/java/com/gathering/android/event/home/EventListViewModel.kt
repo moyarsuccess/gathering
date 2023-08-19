@@ -22,18 +22,19 @@ class EventListViewModel @Inject constructor(
     private val _viewState = ActiveMutableLiveData<EventViewState>()
     val viewState: LiveData<EventViewState> by ::_viewState
 
+    private var page: Int = 1
     private var lastSortType = SortType.SORT_BY_DATE
     private var lastFilter = Filter()
     fun onViewCreated() {
         if (!verificationRepository.isUserVerified()) {
             _viewState.setValue(EventViewState.NavigateToIntroScreen)
         } else {
-            loadFirstPage()
+            getEvents(page)
         }
     }
 
-    private fun loadFirstPage() {
-        eventRepository.getFirstPage { request ->
+    private fun getEvents(page: Int) {
+        eventRepository.getEvents(page) { request ->
             when (request) {
                 is ResponseState.Failure -> {
                     _viewState.setValue(EventViewState.HideProgress)
@@ -44,17 +45,19 @@ class EventListViewModel @Inject constructor(
                     val filteredList = request.data.applySortAndFilter()
                     if (filteredList.isEmpty()) {
                         _viewState.setValue(EventViewState.HideProgress)
-                        return@getFirstPage
+                    } else {
+                        _viewState.setValue(EventViewState.HideProgress)
+                        _viewState.setValue(EventViewState.ShowEventList(filteredList.map { it.toEvent() }))
                     }
-                    _viewState.setValue(EventViewState.HideProgress)
-                    _viewState.setValue(EventViewState.ShowEventList(filteredList.map { it.toEvent() }))
+
                 }
             }
         }
     }
 
     fun onLastItemReached() {
-        eventRepository.getNextPage { request ->
+        page++
+        eventRepository.getEvents(page) { request ->
             when (request) {
                 is ResponseState.Failure -> {
                     _viewState.setValue(EventViewState.HideProgress)
@@ -64,9 +67,9 @@ class EventListViewModel @Inject constructor(
                     val filteredList = request.data.applySortAndFilter()
                     if (filteredList.isEmpty()) {
                         _viewState.setValue(EventViewState.HideProgress)
-                        return@getNextPage
+                    } else {
+                        _viewState.setValue(EventViewState.AppendEventList(filteredList.map { it.toEvent() }))
                     }
-                    _viewState.setValue(EventViewState.AppendEventList(filteredList.map { it.toEvent() }))
                 }
             }
         }

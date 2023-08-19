@@ -1,6 +1,5 @@
 package com.gathering.android.event.myevent
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
@@ -15,39 +14,48 @@ class MyEventViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ) : ViewModel() {
 
+    private var page = 1
     private val _viewState = ActiveMutableLiveData<MyEventViewState>()
     val viewState: MutableLiveData<MyEventViewState> by ::_viewState
 
     fun onViewCreated() {
+        getMyEvents(page)
+    }
+
+    fun onEventAdded() {
+        _viewState.setValue(MyEventViewState.ClearData)
+        page = 1
+        getMyEvents(page)
+    }
+    private fun getMyEvents(page: Int) {
         _viewState.setValue(MyEventViewState.ShowProgress)
-        eventRepository.getMyEvents { request ->
+        eventRepository.getMyEvents(page) { request ->
             when (request) {
                 is ResponseState.Failure -> {
-                    Log.d("WTF_SWE", request.throwable.message ?: "")
+                    _viewState.setValue(MyEventViewState.HideProgress)
                     _viewState.setValue(MyEventViewState.ShowNoData)
-                    hideProgress()
                 }
 
                 is ResponseState.Success<List<EventModel>> -> {
-                    val eventModelList = request.data as? List<EventModel>
-                    (eventModelList)
-                        ?.map { it.toEvent() }
-                        ?.also { events ->
-                            if (events.isEmpty()) {
-                                _viewState.setValue(MyEventViewState.ShowNoData)
-                                hideProgress()
-                                return@also
-                            }
-                            _viewState.setValue(MyEventViewState.ShowUserEventList(events))
-                            _viewState.setValue(MyEventViewState.HideNoData)
-                            hideProgress()
-                        } ?: run {
-                        _viewState.setValue(MyEventViewState.ShowNoData)
+                    val currentPageEvents = request.data as? List<EventModel>
+                    if (currentPageEvents.isNullOrEmpty()) {
+                        if(page == 0) {
+                            _viewState.setValue(MyEventViewState.ShowNoData)
+                        }
                         hideProgress()
+                    } else {
+                        _viewState.setValue(MyEventViewState.HideProgress)
+                        _viewState.setValue(MyEventViewState.ShowNextEventPage(currentPageEvents.map { it.toEvent() }))
                     }
+
                 }
             }
         }
+    }
+
+    fun onNextPageRequested() {
+        page++
+        getMyEvents(page)
     }
 
     fun onEventLikeClicked(event: Event) {

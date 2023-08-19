@@ -8,10 +8,12 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.databinding.FrgMyEventBinding
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
+import com.gathering.android.event.home.EndlessScrollListener
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,7 +37,13 @@ class MyEventFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val linearLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvEvent.layoutManager = linearLayoutManager
         binding.rvEvent.adapter = adapter
+        binding.rvEvent.addOnScrollListener(EndlessScrollListener {
+            viewModel.onNextPageRequested()
+        })
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -48,10 +56,15 @@ class MyEventFragment : Fragment() {
                 is MyEventViewState.ShowError -> showToast(state.errorMessage)
                 MyEventViewState.ShowNoData -> binding.tvNoData.isVisible = true
                 MyEventViewState.ShowProgress -> binding.prg.isVisible = true
-                is MyEventViewState.ShowUserEventList -> adapter.setEventItem(state.myEventList.toMutableList())
+                is MyEventViewState.ShowNextEventPage -> adapter.appendEventItems(state.myEventList.toMutableList())
                 is MyEventViewState.UpdateEvent -> {
                     adapter.updateEvent(state.event)
                 }
+                is MyEventViewState.AppendEventList -> {
+                    adapter.appendEventItems(state.eventList.toMutableList())
+                }
+                MyEventViewState.ClearData -> adapter.clearData()
+
             }
         }
 
@@ -66,13 +79,9 @@ class MyEventFragment : Fragment() {
         getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(
             viewLifecycleOwner
         ) {
-            viewModel.onViewCreated()
+            viewModel.onEventAdded()
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
         viewModel.onViewCreated()
     }
 
