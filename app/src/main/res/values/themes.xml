@@ -43,13 +43,6 @@
         <item name="behavior_hideable">true</item>
     </style>
 
-    <style name="FullScreenCustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="behavior_skipCollapsed">true</item>
-        <item name="behavior_fitToContents">true</item>
-        <item name="behavior_peekHeight">1000dp</item>
-        <item name="behavior_hideable">true</item>
-    </style>
-
     // theme used for datePicker and TimerPicker
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/custom_button_color</item>

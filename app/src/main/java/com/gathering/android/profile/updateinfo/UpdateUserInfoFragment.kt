@@ -6,22 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.ImageLoader
-import com.gathering.android.common.getNavigationResultLiveData
-import com.gathering.android.common.setNavigationResult
-import com.gathering.android.common.showErrorText
+import com.gathering.android.common.*
 import com.gathering.android.databinding.BottomSheetUpdateUserInfoBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UpdateUserInfoFragment : BottomSheetDialogFragment() {
+class UpdateUserInfoFragment : FullScreenBottomSheet() {
 
     lateinit var binding: BottomSheetUpdateUserInfoBinding
 
@@ -30,11 +25,6 @@ class UpdateUserInfoFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var imageLoader: ImageLoader
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenCustomBottomSheet)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

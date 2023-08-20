@@ -65,8 +65,8 @@
         android:label="MyEventFragment"
         tools:layout="@layout/frg_my_event">
         <action
-            android:id="@+id/action_navigation_event_to_addEventBottomSheetFragment"
-            app:destination="@id/addEventBottomSheetFragment" />
+            android:id="@+id/action_navigation_eventFragment_to_putEventBottomSheetFragment"
+            app:destination="@id/putEventBottomSheetFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -93,40 +93,40 @@
             app:argType="com.gathering.android.event.Event" />
     </fragment>
     <dialog
-        android:id="@+id/addEventBottomSheetFragment"
-        android:name="com.gathering.android.event.myevent.addevent.AddEventBottomSheetFragment"
+        android:id="@+id/putEventBottomSheetFragment"
+        android:name="com.gathering.android.event.putevent.PutEventScreen"
         android:label="AddEventBottomSheetFragment"
-        tools:layout="@layout/bottom_sheet_add_event">
+        tools:layout="@layout/screen_put_event">
         <action
-            android:id="@+id/action_addEventBottomSheetFragment_to_addLocationBottomSheet"
+            android:id="@+id/action_putEventBottomSheetFragment_to_addLocationBottomSheet"
             app:destination="@id/addLocationBottomSheet" />
         <action
-            android:id="@+id/action_addEventBottomSheetFragment_to_addPicBottomSheet"
+            android:id="@+id/action_putEventBottomSheetFragment_to_addPicBottomSheet"
             app:destination="@id/addPicBottomSheet" />
         <action
-            android:id="@+id/action_addEventBottomSheetFragment_to_navigation_event"
+            android:id="@+id/action_putEventBottomSheetFragment_to_navigation_event"
             app:destination="@id/navigation_eventFragment" />
         <action
-            android:id="@+id/action_addEventBottomSheetFragment_to_inviteFriendBottomSheet"
+            android:id="@+id/action_putEventBottomSheetFragment_to_inviteFriendBottomSheet"
             app:destination="@id/inviteFriendBottomSheet" />
     </dialog>
     <dialog
         android:id="@+id/addLocationBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.location.AddLocationBottomSheet"
+        android:name="com.gathering.android.event.putevent.location.AddLocationBottomSheet"
         android:label="AddLocationBottomSheet"
         tools:layout="@layout/bottom_sheet_add_location" />
     <dialog
         android:id="@+id/addPicBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.pic.AddPicBottomSheet"
+        android:name="com.gathering.android.event.putevent.pic.AddPicBottomSheet"
         android:label="AddPicBottomSheet"
         tools:layout="@layout/bottom_sheet_add_pic">
         <action
             android:id="@+id/action_back_to_add_event"
-            app:destination="@id/addEventBottomSheetFragment" />
+            app:destination="@id/putEventBottomSheetFragment" />
     </dialog>
     <dialog
         android:id="@+id/inviteFriendBottomSheet"
-        android:name="com.gathering.android.event.myevent.addevent.invitation.AddAttendeeBottomSheet"
+        android:name="com.gathering.android.event.putevent.invitation.AddAttendeeBottomSheet"
         android:label="InviteFriendBottomSheet"
         tools:layout="@layout/bottom_sheet_add_attendees">
         <argument

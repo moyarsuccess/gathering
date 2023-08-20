@@ -6,9 +6,11 @@ import com.gathering.android.event.model.EventModel
 interface EventRepository {
 
     fun likeEvent(
-        eventId: Long,
-        like: Boolean,
-        onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+        eventId: Long, like: Boolean, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+    )
+
+    fun deleteEvent(
+        eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
     )
 
     fun getMyEvents(

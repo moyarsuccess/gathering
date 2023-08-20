@@ -20,6 +20,9 @@ sealed interface MyEventViewState {
     object HideNoData : MyEventViewState
 
     class AppendEventList(val eventList: List<Event>) : MyEventViewState
+
     object ClearData : MyEventViewState
+
+    class NavigateToEditMyEvent(val event: Event) : MyEventViewState
 }
 

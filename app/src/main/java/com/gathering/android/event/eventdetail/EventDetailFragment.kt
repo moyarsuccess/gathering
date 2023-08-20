@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.FrgEventDetailBinding
-import com.gathering.android.event.EVENT
 import com.gathering.android.event.Event
+import com.gathering.android.event.KEY_ARGUMENT_EVENT
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class EventDetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FrgEventDetailBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -38,9 +38,9 @@ class EventDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable(EVENT, Event::class.java)
+            arguments?.getSerializable(KEY_ARGUMENT_EVENT, Event::class.java)
         } else {
-            arguments?.getSerializable(EVENT) as Event
+            arguments?.getSerializable(KEY_ARGUMENT_EVENT) as Event
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
@@ -51,7 +51,7 @@ class EventDetailFragment : Fragment() {
                     binding.tvEventTitle.text = state.event.eventName
                     binding.tvEventHost.text = state.event.eventHostEmail?.toString()
                     binding.tvEventDescription.text = state.event.description
-                    binding.tvEventAddress.text = state.event.location.addressLine
+                    binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
                     binding.tvEventDate.text = state.event.dateAndTime.toString()
                 }
             }

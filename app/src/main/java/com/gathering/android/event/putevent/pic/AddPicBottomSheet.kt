@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.pic
+package com.gathering.android.event.putevent.pic
 
 import android.Manifest
 import android.app.Activity

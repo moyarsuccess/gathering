@@ -10,18 +10,13 @@ data class Event(
     val eventHostEmail: String = "",
     val description: String = "",
     val photoUrl: String = "",
-    val location: EventLocation,
+    val location: EventLocation?,
     val dateAndTime: Long = 0,
     val isContactEvent: Boolean = false,
     val isMyEvent: Boolean = false,
     val attendees: List<String> = listOf(),
     val eventCost: Int = 0,
-    val liked: Boolean,
-) : Serializable {
-
-    fun getAttendeesJson(): String {
-        return Gson().toJson(attendees)
-    }
-}
+    val liked: Boolean = false,
+) : Serializable
 
 

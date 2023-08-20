@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.addevent.location
+package com.gathering.android.event.putevent.location
 
 import com.google.android.gms.maps.model.LatLng
 

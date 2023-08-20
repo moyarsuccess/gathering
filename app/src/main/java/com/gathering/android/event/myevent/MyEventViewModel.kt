@@ -18,6 +18,7 @@ class MyEventViewModel @Inject constructor(
     private val _viewState = ActiveMutableLiveData<MyEventViewState>()
     val viewState: MutableLiveData<MyEventViewState> by ::_viewState
 
+    private var deletedEvent: Event? = null
     fun onViewCreated() {
         getMyEvents(page)
     }
@@ -27,6 +28,7 @@ class MyEventViewModel @Inject constructor(
         page = 1
         getMyEvents(page)
     }
+
     private fun getMyEvents(page: Int) {
         _viewState.setValue(MyEventViewState.ShowProgress)
         eventRepository.getMyEvents(page) { request ->
@@ -39,7 +41,7 @@ class MyEventViewModel @Inject constructor(
                 is ResponseState.Success<List<EventModel>> -> {
                     val currentPageEvents = request.data as? List<EventModel>
                     if (currentPageEvents.isNullOrEmpty()) {
-                        if(page == 0) {
+                        if (page == 0) {
                             _viewState.setValue(MyEventViewState.ShowNoData)
                         }
                         hideProgress()
@@ -56,6 +58,32 @@ class MyEventViewModel @Inject constructor(
     fun onNextPageRequested() {
         page++
         getMyEvents(page)
+    }
+
+    fun onDeleteEvent(event: Event) {
+        eventRepository.deleteEvent(event.eventId) { request ->
+            when (request) {
+                is ResponseState.Failure -> {
+                    _viewState.setValue(MyEventViewState.ShowError(DELETE_EVENT_REQUEST_FAILED))
+                }
+
+                is ResponseState.Success -> {
+                    deletedEvent = event
+                    _viewState.setValue(MyEventViewState.UpdateEvent(event))
+                }
+            }
+        }
+    }
+
+    fun onUndoDeleteEvent() {
+        deletedEvent?.let { event ->
+            _viewState.setValue(MyEventViewState.UpdateEvent(event))
+            deletedEvent = null
+        }
+    }
+
+    fun onEditEventClicked(event: Event) {
+        _viewState.setValue(MyEventViewState.NavigateToEditMyEvent(event))
     }
 
     fun onEventLikeClicked(event: Event) {
@@ -83,6 +111,8 @@ class MyEventViewModel @Inject constructor(
     }
 
     companion object {
+        const val DELETE_EVENT_REQUEST_FAILED = "DELETE_EVENT_REQUEST_FAILED"
+        const val UPDATE_EVENT_REQUEST_FAILED = "UPDATE_EVENT_REQUEST_FAILED"
         const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
     }
 }
