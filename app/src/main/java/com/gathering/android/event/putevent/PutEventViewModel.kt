@@ -68,7 +68,7 @@ class PutEventViewModel @Inject constructor(
             cal.set(Calendar.YEAR, year ?: 0)
             cal.set(Calendar.MONTH, month ?: 0)
             cal.set(Calendar.DAY_OF_MONTH, day ?: 0)
-            val simpleDateFormat = SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             return simpleDateFormat.format(cal.time)
         }
 
@@ -125,8 +125,9 @@ class PutEventViewModel @Inject constructor(
         this.putEventNavigator = putEventNavigator
         val stateMode = if (event == null) StateMode.ADD else StateMode.EDIT
         update { currentState ->
-            val cal = Calendar.getInstance()
-            cal.time = Date(event?.dateAndTime ?: 0L)
+            val cal = Calendar.getInstance().apply {
+                event?.dateAndTime?.also { time = Date(it) }
+            }
             currentState.copy(
                 eventId = event?.eventId ?: 0,
                 imageUri = event?.photoUrl,
