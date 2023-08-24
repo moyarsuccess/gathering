@@ -76,7 +76,7 @@ class PutEventViewModel @Inject constructor(
             val cal = Calendar.getInstance()
             cal.set(Calendar.HOUR_OF_DAY, hour ?: 0)
             cal.set(Calendar.MINUTE, minute ?: 0)
-            val simpleDateFormat = SimpleDateFormat("HH:MM", Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             return simpleDateFormat.format(cal.time)
         }
 
