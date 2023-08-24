@@ -12,9 +12,19 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.*
+import com.gathering.android.common.ATTENDEE_LIST
+import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.getNavigationResultLiveData
+import com.gathering.android.common.setNavigationResult
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenPutEventBinding
-import com.gathering.android.event.*
+import com.gathering.android.event.Event
+import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
+import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
+import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -47,7 +57,6 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                 binding.etDescription.setNonIdenticalText(state.eventDescription ?: "")
                 binding.btnAction.text = state.actionButtonText
                 binding.btnAction.isEnabled = state.actionButtonEnable ?: false
-                println("WTF - 2 ${state.actionButtonEnable ?: false}")
                 binding.tvDate.text = state.eventDate
                 binding.tvTime.text = state.eventTime
                 binding.tvLocation.text = state.eventAddress
