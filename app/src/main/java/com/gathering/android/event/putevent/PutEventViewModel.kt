@@ -12,7 +12,6 @@ import com.gathering.android.event.putevent.repo.PutEventModel
 import com.gathering.android.event.putevent.repo.PutEventRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -275,16 +274,12 @@ class PutEventViewModel @Inject constructor(
     }
 
     private fun update(stateUpdater: (currentState: EventViewModelState) -> EventViewModelState) {
-            viewModelState.update { currentState ->
-                val newState = stateUpdater(currentState)
-                val isReady = newState.isStateReadyToAction()
-                println("balaiie WTF - $isReady")
-                val copy = newState.copy(
-                    actionButtonEnable = isReady
-                )
-                println("WTF - ${copy.actionButtonEnable}")
-                copy
-            }
+        viewModelState.update { currentState ->
+            val newState = stateUpdater(currentState)
+            val isReady = newState.isStateReadyToAction()
+            val copy = newState.copy(actionButtonEnable = isReady)
+            copy
+        }
     }
 
     private fun createPutEventModelFromCurrentState(): PutEventModel {
