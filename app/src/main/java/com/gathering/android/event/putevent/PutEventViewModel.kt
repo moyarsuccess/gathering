@@ -81,23 +81,6 @@ class PutEventViewModel @Inject constructor(
             return simpleDateFormat.format(cal.time)
         }
 
-        fun toEvent(): Event {
-            val cal = Calendar.getInstance()
-            cal.set(Calendar.YEAR, year ?: 0)
-            cal.set(Calendar.MONTH, month ?: 0)
-            cal.set(Calendar.DAY_OF_MONTH, day ?: 0)
-            cal.set(Calendar.HOUR_OF_DAY, hour ?: 0)
-            cal.set(Calendar.MINUTE, minute ?: 0)
-            return Event(
-                eventId = eventId ?: 0,
-                eventName = eventName ?: "",
-                description = eventDescription ?: "",
-                photoUrl = imageUri ?: "",
-                location = EventLocation(lat, lon),
-                dateAndTime = cal.time.time,
-                attendees = eventAttendees ?: listOf(),
-            )
-        }
     }
 
     private val viewModelState = MutableStateFlow(EventViewModelState())
@@ -138,8 +121,8 @@ class PutEventViewModel @Inject constructor(
                 day = cal.getDay(),
                 hour = cal.getHour(),
                 minute = cal.getMinute(),
-                lat = event?.location?.lat,
-                lon = event?.location?.lon,
+                lat = event?.latitude,
+                lon = event?.longitude,
                 eventAttendees = event?.attendees,
                 actionButtonText = if (event == null) "Add" else "Save",
                 stateMode = stateMode,
@@ -278,11 +261,9 @@ class PutEventViewModel @Inject constructor(
             viewModelState.update { currentState ->
                 val newState = stateUpdater(currentState)
                 val isReady = newState.isStateReadyToAction()
-                println("balaiie WTF - $isReady")
                 val copy = newState.copy(
                     actionButtonEnable = isReady
                 )
-                println("WTF - ${copy.actionButtonEnable}")
                 copy
             }
     }

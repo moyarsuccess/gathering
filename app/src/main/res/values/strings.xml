@@ -98,4 +98,5 @@
     <string name="where_is_the_location">Where is the location?</string>
     <string name="who_can_attend">who can attend?</string>
     <string name="edit_event">Edit event</string>
+    <string name="nothing_to_show">Nothing to show!</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.gathering.android.event.eventdetail
 
 import com.gathering.android.event.Event
+import com.gathering.android.event.model.Attendee
 
 sealed interface EventDetailViewState {
 
@@ -8,7 +9,7 @@ sealed interface EventDetailViewState {
 
     class ShowError(val errorMessage: String) : EventDetailViewState
 
-    object NavigateToAttendeesDetailBottomSheet : EventDetailViewState
+    class NavigateToAttendeesDetailBottomSheet(val attendees: List<Attendee>) : EventDetailViewState
 
     object YesSelected : EventDetailViewState
 

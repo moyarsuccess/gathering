@@ -1,13 +1,12 @@
 package com.gathering.android.di
 
 import android.content.Context
-import com.gathering.android.common.UserRepo
-import com.gathering.android.event.myevent.repo.AcceptTypeRemoteService
-import com.gathering.android.event.myevent.repo.AcceptTypeRepository
-import com.gathering.android.event.myevent.repo.ApiAcceptTypeRepository
-import com.gathering.android.event.model.repo.ApiEventRepository
-import com.gathering.android.event.model.repo.EventRemoteService
-import com.gathering.android.event.model.repo.EventRepository
+import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRemoteService
+import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRepository
+import com.gathering.android.event.eventdetail.acceptrepo.ApiAcceptTypeRepository
+import com.gathering.android.event.repo.ApiEventRepository
+import com.gathering.android.event.repo.EventRemoteService
+import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.putevent.repo.PutEventRemoteService
 import com.gathering.android.event.putevent.repo.PutEventRepository
 import com.gathering.android.event.putevent.repo.ApiPutEventRepository

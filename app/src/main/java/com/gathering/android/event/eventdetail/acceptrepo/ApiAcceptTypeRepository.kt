@@ -1,9 +1,9 @@
-package com.gathering.android.event.myevent.repo
+package com.gathering.android.event.eventdetail.acceptrepo
 
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
-import com.gathering.android.event.myevent.AcceptType
+import com.gathering.android.event.eventdetail.AcceptType
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

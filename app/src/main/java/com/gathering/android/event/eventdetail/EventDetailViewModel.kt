@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserRepo
-import com.gathering.android.event.myevent.repo.AcceptTypeRepository
 import com.gathering.android.event.Event
-import com.gathering.android.event.myevent.AcceptType
+import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRepository
 import javax.inject.Inject
 
 class EventDetailViewModel @Inject constructor(
@@ -32,26 +31,24 @@ class EventDetailViewModel @Inject constructor(
             }
             AcceptType.No.type -> {
                 _viewState.setValue(EventDetailViewState.NoSelected)
-
             }
             AcceptType.Maybe.type -> {
                 _viewState.setValue(EventDetailViewState.MaybeSelected)
-
-
             }
         }
     }
 
-    fun onYesButtonClicked(currentUserId: String) {
+    fun onYesButtonClicked() {
 
         event?.let {
             acceptTypeRepository.setEventAcceptType(
                 it.eventId,
                 AcceptType.Yes,
-            ) { state ->
-                when (state) {
+            ) { result ->
+                when (result) {
                     is ResponseState.Success -> {
-                        // todo select the yes button
+                        setAcceptTypeOnSpecificEvent(it, AcceptType.Yes)
+                        _viewState.setValue(EventDetailViewState.YesSelected)
                     }
                     is ResponseState.Failure -> {
                         _viewState.setValue(EventDetailViewState.ShowError("failed to select yes"))
@@ -64,16 +61,60 @@ class EventDetailViewModel @Inject constructor(
 
     }
 
-    fun onNoButtonClicked(currentUserId: String) {
-        TODO("Not yet implemented")
-
+    fun onNoButtonClicked() {
+        event?.let {
+            acceptTypeRepository.setEventAcceptType(
+                it.eventId,
+                AcceptType.No,
+            ) { result ->
+                when (result) {
+                    is ResponseState.Success -> {
+                        setAcceptTypeOnSpecificEvent(it, AcceptType.No)
+                        _viewState.setValue(EventDetailViewState.NoSelected)
+                    }
+                    is ResponseState.Failure -> {
+                        _viewState.setValue(EventDetailViewState.ShowError("failed to select no"))
+                    }
+                }
+            }
+        } ?: run {
+            throw Exception("event was not provided by calling onViewCreated")
+        }
     }
 
-    fun onMaybeButtonClicked(currentUserId: String) {
-        TODO("Not yet implemented")
+    fun onMaybeButtonClicked() {
+        event?.let {
+            acceptTypeRepository.setEventAcceptType(
+                it.eventId,
+                AcceptType.Maybe,
+            ) { result ->
+                when (result) {
+                    is ResponseState.Success -> {
+                        setAcceptTypeOnSpecificEvent(it, AcceptType.Maybe)
+                        _viewState.setValue(EventDetailViewState.MaybeSelected)
+                    }
+                    is ResponseState.Failure -> {
+                        _viewState.setValue(EventDetailViewState.ShowError("failed to select maybe"))
+                    }
+                }
+            }
+        } ?: run {
+            throw Exception("event was not provided by calling onViewCreated")
+        }
     }
 
-    fun onTvAttendeesCountClicked() {
-        _viewState.setValue(EventDetailViewState.NavigateToAttendeesDetailBottomSheet)
+    private fun setAcceptTypeOnSpecificEvent(it: Event, acceptType: AcceptType) {
+        val currentUser = userRepo.getUser()
+        val currentUserFoundAttendee =
+            it.attendees.find { attendee -> attendee.email == currentUser?.email }
+        currentUserFoundAttendee?.accepted = acceptType.type
+    }
+
+    fun onTvAttendeesDetailsClicked() {
+        _viewState.setValue(
+            EventDetailViewState.NavigateToAttendeesDetailBottomSheet(
+                event?.attendees ?: emptyList()
+            )
+        )
     }
 }

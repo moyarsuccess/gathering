@@ -1,7 +1,7 @@
-package com.gathering.android.event.myevent.repo
+package com.gathering.android.event.eventdetail.acceptrepo
 
 import com.gathering.android.common.ResponseState
-import com.gathering.android.event.myevent.AcceptType
+import com.gathering.android.event.eventdetail.AcceptType
 
 interface AcceptTypeRepository {
 

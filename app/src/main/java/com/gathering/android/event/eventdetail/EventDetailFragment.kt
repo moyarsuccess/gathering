@@ -1,19 +1,24 @@
 package com.gathering.android.event.eventdetail
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgEventDetailBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,46 +57,53 @@ class EventDetailFragment : Fragment() {
                     binding.tvEventTitle.text = state.event.eventName
                     binding.tvEventHost.text = state.event.eventHostEmail
                     binding.tvEventDescription.text = state.event.description
-                    binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
-                    binding.tvEventDate.text = state.event.dateAndTime.toString()
+                    //binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
+                    binding.tvEventDate.text =
+                        SimpleDateFormat("EEEE, MMMM d, yyyy - h:mm a", Locale.getDefault()).format(
+                            state.event.dateAndTime
+                        )
                 }
-                EventDetailViewState.NavigateToAttendeesDetailBottomSheet -> {
+                is EventDetailViewState.NavigateToAttendeesDetailBottomSheet -> {
+                    val bundle = bundleOf(ATTENDEE_LIST to state.attendees)
                     findNavController().navigate(
-                        R.id.action_eventDetailFragment_to_attendeesDetailBottomSheet
+                        R.id.action_eventDetailFragment_to_attendeesDetailBottomSheet, bundle
                     )
                 }
                 EventDetailViewState.MaybeSelected -> {
-                    // in ui show maybe btn is selected
+                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnMaybe.setBackgroundColor(Color.GRAY)
                 }
                 EventDetailViewState.NoSelected -> {
-                    TODO()
+                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnNo.setBackgroundColor(Color.GRAY)
                 }
                 EventDetailViewState.YesSelected -> {
-                    TODO()
+                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnYes.setBackgroundColor(Color.GRAY)
                 }
             }
         }
 
-        event?.let { event ->
-            viewModel.onViewCreated(event)
+        event?.let {
+            viewModel.onViewCreated(it)
         }
         binding.btnYes.setOnClickListener {
-            val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
-            viewModel.onYesButtonClicked(currentUserId)
+            viewModel.onYesButtonClicked()
         }
 
         binding.btnNo.setOnClickListener {
-            val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
-            viewModel.onNoButtonClicked(currentUserId)
+            viewModel.onNoButtonClicked()
         }
 
         binding.btnMaybe.setOnClickListener {
-            val currentUserId = "YOUR_USER_ID" // Replace this with the ID of the current user
-            viewModel.onMaybeButtonClicked(currentUserId)
+            viewModel.onMaybeButtonClicked()
         }
 
         binding.tvAttendeesCount.setOnClickListener {
-            viewModel.onTvAttendeesCountClicked()
+            viewModel.onTvAttendeesDetailsClicked()
         }
     }
 }

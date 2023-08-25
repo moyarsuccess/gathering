@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.repo
+package com.gathering.android.event.eventdetail.acceptrepo
 
 import com.gathering.android.common.GeneralApiResponse
 import retrofit2.Call
