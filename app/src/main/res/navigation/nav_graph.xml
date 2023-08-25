@@ -199,7 +199,7 @@
     </dialog>
     <dialog
         android:id="@+id/attendeesDetailBottomSheet"
-        android:name="com.gathering.android.event.eventdetail.AttendeesDetailBottomSheet"
+        android:name="com.gathering.android.event.eventdetail.AttendeesDetailScreen"
         android:label="attendeesDetailBottomSheet"
         tools:layout="@layout/bottom_sheet_attendees_detail" />
 </navigation>

@@ -13,7 +13,6 @@ class ApiAcceptTypeRepository @Inject constructor(
     private val acceptTypeRemoteService: AcceptTypeRemoteService
 ) : AcceptTypeRepository {
 
-
     override fun setEventAcceptType(
         eventId: Long, accept: AcceptType, onResponseReady: (ResponseState<String>) -> Unit
     ) {

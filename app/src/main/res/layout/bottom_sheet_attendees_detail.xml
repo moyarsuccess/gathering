@@ -12,31 +12,27 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
-
-
         <Button
             android:id="@+id/btn_yes"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/btn_margin_attendee_detail"
             android:layout_weight="1"
             android:background="@drawable/custom_button"
             android:text="@string/yes" />
-
         <Button
             android:id="@+id/btn_no"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/btn_margin_attendee_detail"
             android:layout_weight="1"
             android:background="@drawable/custom_button"
             android:text="@string/no" />
-
         <Button
             android:id="@+id/btn_maybe"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/btn_margin_attendee_detail"
             android:layout_weight="1"
             android:background="@drawable/custom_button"
             android:text="@string/maybe" />
@@ -51,20 +47,19 @@
         app:layout_constraintTop_toBottomOf="@id/buttonsLayout">
 
         <TextView
+            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/no_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nothing_to_show"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_attendees"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="20dp"
+            android:padding="@dimen/rv_padding"
             app:layout_constraintTop_toTopOf="parent">
-
         </androidx.recyclerview.widget.RecyclerView>
 
 

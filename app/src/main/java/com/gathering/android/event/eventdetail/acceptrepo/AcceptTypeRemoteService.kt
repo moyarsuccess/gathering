@@ -6,7 +6,6 @@ import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface AcceptTypeRemoteService {
-
     @PUT("event/accept")
     fun setEventAcceptType(
         @Query("event_id") eventId: Long,
