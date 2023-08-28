@@ -24,6 +24,29 @@ class PutEventViewModel @Inject constructor(
 
     private var putEventNavigator: PutEventNavigator? = null
 
+
+    private val viewModelState = MutableStateFlow(EventViewModelState())
+    val uiState: Flow<PutEventUiState> = viewModelState.map { viewModelState ->
+        PutEventUiState(
+            imageUri = viewModelState.imageUri,
+            eventName = viewModelState.eventName,
+            eventDescription = viewModelState.eventDescription,
+            eventDate = viewModelState.getFormattedDate(),
+            eventTime = viewModelState.getFormattedTime(),
+            eventAddress = EventLocation(
+                viewModelState.lat ?: 0.0,
+                viewModelState.lon ?: 0.0
+            ).addressFromLocation(),
+            eventAttendees = viewModelState.eventAttendees.toCommaSeparatedString(),
+            actionButtonText = viewModelState.actionButtonText,
+            actionButtonEnable = viewModelState.actionButtonEnable
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = PutEventUiState()
+    )
+
     private enum class StateMode {
         EDIT,
         ADD,
@@ -79,47 +102,8 @@ class PutEventViewModel @Inject constructor(
             val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             return simpleDateFormat.format(cal.time)
         }
-
-        fun toEvent(): Event {
-            val cal = Calendar.getInstance()
-            cal.set(Calendar.YEAR, year ?: 0)
-            cal.set(Calendar.MONTH, month ?: 0)
-            cal.set(Calendar.DAY_OF_MONTH, day ?: 0)
-            cal.set(Calendar.HOUR_OF_DAY, hour ?: 0)
-            cal.set(Calendar.MINUTE, minute ?: 0)
-            return Event(
-                eventId = eventId ?: 0,
-                eventName = eventName ?: "",
-                description = eventDescription ?: "",
-                photoUrl = imageUri ?: "",
-                location = EventLocation(lat, lon),
-                dateAndTime = cal.time.time,
-                attendees = eventAttendees ?: listOf(),
-            )
-        }
     }
 
-    private val viewModelState = MutableStateFlow(EventViewModelState())
-    val uiState: Flow<PutEventUiState> = viewModelState.map { viewModelState ->
-        PutEventUiState(
-            imageUri = viewModelState.imageUri,
-            eventName = viewModelState.eventName,
-            eventDescription = viewModelState.eventDescription,
-            eventDate = viewModelState.getFormattedDate(),
-            eventTime = viewModelState.getFormattedTime(),
-            eventAddress = EventLocation(
-                viewModelState.lat ?: 0.0,
-                viewModelState.lon ?: 0.0
-            ).addressFromLocation(),
-            eventAttendees = viewModelState.eventAttendees.toCommaSeparatedString(),
-            actionButtonText = viewModelState.actionButtonText,
-            actionButtonEnable = viewModelState.actionButtonEnable
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = PutEventUiState()
-    )
 
     fun onViewCreated(event: Event?, putEventNavigator: PutEventNavigator) {
         this.putEventNavigator = putEventNavigator
