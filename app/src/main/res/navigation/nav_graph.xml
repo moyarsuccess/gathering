@@ -23,7 +23,7 @@
         tools:layout="@layout/frg_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_verificationFragment"
-            app:destination="@id/verificationFragment" />
+            app:destination="@id/verificationScreen" />
         <argument
             android:name="Email"
             app:argType="string" />
@@ -38,7 +38,7 @@
             app:destination="@id/navigation_homeFragment" />
         <action
             android:id="@+id/action_signInFragment_to_verificationFragment"
-            app:destination="@id/verificationFragment"
+            app:destination="@id/verificationScreen"
             app:popUpTo="@+id/main_nav_graph" />
         <action
             android:id="@+id/action_signInFragment_to_forgetPasswordFragment"
@@ -134,15 +134,15 @@
             app:argType="string" />
     </dialog>
     <dialog
-        android:id="@+id/verificationFragment"
-        android:name="com.gathering.android.auth.verification.VerificationFragment"
+        android:id="@+id/verificationScreen"
+        android:name="com.gathering.android.auth.verification.VerificationScreen"
         android:label="showEmailVerification"
-        tools:layout="@layout/frg_verification">
+        tools:layout="@layout/screen_verification">
         <action
             android:id="@+id/action_verification_to_navigation_home"
             app:destination="@id/navigation_homeFragment" />
         <deepLink
-            android:id="@+id/verificationFragment"
+            android:id="@+id/verificationScreen"
             android:autoVerify="true"
             app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/email/verified" />

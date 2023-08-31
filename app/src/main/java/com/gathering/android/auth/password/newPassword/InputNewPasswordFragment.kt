@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.auth.verification.VerificationFragment
+import com.gathering.android.auth.verification.VerificationScreen
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgNewPasswordInputBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,6 +69,6 @@ class InputNewPasswordFragment : DialogFragment() {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT, Intent::class.java)
         } else {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT)
-        }?.data?.getQueryParameter(VerificationFragment.TOKEN_PARAM)
+        }?.data?.getQueryParameter(VerificationScreen.TOKEN_PARAM)
     }
 }

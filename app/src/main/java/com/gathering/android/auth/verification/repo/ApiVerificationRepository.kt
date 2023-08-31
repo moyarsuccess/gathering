@@ -1,11 +1,6 @@
 package com.gathering.android.auth.verification.repo
 
-import com.gathering.android.common.AuthorizedResponse
-import com.gathering.android.common.GeneralApiResponse
-import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
