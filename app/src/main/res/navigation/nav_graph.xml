@@ -46,7 +46,7 @@
     </dialog>
     <fragment
         android:id="@+id/navigation_homeFragment"
-        android:name="com.gathering.android.event.home.HomeFragment"
+        android:name="com.gathering.android.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/frg_home">
         <action
@@ -91,6 +91,9 @@
         <argument
             android:name="Event"
             app:argType="com.gathering.android.event.Event" />
+        <action
+            android:id="@+id/action_eventDetailFragment_to_attendeesDetailBottomSheet"
+            app:destination="@id/attendeesDetailBottomSheet" />
     </fragment>
     <dialog
         android:id="@+id/putEventBottomSheetFragment"
@@ -194,4 +197,9 @@
             app:destination="@id/navigation_homeFragment" />
 
     </dialog>
+    <dialog
+        android:id="@+id/attendeesDetailBottomSheet"
+        android:name="com.gathering.android.event.eventdetail.AttendeesDetailScreen"
+        android:label="attendeesDetailBottomSheet"
+        tools:layout="@layout/bottom_sheet_attendees_detail" />
 </navigation>

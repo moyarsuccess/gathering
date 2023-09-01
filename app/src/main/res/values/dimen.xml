@@ -85,5 +85,8 @@
     <dimen name="circle_image_border_width">2dp</dimen>
     <dimen name="button_save_margin_top">2dp</dimen>
     <dimen name="button_sign_out_margin_top">20dp</dimen>
+    <dimen name="constraint_layout_padding">10dp</dimen>
+    <dimen name="rv_padding">20dp</dimen>
+    <dimen name="btn_margin_attendee_detail">10dp</dimen>
 
 </resources>

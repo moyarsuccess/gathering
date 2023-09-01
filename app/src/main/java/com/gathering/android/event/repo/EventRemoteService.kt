@@ -1,4 +1,4 @@
-package com.gathering.android.event.model.repo
+package com.gathering.android.event.repo
 
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.event.model.EventModel
