@@ -30,9 +30,9 @@
     </dialog>
     <dialog
         android:id="@+id/signInFragment"
-        android:name="com.gathering.android.auth.signin.SignInFragment"
+        android:name="com.gathering.android.auth.signin.SignInScreen"
         android:label="SignInFragment"
-        tools:layout="@layout/frg_sign_in">
+        tools:layout="@layout/screen_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_navigation_homeFragment"
             app:destination="@id/navigation_homeFragment" />

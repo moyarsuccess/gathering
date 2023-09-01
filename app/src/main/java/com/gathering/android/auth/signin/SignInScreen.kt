@@ -10,14 +10,14 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.databinding.FrgSignInBinding
+import com.gathering.android.databinding.ScreenSignInBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignInFragment : DialogFragment() {
+class SignInScreen : DialogFragment(), SignInNavigator {
 
-    private lateinit var binding: FrgSignInBinding
+    private lateinit var binding: ScreenSignInBinding
 
     @Inject
     lateinit var viewModel: SignInViewModel
@@ -32,7 +32,7 @@ class SignInFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FrgSignInBinding.inflate(layoutInflater)
+        binding = ScreenSignInBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -114,5 +114,17 @@ class SignInFragment : DialogFragment() {
 
     private fun showToast(errorMessage: String?) {
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+    }
+
+    override fun navigateToHome() {
+        TODO("Not yet implemented")
+    }
+
+    override fun navigateToVerification() {
+        TODO("Not yet implemented")
+    }
+
+    override fun navigateToPasswordReset() {
+        TODO("Not yet implemented")
     }
 }
