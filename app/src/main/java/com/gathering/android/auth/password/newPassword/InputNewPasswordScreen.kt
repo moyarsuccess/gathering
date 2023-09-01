@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.auth.verification.VerificationFragment
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.auth.verification.VerificationScreen
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenNewPasswordInputBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,7 +62,7 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT, Intent::class.java)
         } else {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT)
-        }?.data?.getQueryParameter(VerificationFragment.TOKEN_PARAM)
+        }?.data?.getQueryParameter(VerificationScreen.TOKEN_PARAM)
     }
 
     override fun navigateToHomeFragment() {

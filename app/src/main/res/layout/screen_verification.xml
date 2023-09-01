@@ -25,25 +25,20 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_logo" />
 
-    <TextView
-        android:id="@+id/tv_countDown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/img_margin"
-        app:layout_constraintEnd_toStartOf="@id/btn_sendEmail"
-        app:layout_constraintTop_toBottomOf="@id/tv_emailVerification" />
-
-
-    <Button
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/btn_sendEmail"
         android:layout_width="@dimen/btn_verification_frg_width"
         android:layout_height="@dimen/btn_verification_frg_height"
+        android:layout_margin="@dimen/margin"
         android:background="@color/custom_button_color"
+        android:padding="@dimen/btn_padding"
         android:text="@string/send_again"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_countDown"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_emailVerification" />
+        app:layout_constraintTop_toBottomOf="@id/tv_emailVerification"
+        app:spinning_bar_color="@color/spinning_bar"
+        app:spinning_bar_padding="@dimen/bar_padding"
+        app:spinning_bar_width="@dimen/bar_width" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

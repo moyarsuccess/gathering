@@ -3,23 +3,28 @@ package com.gathering.android.auth.verification
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.databinding.FrgVerificationBinding
+import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.showErrorText
+import com.gathering.android.databinding.ScreenVerificationBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VerificationFragment : DialogFragment() {
+class VerificationScreen : FullScreenBottomSheet(), VerificationNavigator {
 
-    private lateinit var binding: FrgVerificationBinding
+    private lateinit var binding: ScreenVerificationBinding
 
     @Inject
     lateinit var viewModel: VerificationViewModel
@@ -27,15 +32,12 @@ class VerificationFragment : DialogFragment() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(
-            STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
-        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FrgVerificationBinding.inflate(layoutInflater)
+        binding = ScreenVerificationBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -44,27 +46,27 @@ class VerificationFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSendEmail.setOnClickListener {
-            viewModel.sendEmailVerification(extractEmail())
+            viewModel.onSendEmailVerificationClicked(extractEmail())
         }
 
-        viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                VerificationViewState.NavigateToHomeScreen -> {
-                    findNavController().navigate(
-                        R.id.action_verification_to_navigation_home
-                    )
-                }
 
-                is VerificationViewState.ShowError -> {
-                    showToast(state.message)
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                if (state.isInProgress) {
+                    binding.btnSendEmail.startAnimation()
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed({
+                        binding.btnSendEmail.revertAnimation()
+                    }, 5000)
+                } else {
+                    binding.btnSendEmail.revertAnimation()
                 }
-
-                is VerificationViewState.ButtonState -> {
-                    binding.btnSendEmail.isEnabled = state.isEnabled
+                state.message?.let {
+                    showErrorText(it)
                 }
             }
         }
-
+        viewModel.onViewCreated(this)
     }
 
     override fun onResume() {
@@ -83,14 +85,17 @@ class VerificationFragment : DialogFragment() {
     }
 
     private fun extractEmail(): String? {
-        return arguments?.getString("email")
+        return arguments?.getString(EMAIL_PARAM)
     }
 
-    private fun showToast(errorMessage: String?) {
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+    override fun navigateToHomeScreen() {
+        findNavController().navigate(
+            R.id.action_verification_to_navigation_home
+        )
     }
 
     companion object {
         const val TOKEN_PARAM = "token"
+        const val EMAIL_PARAM = "email"
     }
 }
