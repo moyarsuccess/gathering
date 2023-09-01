@@ -11,7 +11,7 @@ data class EventModel(
     @SerializedName("latitude") var latitude: Double?,
     @SerializedName("longitude") var longitude: Double?,
     @SerializedName("dateTime") var dateTime: Long?,
-    @SerializedName("attendees") var attendees: ArrayList<Attendees>,
+    @SerializedName("attendees") var attendees: ArrayList<Attendee>,
     @SerializedName("liked") var liked: Boolean,
 ) {
     val isMyEvent: Boolean = false

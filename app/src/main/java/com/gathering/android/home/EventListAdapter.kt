@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.home
 
 import android.annotation.SuppressLint
 import android.content.Context

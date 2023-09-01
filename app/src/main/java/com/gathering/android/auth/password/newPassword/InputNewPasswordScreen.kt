@@ -6,35 +6,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.auth.verification.VerificationScreen
 import com.gathering.android.common.showErrorText
-import com.gathering.android.databinding.FrgNewPasswordInputBinding
+import com.gathering.android.databinding.ScreenNewPasswordInputBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class InputNewPasswordFragment : DialogFragment() {
+class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigator {
 
-    private lateinit var binding: FrgNewPasswordInputBinding
+    private lateinit var binding: ScreenNewPasswordInputBinding
 
     @Inject
     lateinit var viewModel: InputNewPasswordViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(
-            STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
-        )
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FrgNewPasswordInputBinding.inflate(layoutInflater)
+        binding = ScreenNewPasswordInputBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -46,22 +42,19 @@ class InputNewPasswordFragment : DialogFragment() {
             viewModel.onSubmitBtnClicked(extractToken(), password, confirmPassword)
         }
 
-        viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is InputNewPasswordViewState.Message -> {
-                    state.text?.let {
-                        showErrorText(it)
-                    }
-
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                if (state.isInProgress) {
+                    binding.btnSubmit.startAnimation()
+                } else {
+                    binding.btnSubmit.revertAnimation()
                 }
-                InputNewPasswordViewState.NavigateToHomeFragment -> {
-                    findNavController().navigate(
-                        R.id.action_newPasswordInputFragment_to_navigation_homeFragment
-                    )
+                state.errorMessage?.let {
+                    showErrorText(it)
                 }
             }
         }
-
+        viewModel.onViewCreated(this)
     }
 
     private fun extractToken(): String? {
@@ -70,5 +63,11 @@ class InputNewPasswordFragment : DialogFragment() {
         } else {
             arguments?.getParcelable(NavController.KEY_DEEP_LINK_INTENT)
         }?.data?.getQueryParameter(VerificationScreen.TOKEN_PARAM)
+    }
+
+    override fun navigateToHomeFragment() {
+        findNavController().navigate(
+            R.id.action_newPasswordInputFragment_to_navigation_homeFragment
+        )
     }
 }
