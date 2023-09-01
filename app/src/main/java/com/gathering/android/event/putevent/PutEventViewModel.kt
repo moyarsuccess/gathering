@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.SEPARATOR
 import com.gathering.android.event.Event
+import com.gathering.android.event.model.Attendee
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.putevent.repo.PutEventModel
 import com.gathering.android.event.putevent.repo.PutEventRepository
@@ -23,29 +24,6 @@ class PutEventViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var putEventNavigator: PutEventNavigator? = null
-
-
-    private val viewModelState = MutableStateFlow(EventViewModelState())
-    val uiState: Flow<PutEventUiState> = viewModelState.map { viewModelState ->
-        PutEventUiState(
-            imageUri = viewModelState.imageUri,
-            eventName = viewModelState.eventName,
-            eventDescription = viewModelState.eventDescription,
-            eventDate = viewModelState.getFormattedDate(),
-            eventTime = viewModelState.getFormattedTime(),
-            eventAddress = EventLocation(
-                viewModelState.lat ?: 0.0,
-                viewModelState.lon ?: 0.0
-            ).addressFromLocation(),
-            eventAttendees = viewModelState.eventAttendees.toCommaSeparatedString(),
-            actionButtonText = viewModelState.actionButtonText,
-            actionButtonEnable = viewModelState.actionButtonEnable
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = PutEventUiState()
-    )
 
     private enum class StateMode {
         EDIT,
@@ -66,7 +44,7 @@ class PutEventViewModel @Inject constructor(
         val minute: Int = 0,
         val lat: Double? = null,
         val lon: Double? = null,
-        val eventAttendees: List<String>? = null,
+        val eventAttendees: List<Attendee>? = null,
         val actionButtonText: String? = null,
         val actionButtonEnable: Boolean? = false,
         val stateMode: StateMode = StateMode.ADD,
@@ -102,8 +80,30 @@ class PutEventViewModel @Inject constructor(
             val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             return simpleDateFormat.format(cal.time)
         }
+
     }
 
+    private val viewModelState = MutableStateFlow(EventViewModelState())
+    val uiState: Flow<PutEventUiState> = viewModelState.map { viewModelState ->
+        PutEventUiState(
+            imageUri = viewModelState.imageUri,
+            eventName = viewModelState.eventName,
+            eventDescription = viewModelState.eventDescription,
+            eventDate = viewModelState.getFormattedDate(),
+            eventTime = viewModelState.getFormattedTime(),
+            eventAddress = EventLocation(
+                viewModelState.lat ?: 0.0,
+                viewModelState.lon ?: 0.0
+            ).addressFromLocation(),
+            eventAttendees = viewModelState.eventAttendees.toCommaSeparatedString(),
+            actionButtonText = viewModelState.actionButtonText,
+            actionButtonEnable = viewModelState.actionButtonEnable
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = PutEventUiState()
+    )
 
     fun onViewCreated(event: Event?, putEventNavigator: PutEventNavigator) {
         this.putEventNavigator = putEventNavigator
@@ -122,8 +122,8 @@ class PutEventViewModel @Inject constructor(
                 day = cal.getDay(),
                 hour = cal.getHour(),
                 minute = cal.getMinute(),
-                lat = event?.location?.lat,
-                lon = event?.location?.lon,
+                lat = event?.latitude,
+                lon = event?.longitude,
                 eventAttendees = event?.attendees,
                 actionButtonText = if (event == null) "Add" else "Save",
                 stateMode = stateMode,
@@ -205,10 +205,10 @@ class PutEventViewModel @Inject constructor(
         )
     }
 
-    fun onNewAttendeeListSelected(attendees: List<String>) {
+    fun onNewAttendeeListSelected(attendeesEmails: List<String>) {
         update { currentState ->
             currentState.copy(
-                eventAttendees = attendees,
+                eventAttendees = attendeesEmails.map { attendeeEmail -> Attendee(email = attendeeEmail) },
             )
         }
     }
@@ -277,7 +277,7 @@ class PutEventViewModel @Inject constructor(
             lat = eventLocation.lat ?: 0.0,
             lon = eventLocation.lon ?: 0.0,
             dateAndTime = viewModelState.value.getDate(),
-            attendees = viewModelState.value.eventAttendees ?: listOf()
+            attendees = viewModelState.value.eventAttendees?.map { it.email ?: "" } ?: emptyList()
         )
     }
 
@@ -335,8 +335,8 @@ class PutEventViewModel @Inject constructor(
             return get(Calendar.MINUTE)
         }
 
-        private fun List<String>?.toCommaSeparatedString(): String {
-            return this?.joinToString(SEPARATOR) { it } ?: ""
+        private fun List<Attendee>?.toCommaSeparatedString(): String {
+            return this?.joinToString(SEPARATOR) { it.email ?: "" } ?: ""
         }
     }
 }

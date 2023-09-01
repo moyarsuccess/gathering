@@ -17,7 +17,7 @@ import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgMyEventBinding
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
-import com.gathering.android.event.home.EndlessScrollListener
+import com.gathering.android.home.EndlessScrollListener
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
