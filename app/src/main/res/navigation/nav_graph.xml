@@ -184,9 +184,9 @@
 
     <dialog
         android:id="@+id/newPasswordInputFragment"
-        android:name="com.gathering.android.auth.password.newPassword.InputNewPasswordFragment"
+        android:name="com.gathering.android.auth.password.newPassword.InputNewPasswordScreen"
         android:label="newPasswordInputFragment"
-        tools:layout="@layout/frg_new_password_input">
+        tools:layout="@layout/screen_new_password_input">
         <deepLink
             android:id="@+id/sendLinkForPassword"
             android:autoVerify="true"
