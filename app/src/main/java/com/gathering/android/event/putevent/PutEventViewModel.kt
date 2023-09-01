@@ -259,14 +259,12 @@ class PutEventViewModel @Inject constructor(
     }
 
     private fun update(stateUpdater: (currentState: EventViewModelState) -> EventViewModelState) {
-            viewModelState.update { currentState ->
-                val newState = stateUpdater(currentState)
-                val isReady = newState.isStateReadyToAction()
-                val copy = newState.copy(
-                    actionButtonEnable = isReady
-                )
-                copy
-            }
+        viewModelState.update { currentState ->
+            val newState = stateUpdater(currentState)
+            val isReady = newState.isStateReadyToAction()
+            val copy = newState.copy(actionButtonEnable = isReady)
+            copy
+        }
     }
 
     private fun createPutEventModelFromCurrentState(): PutEventModel {

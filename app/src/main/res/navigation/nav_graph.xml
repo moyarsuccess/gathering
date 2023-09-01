@@ -152,9 +152,9 @@
     </dialog>
     <dialog
         android:id="@+id/forgetPasswordFragment"
-        android:name="com.gathering.android.auth.password.ForgetPasswordFragment"
+        android:name="com.gathering.android.auth.password.ForgetPasswordScreen"
         android:label="forgetPasswordFragment"
-        tools:layout="@layout/frg_email_input_reset_password">
+        tools:layout="@layout/screen_forget_password_email_input">
         <action
             android:id="@+id/action_forgetPasswordFragment_to_resetPassInfoBottomSheet"
             app:destination="@id/forgetPassInfoBottomSheet" />
