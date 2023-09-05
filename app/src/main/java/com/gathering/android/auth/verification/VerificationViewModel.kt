@@ -1,59 +1,101 @@
 package com.gathering.android.auth.verification
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.verification.repo.VerificationRepository
-import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.ResponseState
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class VerificationViewModel @Inject constructor(
     private val verificationRepository: VerificationRepository
 ) : ViewModel() {
 
-    private val _viewState = MutableLiveData<VerificationViewState>()
-    val viewState: LiveData<VerificationViewState> by ::_viewState
+    private val viewModelState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = viewModelState.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = UiState()
+    )
+
+    data class UiState(
+        val isInProgress: Boolean = false, var message: String? = null
+    )
+
+    private var verificationNavigator: VerificationNavigator? = null
+
+
+    fun onViewCreated(verificationNavigator: VerificationNavigator) {
+        this.verificationNavigator = verificationNavigator
+    }
 
     fun onViewResumed(email: String?, token: String?) {
         if (token.isNullOrEmpty() && email.isNullOrEmpty()) return
         if (token.isNullOrEmpty()) {
-            sendEmailVerification(email)
+            onSendEmailVerificationClicked(email)
         } else {
             verifyEmail(token)
         }
     }
 
-    fun sendEmailVerification(email: String?) {
-        verificationRepository.sendEmailVerification(email ?: "") { result ->
-            when (result) {
+    fun onSendEmailVerificationClicked(email: String?) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(
+                isInProgress = true,
+            )
+        }
+        verificationRepository.sendEmailVerification(email ?: "") { state ->
+            when (state) {
                 is ResponseState.Failure -> {
-                    _viewState.value = VerificationViewState.ButtonState(true)
-                    _viewState.value =
-                        VerificationViewState.ShowError("Failed to send Email Verification, try again!")
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            isInProgress = false, message = FAILED_TO_SEND_EMAIL_VERIFICATION
+                        )
+                    }
                 }
 
-                is ResponseState.Success<String> -> {
-                    Log.d("verificationEmail", "email verification sent successfully.")
-                    _viewState.value = VerificationViewState.ButtonState(true)
+                is ResponseState.Success -> {
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            isInProgress = false, message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
+                        )
+                    }
                 }
             }
         }
     }
 
     private fun verifyEmail(token: String?) {
-        verificationRepository.emailVerify(token ?: "") { result ->
-            when (result) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(
+                isInProgress = true,
+            )
+        }
+        verificationRepository.emailVerify(token ?: "") { state ->
+            when (state) {
                 is ResponseState.Failure -> {
-                    _viewState.value = VerificationViewState.ShowError("Failed to verify user")
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(isInProgress = false, message = FAILED_TO_VERIFY_USER)
+                    }
                 }
-
-                is ResponseState.Success<AuthorizedResponse> -> {
-                    Log.d("Email verify", "User verified successfully.")
-                    _viewState.value = VerificationViewState.NavigateToHomeScreen
+                is ResponseState.Success -> {
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            isInProgress = false, message = USER_VERIFIED_SUCCESSFULLY
+                        )
+                    }
+                    verificationNavigator?.navigateToHomeScreen()
                 }
             }
         }
+    }
+
+    companion object {
+        private const val VERIFICATION_EMAIL_SENT_SUCCESSFULLY =
+            "EMAIL VERIFICATION SENT SUCCESSFULLY"
+        private const val FAILED_TO_SEND_EMAIL_VERIFICATION =
+            "FAILED TO SEND EMAIL VERIFICATION, TRY AGAIN!"
+        private const val FAILED_TO_VERIFY_USER = "FAILED TO VERIFY THE USER"
+        private const val USER_VERIFIED_SUCCESSFULLY = "USER VERIFIED SUCCESSFULLY"
     }
 }

@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.home
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

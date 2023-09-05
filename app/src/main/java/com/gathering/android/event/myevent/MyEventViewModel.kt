@@ -6,7 +6,7 @@ import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
-import com.gathering.android.event.model.repo.EventRepository
+import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
 import javax.inject.Inject
 
@@ -112,7 +112,6 @@ class MyEventViewModel @Inject constructor(
 
     companion object {
         const val DELETE_EVENT_REQUEST_FAILED = "DELETE_EVENT_REQUEST_FAILED"
-        const val UPDATE_EVENT_REQUEST_FAILED = "UPDATE_EVENT_REQUEST_FAILED"
         const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
     }
 }

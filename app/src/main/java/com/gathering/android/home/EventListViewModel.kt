@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.home
 
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
@@ -8,7 +8,7 @@ import com.gathering.android.common.ActiveMutableLiveData
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
-import com.gathering.android.event.model.repo.EventRepository
+import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
 import javax.inject.Inject
 

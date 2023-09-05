@@ -25,4 +25,3 @@ sealed interface MyEventViewState {
 
     class NavigateToEditMyEvent(val event: Event) : MyEventViewState
 }
-

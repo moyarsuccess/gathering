@@ -1,4 +1,4 @@
-package com.gathering.android.event.home
+package com.gathering.android.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,7 @@ import com.gathering.android.R
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.FrgHomeBinding
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
-import com.gathering.android.event.home.FilterDialogFragment.Companion.TAG
+import com.gathering.android.home.FilterDialogFragment.Companion.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -72,7 +72,7 @@ class HomeFragment : Fragment() {
                 EventViewState.ShowProgress -> binding.prg.isVisible = true
                 EventViewState.NavigateToIntroScreen -> {
                     // TODO: we need to find a better way to handle this
-                    if (R.id.verificationFragment != findNavController().currentDestination?.id &&
+                    if (R.id.verificationScreen != findNavController().currentDestination?.id &&
                         R.id.newPasswordInputFragment != findNavController().currentDestination?.id
                     ) {
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)
