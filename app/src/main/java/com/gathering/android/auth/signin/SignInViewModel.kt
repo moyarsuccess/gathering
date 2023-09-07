@@ -1,78 +1,105 @@
 package com.gathering.android.auth.signin
 
 import android.text.TextUtils
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.signin.repo.SignInRepository
-import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.WrongCredentialsException
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class SignInViewModel @Inject constructor(
     private val signInRepository: SignInRepository
 ) : ViewModel() {
 
-    private val _viewState = MutableLiveData<SignInViewState>()
-    val viewState: LiveData<SignInViewState> by ::_viewState
+    private val viewModelState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = viewModelState.stateIn(
+        scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = UiState()
+    )
 
-    private var isEmailValid: Boolean = false
-    private var isPassValid: Boolean = false
+    private var signInNavigator: SignInNavigator? = null
 
-    fun onEmailAddressChanged(emailAddress: String) {
-        isEmailValid = isEmailValid(emailAddress)
-        val errorMessage = if (isEmailValid) null else INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE
-        _viewState.value = SignInViewState.Error.ShowInvalidEmailError(errorMessage)
-        checkAllFieldsReady()
-    }
+    data class UiState(
+        val isInProgress: Boolean = false,
+        var errorMessage: String? = null,
+    )
 
-    fun onPasswordChanged(pass: String) {
-        isPassValid = isPassValid(pass)
-        val errorMessage = if (isPassValid) null else INVALID_PASS_FORMAT_ERROR_MESSAGE
-        _viewState.value = SignInViewState.Error.ShowInvalidPassError(errorMessage)
-        checkAllFieldsReady()
+    fun onViewCreated(signInNavigator: SignInNavigator) {
+        this.signInNavigator = signInNavigator
     }
 
     fun onSignInButtonClicked(email: String, pass: String) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(isInProgress = true, errorMessage = null)
+        }
+        if (!isEmailValid(email)) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    errorMessage = INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE, isInProgress = false
+                )
+            }
+            return
+        }
+
+        if (!isPassValid(pass)) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    errorMessage = INVALID_PASS_FORMAT_ERROR_MESSAGE, isInProgress = false
+                )
+            }
+            return
+        }
+
+
+
         signInRepository.signInUser(email, pass, onResponseReady = { state ->
             when (state) {
                 is ResponseState.Failure -> {
                     when (state.throwable) {
                         is WrongCredentialsException -> {
-                            _viewState.value =
-                                SignInViewState.Error.ShowAuthenticationFailedError("Sign in failed")
+                            viewModelState.update { currentViewState ->
+                                currentViewState.copy(
+                                    errorMessage = SIGN_IN_FAILED,
+                                    isInProgress = false,
+                                )
+                            }
                         }
 
                         is UserNotVerifiedException -> {
-                            _viewState.value =
-                                SignInViewState.Error.ShowUserNotVerifiedError("email not verified")
-                            _viewState.value =
-                                SignInViewState.NavigateToVerification
+                            viewModelState.update { currentViewState ->
+                                currentViewState.copy(
+                                    errorMessage = EMAIL_NOT_VERIFIED, isInProgress = false
+                                )
+                            }
+                            signInNavigator?.navigateToVerification()
                         }
-
                         else -> {
-                            _viewState.value =
-                                SignInViewState.Error.ShowGeneralError("can not reach the server")
+                            viewModelState.update { currentViewState ->
+                                currentViewState.copy(
+                                    errorMessage = CAN_NOT_REACH_THE_SERVER,
+                                    isInProgress = false,
+                                )
+                            }
                         }
                     }
                 }
 
-                is ResponseState.Success<AuthorizedResponse> -> {
-                    _viewState.value =
-                        SignInViewState.NavigateToHome
+                is ResponseState.Success -> {
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            isInProgress = true
+                        )
+                    }
+                    signInNavigator?.navigateToHome()
                 }
             }
         })
     }
 
     fun onForgotPassTvClicked() {
-        _viewState.value = SignInViewState.NavigateToPasswordReset
-    }
-
-    private fun checkAllFieldsReady() {
-        _viewState.value = SignInViewState.SignInButtonVisibility(isAllFieldsValid())
+        signInNavigator?.navigateToPasswordReset()
     }
 
     private fun isEmailValid(email: String): Boolean {
@@ -84,15 +111,12 @@ class SignInViewModel @Inject constructor(
         return !TextUtils.isEmpty(pass)
     }
 
-    private fun isAllFieldsValid(): Boolean {
-        return isEmailValid && isPassValid
-    }
-
     companion object {
         private const val INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE =
-            "Please enter a valid email address"
-        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "Please enter a valid password"
+            "PLEASE ENTER A VALID EMAIL ADDRESS"
+        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "PLEASE ENTER A VALID PASSWORD"
+        private const val SIGN_IN_FAILED = "SIGN IN FAILED"
+        private const val EMAIL_NOT_VERIFIED = "EMAIL NOT VERIFIED"
+        private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
     }
 }
-
-

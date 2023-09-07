@@ -22,7 +22,6 @@
                 android:id="@+id/et_mail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/padding" />
@@ -43,7 +42,6 @@
                 android:id="@+id/et_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:padding="@dimen/padding" />
@@ -64,19 +62,23 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="@dimen/guideline" />
 
-        <Button
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/btn_sign_in"
             style="@style/buttonStyle"
+            android:layout_margin="@dimen/margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sign_in_margin_top_btn"
+            android:textColor="@color/black"
             android:background="@drawable/custom_button"
             android:padding="@dimen/padding"
             android:text="@string/signIn_button_text"
-            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_pass_text" />
+            app:layout_constraintTop_toBottomOf="@id/input_layout_pass_text"
+            app:spinning_bar_color="@color/spinning_bar"
+            app:spinning_bar_padding="@dimen/bar_padding"
+            app:spinning_bar_width="@dimen/bar_width" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
