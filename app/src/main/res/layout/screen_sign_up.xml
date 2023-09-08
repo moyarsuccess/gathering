@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="@dimen/sign_up_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -15,14 +16,13 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/guideline_start"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_pass_text"
             app:startIconDrawable="@drawable/ic_person">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_mail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/padding"
@@ -37,14 +37,13 @@
             app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_email_text"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_verify_pass_text"
             app:startIconDrawable="@drawable/ic_pass">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:padding="@dimen/padding"
@@ -60,14 +59,13 @@
             app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_pass_text"
+            app:layout_constraintBottom_toTopOf="@id/btn_sign_Up"
             app:startIconDrawable="@drawable/ic_pass">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_verify_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
                 android:hint="@string/confirm_password"
                 android:inputType="textPassword"
                 android:padding="@dimen/padding"
@@ -75,35 +73,19 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/btn_sign_Up"
             style="@style/buttonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
             android:background="@drawable/custom_button"
             android:padding="@dimen/padding"
             android:text="@string/sign_up"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_verify_pass_text" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="250dp" />
-
-        <ImageView
-            android:id="@+id/img_logo"
-            android:layout_width="@dimen/size"
-            android:layout_height="@dimen/size"
-            app:layout_constraintBottom_toTopOf="@+id/guideline_start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/logo_transparent_svg" />
-
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

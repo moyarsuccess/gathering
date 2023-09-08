@@ -88,5 +88,6 @@
     <dimen name="constraint_layout_padding">10dp</dimen>
     <dimen name="rv_padding">20dp</dimen>
     <dimen name="btn_margin_attendee_detail">10dp</dimen>
+    <dimen name="sign_up_margin">200dp</dimen>
 
 </resources>

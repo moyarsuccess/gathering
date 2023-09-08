@@ -10,19 +10,19 @@
         android:label="IntroFragment"
         tools:layout="@layout/frg_intro">
         <action
-            android:id="@+id/action_introFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            android:id="@+id/action_introFragment_to_signUpScreen"
+            app:destination="@id/signUpScreen" />
         <action
             android:id="@+id/action_introFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
     </dialog>
     <dialog
-        android:id="@+id/signUpFragment"
-        android:name="com.gathering.android.auth.signup.SignUpFragment"
-        android:label="SignUpFragment"
-        tools:layout="@layout/frg_sign_up">
+        android:id="@+id/signUpScreen"
+        android:name="com.gathering.android.auth.signup.SignUpScreen"
+        android:label="SignUpScreen"
+        tools:layout="@layout/screen_sign_up">
         <action
-            android:id="@+id/action_signUpFragment_to_verificationFragment"
+            android:id="@+id/action_signUpScreen_to_verificationScreen"
             app:destination="@id/verificationScreen" />
         <argument
             android:name="Email"

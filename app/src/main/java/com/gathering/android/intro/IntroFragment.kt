@@ -63,7 +63,7 @@ class IntroFragment : DialogFragment() {
         }
 
         binding.btnSignUp.setOnClickListener {
-            findNavController().navigate(R.id.action_introFragment_to_signUpFragment)
+            findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
         }
     }
 }
