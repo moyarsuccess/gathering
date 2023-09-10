@@ -24,7 +24,7 @@ class ApiSignUpRepository @Inject constructor(
                     response: Response<GeneralApiResponse>
                 ) {
                     if (!response.isSuccessful) {
-                        if (response.code() == 409) {
+                        if (response.code() == CONFLICT_HTTP_CODE) {
                             onResponseReady(ResponseState.Failure(EmailAlreadyInUse()))
                             return
                         }
@@ -37,5 +37,9 @@ class ApiSignUpRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+    }
+
+    companion object {
+        private const val CONFLICT_HTTP_CODE = 409
     }
 }
