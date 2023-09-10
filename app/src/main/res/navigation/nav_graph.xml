@@ -53,8 +53,8 @@
             android:id="@+id/action_homeFragment_to_introFragment"
             app:destination="@id/introFragment" />
         <action
-            android:id="@+id/action_navigation_home_to_eventDetailFragment"
-            app:destination="@id/eventDetailFragment" />
+            android:id="@+id/action_navigation_home_to_EventDetailScreen"
+            app:destination="@id/EventDetailScreen" />
         <argument
             android:name="Event"
             app:argType="com.gathering.android.event.Event" />
@@ -84,15 +84,12 @@
             app:destination="@id/introFragment" />
     </fragment>
     <fragment
-        android:id="@+id/eventDetailFragment"
-        android:name="com.gathering.android.event.eventdetail.EventDetailFragment"
-        android:label="EventDetailFragment"
-        tools:layout="@layout/frg_event_detail">
-        <argument
-            android:name="Event"
-            app:argType="com.gathering.android.event.Event" />
+        android:id="@+id/EventDetailScreen"
+        android:name="com.gathering.android.event.eventdetail.EventDetailScreen"
+        android:label="EventDetailScreen"
+        tools:layout="@layout/screen_event_detail">
         <action
-            android:id="@+id/action_eventDetailFragment_to_attendeesDetailBottomSheet"
+            android:id="@+id/action_EventDetailScreen_to_attendeesDetailBottomSheet"
             app:destination="@id/attendeesDetailBottomSheet" />
     </fragment>
     <dialog

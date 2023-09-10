@@ -9,9 +9,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class ApiAcceptTypeRepository @Inject constructor(
+class ApiAttendanceStateRepo @Inject constructor(
     private val acceptTypeRemoteService: AcceptTypeRemoteService
-) : AcceptTypeRepository {
+) : AttendanceStateRepo {
 
     override fun setEventAcceptType(
         eventId: Long, accept: AcceptType, onResponseReady: (ResponseState<String>) -> Unit

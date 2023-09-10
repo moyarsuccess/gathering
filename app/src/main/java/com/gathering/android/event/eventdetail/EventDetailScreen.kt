@@ -8,23 +8,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.showErrorText
-import com.gathering.android.databinding.FrgEventDetailBinding
+import com.gathering.android.databinding.ScreenEventDetailBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.model.Attendee
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EventDetailFragment : Fragment() {
+class EventDetailScreen : Fragment(), EventDetailNavigator {
 
-    private lateinit var binding: FrgEventDetailBinding
+    private lateinit var binding: ScreenEventDetailBinding
 
     @Inject
     lateinit var viewModel: EventDetailViewModel
@@ -37,7 +39,7 @@ class EventDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FrgEventDetailBinding.inflate(layoutInflater)
+        binding = ScreenEventDetailBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -49,47 +51,41 @@ class EventDetailFragment : Fragment() {
             arguments?.getSerializable(KEY_ARGUMENT_EVENT) as Event
         }
 
-        viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is EventDetailViewState.ShowError -> showErrorText(state.errorMessage)
-                is EventDetailViewState.ShowEventDetail -> {
-                    imageLoader.loadImage(state.event.photoUrl, binding.imgEvent)
-                    binding.tvEventTitle.text = state.event.eventName
-                    binding.tvEventHost.text = state.event.eventHostEmail
-                    binding.tvEventDescription.text = state.event.description
-                    //binding.tvEventAddress.text = "" // FIXME state.event.location?.addressLine
-                    binding.tvEventDate.text =
-                        SimpleDateFormat("EEEE, MMMM d, yyyy - h:mm a", Locale.getDefault()).format(
-                            state.event.dateAndTime
-                        )
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                imageLoader.loadImage(state.imageUri, binding.imgEvent)
+                binding.tvEventTitle.text = state.eventName
+                binding.tvEventHost.text = state.hostEvent
+                binding.tvEventDescription.text = state.eventDescription
+                binding.tvEventDate.text = getString(
+                    R.string.event_detail_date_and_time,
+                    state.eventDate,
+                    state.eventTime,
+                )
+                binding.tvEventAddress.text = state.eventAddress
+                if (!state.errorMessage.isNullOrEmpty()) {
+                    showErrorText(state.errorMessage)
                 }
-                is EventDetailViewState.NavigateToAttendeesDetailBottomSheet -> {
-                    val bundle = bundleOf(ATTENDEE_LIST to state.attendees)
-                    findNavController().navigate(
-                        R.id.action_eventDetailFragment_to_attendeesDetailBottomSheet, bundle
-                    )
-                }
-                EventDetailViewState.MaybeSelected -> {
-                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnMaybe.setBackgroundColor(Color.GRAY)
-                }
-                EventDetailViewState.NoSelected -> {
-                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnNo.setBackgroundColor(Color.GRAY)
-                }
-                EventDetailViewState.YesSelected -> {
-                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                if (state.acceptButtonBackColor == R.color.gray) {
                     binding.btnYes.setBackgroundColor(Color.GRAY)
+                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                }
+
+                if (state.declineButtonBackColor == R.color.gray) {
+                    binding.btnNo.setBackgroundColor(Color.GRAY)
+                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                }
+
+                if (state.maybeButtonBackColor == R.color.gray) {
+                    binding.btnMaybe.setBackgroundColor(Color.GRAY)
+                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
                 }
             }
         }
 
-        event?.let {
-            viewModel.onViewCreated(it)
-        }
         binding.btnYes.setOnClickListener {
             viewModel.onYesButtonClicked()
         }
@@ -105,5 +101,17 @@ class EventDetailFragment : Fragment() {
         binding.tvAttendeesCount.setOnClickListener {
             viewModel.onTvAttendeesDetailsClicked()
         }
+
+        event?.let {
+            viewModel.onViewCreated(it, this)
+        }
+    }
+
+    override fun navigateToAttendeesDetail(attendees: List<Attendee>) {
+        val bundle = bundleOf(ATTENDEE_LIST to attendees)
+        findNavController().navigate(
+            R.id.action_EventDetailScreen_to_attendeesDetailBottomSheet,
+            bundle
+        )
     }
 }
