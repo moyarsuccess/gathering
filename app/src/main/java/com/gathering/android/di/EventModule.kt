@@ -2,8 +2,8 @@ package com.gathering.android.di
 
 import android.content.Context
 import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRemoteService
-import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRepository
-import com.gathering.android.event.eventdetail.acceptrepo.ApiAcceptTypeRepository
+import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepo
+import com.gathering.android.event.eventdetail.acceptrepo.ApiAttendanceStateRepo
 import com.gathering.android.event.repo.ApiEventRepository
 import com.gathering.android.event.repo.EventRemoteService
 import com.gathering.android.event.repo.EventRepository
@@ -66,7 +66,7 @@ class EventModule {
     @Singleton
     fun provideAcceptTypeRepository(
         acceptTypeRemoteService: AcceptTypeRemoteService
-    ): AcceptTypeRepository {
-        return ApiAcceptTypeRepository(acceptTypeRemoteService)
+    ): AttendanceStateRepo {
+        return ApiAttendanceStateRepo(acceptTypeRemoteService)
     }
 }

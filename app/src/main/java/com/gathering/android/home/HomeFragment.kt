@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
                 is EventViewState.NavigateToEventDetail -> {
                     val bundle = bundleOf(KEY_ARGUMENT_EVENT to state.event)
                     findNavController().navigate(
-                        R.id.action_navigation_home_to_eventDetailFragment, bundle
+                        R.id.action_navigation_home_to_EventDetailScreen, bundle
                     )
                 }
 
