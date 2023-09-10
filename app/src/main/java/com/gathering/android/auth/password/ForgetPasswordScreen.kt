@@ -59,7 +59,7 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
 
     override fun navigateToResetPassInfoBottomSheet() {
         findNavController().navigate(
-            R.id.action_forgetPasswordFragment_to_resetPassInfoBottomSheet
+            R.id.action_forgetPasswordScreen_to_resetPassInfoBottomSheet
         )
     }
 }

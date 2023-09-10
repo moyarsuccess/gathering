@@ -14,7 +14,7 @@
             app:destination="@id/signUpFragment" />
         <action
             android:id="@+id/action_introFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
+            app:destination="@id/signInScreen" />
     </dialog>
     <dialog
         android:id="@+id/signUpFragment"
@@ -29,20 +29,20 @@
             app:argType="string" />
     </dialog>
     <dialog
-        android:id="@+id/signInFragment"
-        android:name="com.gathering.android.auth.signin.SignInFragment"
-        android:label="SignInFragment"
-        tools:layout="@layout/frg_sign_in">
+        android:id="@+id/signInScreen"
+        android:name="com.gathering.android.auth.signin.SignInScreen"
+        android:label="SignInScreen"
+        tools:layout="@layout/screen_sign_in">
         <action
-            android:id="@+id/action_signInFragment_to_navigation_homeFragment"
+            android:id="@+id/action_signInScreen_to_navigation_homeFragment"
             app:destination="@id/navigation_homeFragment" />
         <action
-            android:id="@+id/action_signInFragment_to_verificationFragment"
+            android:id="@+id/action_signInScreen_to_verificationScreen"
             app:destination="@id/verificationScreen"
             app:popUpTo="@+id/main_nav_graph" />
         <action
-            android:id="@+id/action_signInFragment_to_forgetPasswordFragment"
-            app:destination="@id/forgetPasswordFragment" />
+            android:id="@+id/action_signInScreen_to_forgetPasswordScreen"
+            app:destination="@id/forgetPasswordScreen" />
     </dialog>
     <fragment
         android:id="@+id/navigation_homeFragment"
@@ -151,12 +151,12 @@
             app:uri="gathering://gathering.com/email/verified" />
     </dialog>
     <dialog
-        android:id="@+id/forgetPasswordFragment"
+        android:id="@+id/forgetPasswordScreen"
         android:name="com.gathering.android.auth.password.ForgetPasswordScreen"
-        android:label="forgetPasswordFragment"
+        android:label="forgetPasswordScreen"
         tools:layout="@layout/screen_forget_password_email_input">
         <action
-            android:id="@+id/action_forgetPasswordFragment_to_resetPassInfoBottomSheet"
+            android:id="@+id/action_forgetPasswordScreen_to_resetPassInfoBottomSheet"
             app:destination="@id/forgetPassInfoBottomSheet" />
     </dialog>
     <dialog
@@ -183,9 +183,9 @@
         tools:layout="@layout/bottom_sheet_favorite_event" />
 
     <dialog
-        android:id="@+id/newPasswordInputFragment"
+        android:id="@+id/newPasswordInputScreen"
         android:name="com.gathering.android.auth.password.newPassword.InputNewPasswordScreen"
-        android:label="newPasswordInputFragment"
+        android:label="newPasswordInputScreen"
         tools:layout="@layout/screen_new_password_input">
         <deepLink
             android:id="@+id/sendLinkForPassword"
@@ -193,7 +193,7 @@
             app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/password/reset" />
         <action
-            android:id="@+id/action_newPasswordInputFragment_to_navigation_homeFragment"
+            android:id="@+id/action_newPasswordInputScreen_to_navigation_homeFragment"
             app:destination="@id/navigation_homeFragment" />
 
     </dialog>

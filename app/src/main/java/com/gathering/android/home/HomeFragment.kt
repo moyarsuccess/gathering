@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
                 EventViewState.NavigateToIntroScreen -> {
                     // TODO: we need to find a better way to handle this
                     if (R.id.verificationScreen != findNavController().currentDestination?.id &&
-                        R.id.newPasswordInputFragment != findNavController().currentDestination?.id
+                        R.id.newPasswordInputScreen != findNavController().currentDestination?.id
                     ) {
                         findNavController().navigate(R.id.action_homeFragment_to_introFragment)
                     }
