@@ -1,21 +1,39 @@
 package com.gathering.android.profile
 
 import androidx.lifecycle.ViewModel
-import com.gathering.android.common.ActiveMutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.TokenRepo
 import com.gathering.android.common.UserRepo
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
     private val userRepo: UserRepo,
     private val tokenRepo: TokenRepo
-) :
-    ViewModel() {
+) : ViewModel() {
 
-    private val _viewState = ActiveMutableLiveData<ProfileViewState>()
-    val viewState: ActiveMutableLiveData<ProfileViewState> by ::_viewState
+    private var profileNavigator: ProfileNavigator? = null
 
-    fun onViewCreated() {
+    private val viewModelState = MutableStateFlow(ProfileViewModelState())
+    val uiState: StateFlow<ProfileUiState> = viewModelState.map { viewModelState ->
+        ProfileUiState(
+            imageUri = viewModelState.imageUri,
+            displayName = viewModelState.displayName,
+            email = viewModelState.email,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = ProfileUiState()
+    )
+
+    fun onViewCreated(profileNavigator: ProfileNavigator) {
+        this.profileNavigator = profileNavigator
         showMostRecentUserInfo()
     }
 
@@ -24,23 +42,35 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onFavoriteEventLayoutClicked() {
-        _viewState.setValue(ProfileViewState.NavigateToFavoriteEvent)
+        profileNavigator?.navigateToFavoriteEvent()
     }
 
     fun onPersonalDataLayoutClicked() {
-        _viewState.setValue(ProfileViewState.NavigateToPersonalData)
+        profileNavigator?.navigateToEditProfile()
     }
 
     fun onSignOutButtonClicked() {
         userRepo.clearUser()
         tokenRepo.clearToken()
-        _viewState.setValue(ProfileViewState.NavigateToIntro)
+        profileNavigator?.navigateToIntro()
     }
 
     private fun showMostRecentUserInfo() {
-        val user = userRepo.getUser() ?: return
-        _viewState.setValue(ProfileViewState.SetEmail(user.email))
-        _viewState.setValue(ProfileViewState.ShowImage(user.photoName))
-        _viewState.setValue(ProfileViewState.SetDisplayName(user.displayName))
+        viewModelState.update { currentState ->
+            val user = userRepo.getUser() ?: return
+            currentState.copy(
+                imageUri = user.photoName,
+                displayName = user.displayName,
+                email = user.email,
+            )
+        }
     }
+
+    private data class ProfileViewModelState(
+        val imageUri: String? = null,
+        val displayName: String? = null,
+        val email: String? = null,
+    )
 }
+
+

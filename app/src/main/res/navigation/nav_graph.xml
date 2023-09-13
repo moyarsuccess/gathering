@@ -70,9 +70,9 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.gathering.android.profile.ProfileFragment"
-        android:label="ProfileFragment"
-        tools:layout="@layout/frg_profile">
+        android:name="com.gathering.android.profile.ProfileScreen"
+        android:label="ProfileScreen"
+        tools:layout="@layout/screen_profile">
         <action
             android:id="@+id/action_navigation_profile_to_updateUserInfoBottomSheetFragment"
             app:destination="@id/personalDataBottomSheetFragment" />
