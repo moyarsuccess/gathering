@@ -23,11 +23,11 @@ class ApiSignInRepository @Inject constructor(
                 response: Response<AuthorizedResponse>
             ) {
                 if (!response.isSuccessful) {
-                    if (response.code() == 400) {
+                    if (response.code() == BAD_REQUEST_HTTP_CODE) {
                         onResponseReady(ResponseState.Failure(WrongCredentialsException()))
                         return
                     }
-                    if (response.code() == 401) {
+                    if (response.code() == UNAUTHORIZED_HTTP_CODE) {
                         onResponseReady(ResponseState.Failure(UserNotVerifiedException()))
                         return
                     }
@@ -48,5 +48,10 @@ class ApiSignInRepository @Inject constructor(
                 onResponseReady(ResponseState.Failure(t))
             }
         })
+    }
+
+    companion object {
+        private const val BAD_REQUEST_HTTP_CODE = 400
+        private const val UNAUTHORIZED_HTTP_CODE = 401
     }
 }

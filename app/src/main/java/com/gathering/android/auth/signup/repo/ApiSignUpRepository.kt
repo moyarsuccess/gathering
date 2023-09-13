@@ -1,5 +1,6 @@
 package com.gathering.android.auth.signup.repo
 
+import com.gathering.android.common.EmailAlreadyInUse
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
@@ -23,13 +24,11 @@ class ApiSignUpRepository @Inject constructor(
                     response: Response<GeneralApiResponse>
                 ) {
                     if (!response.isSuccessful) {
-                        onResponseReady(
-                            ResponseState.Failure(
-                                Exception(
-                                    RESPONSE_IS_NOT_SUCCESSFUL
-                                )
-                            )
-                        )
+                        if (response.code() == CONFLICT_HTTP_CODE) {
+                            onResponseReady(ResponseState.Failure(EmailAlreadyInUse()))
+                            return
+                        }
+                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
                     }
                     onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
                 }
@@ -38,5 +37,9 @@ class ApiSignUpRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+    }
+
+    companion object {
+        private const val CONFLICT_HTTP_CODE = 409
     }
 }
