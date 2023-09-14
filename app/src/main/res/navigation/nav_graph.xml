@@ -163,11 +163,11 @@
         tools:layout="@layout/bottom_sheet_forget_pass_info" />
     <dialog
         android:id="@+id/personalDataBottomSheetFragment"
-        android:name="com.gathering.android.profile.updateinfo.UpdateUserInfoFragment"
+        android:name="com.gathering.android.profile.editProfile.EditProfileScreen"
         android:label="PersonalDataBottomSheetFragment"
-        tools:layout="@layout/bottom_sheet_update_user_info">
+        tools:layout="@layout/screen_edit_profile">
         <action
-            android:id="@+id/action_personalDataBottomSheetFragment_to_addPicBottomSheet"
+            android:id="@+id/action_editProfile_to_addPicBottomSheet"
             app:destination="@id/addPicBottomSheet" />
         <argument
             android:name="User"
