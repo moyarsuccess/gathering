@@ -3,6 +3,7 @@ package com.gathering.android.event.myevent
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
 import com.gathering.android.common.ImageLoader
@@ -35,22 +36,12 @@ class MyEventAdapter @Inject constructor(
         this.onEditClickListener = onEditImageClickListener
     }
 
-    fun updateEvent(event: Event) {
-        val indexOfItem = this.myEventItemList.indexOfFirst { it.eventId == event.eventId }
-        this.myEventItemList[indexOfItem] = event
-        notifyItemChanged(indexOfItem)
-    }
+    fun updateEvents(newEventList: List<Event>) {
+        val diffCallback = MyEventDiffCallback(this.myEventItemList, newEventList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        diffResult.dispatchUpdatesTo(this)
 
-    fun appendEventItems(eventItemList: List<Event>) {
-        val startPosition = this.myEventItemList.size
-        this.myEventItemList.addAll(eventItemList)
-        notifyItemRangeInserted(startPosition, eventItemList.size)
-    }
-
-    fun clearData() {
-        val size = this.myEventItemList.size
-        myEventItemList = mutableListOf()
-        notifyItemRangeRemoved(0, size)
+        this.myEventItemList = newEventList.toMutableList()
     }
 
     fun setOnFavoriteImageClick(onFavoriteImageClickListener: (event: Event) -> Unit) {
@@ -81,7 +72,6 @@ class MyEventAdapter @Inject constructor(
         private val onMyEventEventClickListener: (event: Event) -> Unit,
         private val onFavoriteImageClickListener: (event: Event) -> Unit,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
-
         fun bind(event: Event) {
             itemBinding.cardView.setOnClickListener {
                 onMyEventEventClickListener(event)
@@ -90,7 +80,6 @@ class MyEventAdapter @Inject constructor(
             itemBinding.tvEventDescription.text = event.description
             imageLoader.loadImage(event.photoUrl, itemBinding.imgEvent)
             itemBinding.tvEventHost.text = event.eventHostEmail
-
             itemBinding.imgFavorite.setOnClickListener {
                 onFavoriteImageClickListener(event)
             }

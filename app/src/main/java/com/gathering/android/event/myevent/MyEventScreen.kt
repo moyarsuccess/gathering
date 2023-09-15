@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,18 +15,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.showErrorText
-import com.gathering.android.databinding.FrgMyEventBinding
+import com.gathering.android.databinding.ScreenMyEventBinding
+import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.home.EndlessScrollListener
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyEventFragment : Fragment() {
+class MyEventScreen : Fragment(), MyEventNavigator {
 
-    private lateinit var binding: FrgMyEventBinding
+    private lateinit var binding: ScreenMyEventBinding
 
     @Inject
     lateinit var adapter: MyEventAdapter
@@ -39,7 +43,7 @@ class MyEventFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FrgMyEventBinding.inflate(layoutInflater)
+        binding = ScreenMyEventBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -55,12 +59,12 @@ class MyEventFragment : Fragment() {
                 val event = adapter.getEventAtPosition(position)
                 event?.let {
                     if (direction == ItemTouchHelper.LEFT) {
-                        viewModel.onDeleteEvent(it)
+                        viewModel.onSwipedToDelete(it)
                         // Show a snack bar with an "Undo" option for the delete action
                         val snackBar = Snackbar.make(
-                            binding.root, "Event deleted", Snackbar.LENGTH_LONG
+                            binding.root, EVENT_DELETED, Snackbar.LENGTH_LONG
                         )
-                        snackBar.setAction("Undo") {
+                        snackBar.setAction(UNDO) {
                             viewModel.onUndoDeleteEvent()
                         }
                         snackBar.show()
@@ -77,47 +81,18 @@ class MyEventFragment : Fragment() {
         })
         itemTouchHelper.attachToRecyclerView(binding.rvEvent)
 
-        viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                MyEventViewState.HideNoData -> binding.tvNoData.isVisible = false
-                MyEventViewState.HideProgress -> binding.prg.isVisible = false
-                MyEventViewState.NavigateToAddEvent -> view.let {
-                    findNavController().navigate(R.id.action_navigation_eventFragment_to_putEventBottomSheetFragment)
+
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                binding.prg.isVisible = state.showProgress
+
+                state.errorMessage?.let {
+                    showErrorText(it)
                 }
-
-                is MyEventViewState.ShowError -> showErrorText(state.errorMessage)
-                MyEventViewState.ShowProgress -> binding.prg.isVisible = true
-
-                is MyEventViewState.ShowNextEventPage -> adapter.appendEventItems(state.myEventList.toMutableList())
-                is MyEventViewState.UpdateEvent -> {
-                    adapter.updateEvent(state.event)
-                    binding.tvNoData.isVisible = adapter.itemCount == 0
-                    updateUIAfterDeletion()
-                }
-
-                MyEventViewState.ShowNoData -> {
-                    binding.tvNoData.isVisible = true
-                    binding.rvEvent.isVisible = false
-                }
-
-                is MyEventViewState.NavigateToEditMyEvent -> {
-                    val event = state.event
-                    val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
-                    findNavController().navigate(
-                        R.id.action_navigation_eventFragment_to_putEventBottomSheetFragment,
-                        bundle
-                    )
-                }
-
-                is MyEventViewState.AppendEventList -> {
-                    adapter.appendEventItems(state.eventList.toMutableList())
-                }
-
-                MyEventViewState.ClearData -> adapter.clearData()
-
+                binding.tvNoData.isVisible = state.showNoData
+                adapter.updateEvents(state.myEvents)
             }
         }
-
         binding.btnFab.setOnClickListener {
             viewModel.onFabButtonClicked()
         }
@@ -135,11 +110,24 @@ class MyEventFragment : Fragment() {
         ) {
             viewModel.onEventAdded()
         }
-        viewModel.onViewCreated()
+        viewModel.onViewCreated(this)
     }
 
-    private fun updateUIAfterDeletion() {
-        val isListEmpty = adapter.itemCount == 0
-        binding.tvNoData.isVisible = isListEmpty
+    override fun navigateToAddEvent() {
+        findNavController().navigate(
+            R.id.action_navigation_eventFragment_to_putEventBottomSheetFragment
+        )
+    }
+
+    override fun navigateToEditEvent(event: Event) {
+        val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
+        findNavController().navigate(
+            R.id.action_navigation_eventFragment_to_putEventBottomSheetFragment, bundle
+        )
+    }
+
+    companion object {
+        private const val EVENT_DELETED = "EVENT DELETED"
+        private const val UNDO = "UNDO"
     }
 }

@@ -1,55 +1,82 @@
 package com.gathering.android.event.myevent
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.common.ActiveMutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class MyEventViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ) : ViewModel() {
 
-    private var page = 1
-    private val _viewState = ActiveMutableLiveData<MyEventViewState>()
-    val viewState: MutableLiveData<MyEventViewState> by ::_viewState
-
     private var deletedEvent: Event? = null
-    fun onViewCreated() {
+    private var deletedEventIndex: Int = 0
+    private var page = 1
+    private var myEventNavigator: MyEventNavigator? = null
+
+    private val viewModelState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = viewModelState.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = UiState()
+    )
+
+    data class UiState(
+        val showNoData: Boolean = false,
+        val showProgress: Boolean = false,
+        val myEvents: List<Event> = emptyList(),
+        var errorMessage: String? = null,
+    )
+
+    fun onViewCreated(myEventNavigator: MyEventNavigator) {
+        this.myEventNavigator = myEventNavigator
         getMyEvents(page)
     }
 
     fun onEventAdded() {
-        _viewState.setValue(MyEventViewState.ClearData)
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(myEvents = emptyList())
+        }
         page = 1
         getMyEvents(page)
     }
 
     private fun getMyEvents(page: Int) {
-        _viewState.setValue(MyEventViewState.ShowProgress)
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(showProgress = true)
+        }
         eventRepository.getMyEvents(page) { request ->
             when (request) {
                 is ResponseState.Failure -> {
-                    _viewState.setValue(MyEventViewState.HideProgress)
-                    _viewState.setValue(MyEventViewState.ShowNoData)
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            showProgress = false, errorMessage = MY_EVENTS_REQUEST_FAILED
+                        )
+                    }
                 }
-
                 is ResponseState.Success<List<EventModel>> -> {
                     val currentPageEvents = request.data as? List<EventModel>
                     if (currentPageEvents.isNullOrEmpty()) {
-                        if (page == 0) {
-                            _viewState.setValue(MyEventViewState.ShowNoData)
+                        if (page == 1) {
+                            viewModelState.update { currentViewState ->
+                                currentViewState.copy(showNoData = true)
+                            }
                         }
-                        hideProgress()
                     } else {
-                        _viewState.setValue(MyEventViewState.HideProgress)
-                        _viewState.setValue(MyEventViewState.ShowNextEventPage(currentPageEvents.map { it.toEvent() }))
+                        viewModelState.update { currentViewState ->
+                            currentViewState.copy(
+                                myEvents = currentViewState.myEvents.plus(currentPageEvents.map { it.toEvent() })
+                            )
+                        }
                     }
-
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(showProgress = false)
+                    }
                 }
             }
         }
@@ -60,58 +87,86 @@ class MyEventViewModel @Inject constructor(
         getMyEvents(page)
     }
 
-    fun onDeleteEvent(event: Event) {
+    fun onSwipedToDelete(event: Event) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(showProgress = true)
+        }
         eventRepository.deleteEvent(event.eventId) { request ->
             when (request) {
                 is ResponseState.Failure -> {
-                    _viewState.setValue(MyEventViewState.ShowError(DELETE_EVENT_REQUEST_FAILED))
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            showProgress = false, errorMessage = DELETE_EVENT_REQUEST_FAILED
+                        )
+                    }
                 }
-
                 is ResponseState.Success -> {
                     deletedEvent = event
-                    _viewState.setValue(MyEventViewState.UpdateEvent(event))
+                    deletedEventIndex =
+                        viewModelState.value.myEvents.indexOfFirst { it.eventId == event.eventId }
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(showProgress = false,
+                            myEvents = currentViewState.myEvents.toMutableList()
+                                .apply { this.removeAt(deletedEventIndex) })
+                    }
                 }
             }
         }
     }
-
     fun onUndoDeleteEvent() {
-        deletedEvent?.let { event ->
-            _viewState.setValue(MyEventViewState.UpdateEvent(event))
-            deletedEvent = null
+        deletedEvent?.let { deletedElement ->
+            val mutableEventList = viewModelState.value.myEvents.toMutableList().apply {
+                this.add(
+                    deletedEventIndex, deletedElement
+                )
+            }
+
+            viewModelState.update { currentViewState -> currentViewState.copy(myEvents = mutableEventList) }
         }
+        deletedEvent = null
+        deletedEventIndex = 0
     }
 
     fun onEditEventClicked(event: Event) {
-        _viewState.setValue(MyEventViewState.NavigateToEditMyEvent(event))
+        myEventNavigator?.navigateToEditEvent(event)
     }
 
     fun onEventLikeClicked(event: Event) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(showProgress = true)
+        }
         val liked = !event.liked
         val eventId = event.eventId
         eventRepository.likeEvent(eventId, liked) { request ->
             when (request) {
                 is ResponseState.Failure -> {
-                    _viewState.setValue(MyEventViewState.ShowError(LIKE_EVENT_REQUEST_FAILED))
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            showProgress = false, errorMessage = LIKE_EVENT_REQUEST_FAILED
+                        )
+                    }
                 }
-
                 is ResponseState.Success -> {
-                    _viewState.setValue(MyEventViewState.UpdateEvent(event.copy(liked = !event.liked)))
+                    viewModelState.update { currentViewState ->
+                        currentViewState.copy(
+                            showProgress = false,
+                            myEvents = currentViewState.myEvents.apply {
+                                val index = this.indexOfFirst { it.eventId == eventId }
+                                this.toMutableList()[index] = event.copy(liked = liked)
+                            })
+                    }
                 }
             }
         }
     }
 
-    private fun hideProgress() {
-        _viewState.setValue(MyEventViewState.HideProgress)
-    }
-
     fun onFabButtonClicked() {
-        _viewState.setValue(MyEventViewState.NavigateToAddEvent)
+        myEventNavigator?.navigateToAddEvent()
     }
 
     companion object {
         const val DELETE_EVENT_REQUEST_FAILED = "DELETE_EVENT_REQUEST_FAILED"
         const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
+        const val MY_EVENTS_REQUEST_FAILED = "COULD NOT GET MY EVENTS LIST"
     }
 }
