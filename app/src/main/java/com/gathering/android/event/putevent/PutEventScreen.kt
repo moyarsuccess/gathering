@@ -12,6 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.ImageLoader
@@ -86,7 +87,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         }
 
         binding.tvLocation.setOnClickListener {
-            viewModel.onLocationButtonClicked()
+            viewModel.onLocationButtonClicked(binding.tvLocation.text.toString())
         }
 
         binding.tvAttendees.setOnClickListener {
@@ -129,7 +130,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
 
 
     override fun navigateToImagePicker() {
-        findNavController().navigate(R.id.action_putEventBottomSheetFragment_to_addPicBottomSheet)
+        findNavController().navigate(R.id.action_putEventScreen_to_addPicBottomSheet)
     }
 
     override fun navigateToDatePicker(year: Int, month: Int, day: Int) {
@@ -159,14 +160,18 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         timePickerDialog.show()
     }
 
-    override fun navigateToLocationPicker() {
-        findNavController().navigate(R.id.action_putEventBottomSheetFragment_to_addLocationBottomSheet)
+    override fun navigateToLocationPicker(address: String?) {
+        val bundle = bundleOf(ADDRESS to address)
+        findNavController().navigate(
+            R.id.action_putEventScreen_to_addLocationScreen,
+            bundle
+        )
     }
 
     override fun navigateToAttendeesPicker(attendees: String) {
         val bundle = bundleOf(ATTENDEE_LIST to attendees)
         findNavController().navigate(
-            R.id.action_putEventBottomSheetFragment_to_inviteFriendBottomSheet,
+            R.id.action_putEventScreen_to_inviteFriendBottomSheet,
             bundle
         )
     }
@@ -180,5 +185,4 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         if (this.text.toString() == text) return
         setText(text)
     }
-
 }

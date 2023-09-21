@@ -8,7 +8,7 @@ interface PutEventNavigator {
 
     fun navigateToTimePicker(hour: Int, minute: Int)
 
-    fun navigateToLocationPicker()
+    fun navigateToLocationPicker(address:String?)
 
     fun navigateToAttendeesPicker(attendees: String)
 

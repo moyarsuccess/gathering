@@ -5,12 +5,18 @@ import android.location.Geocoder
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.common.ActiveMutableLiveData
+import com.gathering.android.event.model.EventLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -20,8 +26,39 @@ class AddLocationViewModel @Inject constructor(
     private val geocoder: Geocoder
 ) : ViewModel() {
 
-    private val _viewState = ActiveMutableLiveData<AddLocationViewState>()
-    val viewState: ActiveMutableLiveData<AddLocationViewState> by ::_viewState
+    private var addLocationNavigator: AddLocationNavigator? = null
+
+    private val viewModelState = MutableStateFlow(AddLocationViewModelState())
+    val uiState: Flow<AddLocationUiState> = viewModelState.map { viewModelState ->
+        AddLocationUiState(
+            addressList = viewModelState.addressList,
+            selectedAddress = viewModelState.selectedAddress,
+            selectedLocation = viewModelState.selectedLocation,
+            errorMessage = viewModelState.errorMessage,
+            okButtonEnable = viewModelState.okButtonEnable,
+            addMarker = viewModelState.addMarker,
+            setSelectedAddress = viewModelState.setSelectedAddress,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = AddLocationUiState()
+    )
+
+    fun onViewCreated(address: String?, addLocationNavigator: AddLocationNavigator) {
+        this.addLocationNavigator = addLocationNavigator
+        val selectedLocation = address.let {
+            it?.locationFromAddressLine()
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(
+                selectedAddress = address,
+                selectedLocation = selectedLocation ?: EventLocation(),
+                okButtonEnable = false,
+                addMarker = true,
+            )
+        }
+    }
 
     fun onAddressChanged(address: String) {
         if (address.length < AUTO_SUGGESTION_THRESH_HOLD) return
@@ -38,19 +75,38 @@ class AddLocationViewModel @Inject constructor(
                 val addresses = response.autocompletePredictions.map {
                     it.getPrimaryText(null).toString()
                 }
-                _viewState.setValue(AddLocationViewState.ShowAddressList(addresses))
+                viewModelState.update { currentState ->
+                    currentState.copy(
+                        addressList = addresses,
+                        okButtonEnable = true,
+                        addMarker = false,
+                        setSelectedAddress = false,
+                    )
+                }
             }
             .addOnFailureListener {
-                _viewState.setValue(AddLocationViewState.ShowError(it.message))
+                viewModelState.update { currentState ->
+                    currentState.copy(
+                        errorMessage = it.message,
+                        addMarker = false,
+                        setSelectedAddress = false,
+                    )
+                }
             }
     }
 
     fun onSuggestedAddressClicked(suggestedAddress: String) {
-        val latLng = getLatLong(suggestedAddress) ?: return
-        _viewState.setValue(AddLocationViewState.ClearMap)
-        _viewState.setValue(AddLocationViewState.AddMarker(latLng))
-        _viewState.setValue(AddLocationViewState.MoveCamera(latLng))
-        _viewState.setValue(AddLocationViewState.HideKeyboard)
+        val latLng = getLatLong(suggestedAddress)
+        println("WTF - $latLng")
+        if (latLng == null) return
+        viewModelState.update { currentState ->
+            currentState.copy(
+                selectedLocation = EventLocation(latLng.latitude, latLng.longitude),
+                selectedAddress = suggestedAddress,
+                addMarker = true,
+                setSelectedAddress = true,
+            )
+        }
     }
 
     private fun getLatLong(address: String): LatLng? {
@@ -61,15 +117,25 @@ class AddLocationViewModel @Inject constructor(
         return LatLng(lat.toDouble(), long.toDouble())
     }
 
-    fun onOKButtonClicked(address: String) {
-        _viewState.setValue(AddLocationViewState.NavigateToAddEvent(address))
+
+    fun onOKButtonClicked() {
+        addLocationNavigator?.navigateToAddEvent(viewModelState.value.selectedAddress ?: "")
     }
 
     fun onMapLongClicked(latLong: LatLng) {
         getAddress(latLong) { address ->
-            _viewState.setValue(AddLocationViewState.SetAddress(address))
-            _viewState.setValue(AddLocationViewState.ClearMap)
-            _viewState.setValue(AddLocationViewState.AddMarker(latLong))
+            viewModelState.update { currentState ->
+                currentState.copy(
+                    selectedAddress = address,
+                    okButtonEnable = true,
+                    selectedLocation = EventLocation(
+                        lat = latLong.latitude,
+                        lon = latLong.longitude,
+                    ),
+                    addMarker = true,
+                    setSelectedAddress = true,
+                )
+            }
         }
     }
 
@@ -84,7 +150,10 @@ class AddLocationViewModel @Inject constructor(
                 1
             ) { addresses ->
                 viewModelScope.launch {
-                    val address = addresses.getOrNull(0)?.getAddressLine(0).toString()
+                    val address = addresses
+                        .getOrNull(0)
+                        ?.getAddressLine(0)
+                        .toString()
                     onAddressReady(address)
                 }
             }
@@ -106,12 +175,28 @@ class AddLocationViewModel @Inject constructor(
             )?.getOrNull(0)?.getAddressLine(0).toString()
         }
 
-    fun onPermissionGranted() {
-        _viewState.setValue(AddLocationViewState.AdjustMapUi)
-        _viewState.setValue(AddLocationViewState.SyncMapWithCurrentDeviceLocation)
+    private fun String.locationFromAddressLine(): EventLocation {
+        val addressList = geocoder
+            .getFromLocationName(this, 1)
+            ?: return EventLocation()
+
+        val lat = addressList.firstOrNull()?.latitude ?: 0.0
+        val long = addressList.firstOrNull()?.longitude ?: 0.0
+        return EventLocation(lat, long)
     }
+
+    private data class AddLocationViewModelState(
+        val addressList: List<String> = listOf(),
+        val selectedAddress: String? = null,
+        val selectedLocation: EventLocation = EventLocation(0.0, 0.0),
+        val errorMessage: String? = null,
+        val okButtonEnable: Boolean? = false,
+        val addMarker: Boolean = true,
+        val setSelectedAddress: Boolean = true,
+    )
 
     companion object {
         private const val AUTO_SUGGESTION_THRESH_HOLD = 3
     }
 }
+
