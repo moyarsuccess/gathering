@@ -7,6 +7,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +15,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.gathering.android.R
+import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.setNavigationResult
-import com.gathering.android.databinding.BottomSheetAddLocationBinding
+import com.gathering.android.common.showErrorText
+import com.gathering.android.databinding.ScreenAddLocationBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
+import com.gathering.android.event.model.EventLocation
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -34,12 +37,15 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class AddLocationBottomSheet : FullScreenBottomSheet(), OnMapReadyCallback {
 
-    private lateinit var binding: BottomSheetAddLocationBinding
+@AndroidEntryPoint
+class AddLocationScreen : FullScreenBottomSheet(), OnMapReadyCallback, AddLocationNavigator {
+
+    private lateinit var binding: ScreenAddLocationBinding
 
     @Inject
     lateinit var viewModel: AddLocationViewModel
@@ -56,7 +62,18 @@ class AddLocationBottomSheet : FullScreenBottomSheet(), OnMapReadyCallback {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetAddLocationBinding.inflate(LayoutInflater.from(requireContext()))
+        binding = ScreenAddLocationBinding.inflate(LayoutInflater.from(requireContext()))
+
+        val fm = childFragmentManager
+        var mapFragment = fm.findFragmentByTag("mapFragment") as? SupportMapFragment
+        if (mapFragment == null) {
+            mapFragment = SupportMapFragment()
+            val ft = fm.beginTransaction()
+            ft.add(com.gathering.android.R.id.mapFragmentContainer, mapFragment, "mapFragment")
+            ft.commit()
+            fm.executePendingTransactions()
+        }
+        mapFragment.getMapAsync(this)
 
         if (savedInstanceState != null) {
             lastKnownLocation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -80,48 +97,56 @@ class AddLocationBottomSheet : FullScreenBottomSheet(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragmentManager = requireActivity().supportFragmentManager
-
-        val mapFragment = fragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
         binding.etAddress.initAutoSuggestion()
 
         binding.btnOk.setOnClickListener {
-            val address = binding.etAddress.text.toString()
-            viewModel.onOKButtonClicked(address)
+            viewModel.onOKButtonClicked()
         }
 
-        viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                AddLocationViewState.ClearMap -> map?.clear()
-                AddLocationViewState.HideKeyboard -> hideKeyboard()
-                AddLocationViewState.AdjustMapUi -> adjustMapUi()
-                AddLocationViewState.SyncMapWithCurrentDeviceLocation -> syncMapWithCurrentDeviceLocation()
-                is AddLocationViewState.ShowError -> showToast(state.errorMessage)
-                is AddLocationViewState.ShowAddressList -> showAddressAutoSuggestionList(state)
-                is AddLocationViewState.SetAddress -> binding.etAddress.setText(state.address)
-                is AddLocationViewState.MoveCamera -> moveCamera(state.latLng)
-                is AddLocationViewState.AddMarker -> {
-                    map?.addMarker(
-                        MarkerOptions().position(state.latLng)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                    )
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                if (state.setSelectedAddress) {
+                    binding.etAddress.setText(state.selectedAddress)
                 }
-
-                is AddLocationViewState.NavigateToAddEvent -> {
-                    setNavigationResult(KEY_ARGUMENT_SELECTED_ADDRESS, state.address)
-                    findNavController().popBackStack()
+                if (state.addMarker) {
+                    state.showMarker()
+                }
+                state.addressList.showAddressAutoSuggestionList()
+                if (!state.errorMessage.isNullOrEmpty()) {
+                    showErrorText(state.errorMessage)
                 }
             }
         }
     }
 
-    private fun showAddressAutoSuggestionList(state: AddLocationViewState.ShowAddressList) {
+    private fun AddLocationUiState.showMarker() {
+        map?.clear()
+        val latLng = selectedLocation.toLatLng()
+        Log.d("WTF", "$latLng")
+        Log.d("WTF2", "$map")
+        moveCamera(latLng)
+        map?.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .icon(
+                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                )
+        )
+        hideKeyboard()
+    }
+
+    private fun EventLocation.toLatLng(): LatLng {
+        return LatLng(
+            lat ?: 0.0,
+            lon ?: 0.0
+        )
+    }
+
+    private fun List<String>.showAddressAutoSuggestionList() {
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.select_dialog_item,
-            state.addressList.toTypedArray()
+            toTypedArray()
         )
         binding.etAddress.setAdapter(adapter)
     }
@@ -157,9 +182,13 @@ class AddLocationBottomSheet : FullScreenBottomSheet(), OnMapReadyCallback {
         PermissionX.init(requireActivity()).permissions(Manifest.permission.ACCESS_FINE_LOCATION)
             .request { allGranted, _, _ ->
                 if (allGranted) {
-                    viewModel.onPermissionGranted()
+                    adjustMapUi()
+                    syncMapWithCurrentDeviceLocation()
                 }
             }
+
+        val address = arguments?.getString(ADDRESS)
+        viewModel.onViewCreated(address, this)
     }
 
     @SuppressLint("MissingPermission")
@@ -187,20 +216,9 @@ class AddLocationBottomSheet : FullScreenBottomSheet(), OnMapReadyCallback {
         map?.uiSettings?.isMyLocationButtonEnabled = true
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        val frg = requireActivity().supportFragmentManager.findFragmentById(R.id.map)
-        if (frg != null) {
-            requireActivity().supportFragmentManager.beginTransaction().remove(frg).commit()
-        }
-    }
-
-    private fun showToast(text: String?) {
-        Toast.makeText(
-            requireContext(),
-            text,
-            Toast.LENGTH_LONG
-        ).show()
+    override fun navigateToAddEvent(address: String) {
+        setNavigationResult(KEY_ARGUMENT_SELECTED_ADDRESS, address)
+        findNavController().popBackStack()
     }
 
     companion object {

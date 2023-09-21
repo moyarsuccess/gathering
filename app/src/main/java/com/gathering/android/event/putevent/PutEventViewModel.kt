@@ -185,8 +185,8 @@ class PutEventViewModel @Inject constructor(
         }
     }
 
-    fun onLocationButtonClicked() {
-        putEventNavigator?.navigateToLocationPicker()
+    fun onLocationButtonClicked(address: String) {
+        putEventNavigator?.navigateToLocationPicker(address)
     }
 
     fun onNewLocationSelected(address: String) {

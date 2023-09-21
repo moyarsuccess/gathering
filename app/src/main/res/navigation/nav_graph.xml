@@ -66,7 +66,7 @@
         tools:layout="@layout/frg_my_event">
         <action
             android:id="@+id/action_navigation_eventFragment_to_putEventBottomSheetFragment"
-            app:destination="@id/putEventBottomSheetFragment" />
+            app:destination="@id/putEventScreen" />
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -93,28 +93,28 @@
             app:destination="@id/attendeesDetailBottomSheet" />
     </fragment>
     <dialog
-        android:id="@+id/putEventBottomSheetFragment"
+        android:id="@+id/putEventScreen"
         android:name="com.gathering.android.event.putevent.PutEventScreen"
-        android:label="AddEventBottomSheetFragment"
+        android:label="putEventScreent"
         tools:layout="@layout/screen_put_event">
         <action
-            android:id="@+id/action_putEventBottomSheetFragment_to_addLocationBottomSheet"
-            app:destination="@id/addLocationBottomSheet" />
+            android:id="@+id/action_putEventScreen_to_addLocationScreen"
+            app:destination="@id/addLocationScreen" />
         <action
-            android:id="@+id/action_putEventBottomSheetFragment_to_addPicBottomSheet"
+            android:id="@+id/action_putEventScreen_to_addPicBottomSheet"
             app:destination="@id/addPicBottomSheet" />
         <action
-            android:id="@+id/action_putEventBottomSheetFragment_to_navigation_event"
+            android:id="@+id/action_putEventScreen_to_navigation_event"
             app:destination="@id/navigation_eventFragment" />
         <action
-            android:id="@+id/action_putEventBottomSheetFragment_to_inviteFriendBottomSheet"
+            android:id="@+id/action_putEventScreen_to_inviteFriendBottomSheet"
             app:destination="@id/inviteFriendBottomSheet" />
     </dialog>
     <dialog
-        android:id="@+id/addLocationBottomSheet"
-        android:name="com.gathering.android.event.putevent.location.AddLocationBottomSheet"
-        android:label="AddLocationBottomSheet"
-        tools:layout="@layout/bottom_sheet_add_location" />
+        android:id="@+id/addLocationScreen"
+        android:name="com.gathering.android.event.putevent.location.AddLocationScreen"
+        android:label="addLocationScreen"
+        tools:layout="@layout/screen_add_location" />
     <dialog
         android:id="@+id/addPicBottomSheet"
         android:name="com.gathering.android.event.putevent.pic.AddPicBottomSheet"
@@ -122,7 +122,7 @@
         tools:layout="@layout/bottom_sheet_add_pic">
         <action
             android:id="@+id/action_back_to_add_event"
-            app:destination="@id/putEventBottomSheetFragment" />
+            app:destination="@id/putEventScreen" />
     </dialog>
     <dialog
         android:id="@+id/inviteFriendBottomSheet"
