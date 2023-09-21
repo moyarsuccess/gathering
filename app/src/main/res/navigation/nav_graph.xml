@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_homeFragment">
+    app:startDestination="@id/navigation_homeScreen">
     <dialog
         android:id="@+id/introFragment"
         android:name="com.gathering.android.intro.IntroFragment"
@@ -34,8 +34,8 @@
         android:label="SignInScreen"
         tools:layout="@layout/screen_sign_in">
         <action
-            android:id="@+id/action_signInScreen_to_navigation_homeFragment"
-            app:destination="@id/navigation_homeFragment" />
+            android:id="@+id/action_signInScreen_to_navigation_homeScreen"
+            app:destination="@id/navigation_homeScreen" />
         <action
             android:id="@+id/action_signInScreen_to_verificationScreen"
             app:destination="@id/verificationScreen"
@@ -45,12 +45,12 @@
             app:destination="@id/forgetPasswordScreen" />
     </dialog>
     <fragment
-        android:id="@+id/navigation_homeFragment"
-        android:name="com.gathering.android.home.HomeFragment"
-        android:label="HomeFragment"
-        tools:layout="@layout/frg_home">
+        android:id="@+id/navigation_homeScreen"
+        android:name="com.gathering.android.home.HomeScreen"
+        android:label="HomeScreen"
+        tools:layout="@layout/screen_home">
         <action
-            android:id="@+id/action_homeFragment_to_introFragment"
+            android:id="@+id/action_homeScreen_to_introFragment"
             app:destination="@id/introFragment" />
         <action
             android:id="@+id/action_navigation_home_to_EventDetailScreen"
@@ -140,7 +140,7 @@
         tools:layout="@layout/screen_verification">
         <action
             android:id="@+id/action_verification_to_navigation_home"
-            app:destination="@id/navigation_homeFragment" />
+            app:destination="@id/navigation_homeScreen" />
         <deepLink
             android:id="@+id/verificationScreen"
             android:autoVerify="true"
@@ -190,8 +190,8 @@
             app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/password/reset" />
         <action
-            android:id="@+id/action_newPasswordInputScreen_to_navigation_homeFragment"
-            app:destination="@id/navigation_homeFragment" />
+            android:id="@+id/action_newPasswordInputScreen_to_navigation_homeScreen"
+            app:destination="@id/navigation_homeScreen" />
 
     </dialog>
     <dialog

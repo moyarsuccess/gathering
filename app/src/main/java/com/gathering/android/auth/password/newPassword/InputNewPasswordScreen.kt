@@ -67,7 +67,7 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
 
     override fun navigateToHomeFragment() {
         findNavController().navigate(
-            R.id.action_newPasswordInputScreen_to_navigation_homeFragment
+            R.id.action_newPasswordInputScreen_to_navigation_homeScreen
         )
     }
 }

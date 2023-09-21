@@ -1,9 +1,9 @@
-package com.gathering.android.event.myevent
+package com.gathering.android.common
 
 import androidx.recyclerview.widget.DiffUtil
 import com.gathering.android.event.Event
 
-class MyEventDiffCallback(
+class EventsDiffCallback(
     private val oldList: List<Event>, private val newList: List<Event>
 ) : DiffUtil.Callback() {
 

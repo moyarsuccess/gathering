@@ -7,7 +7,7 @@ import androidx.fragment.app.DialogFragment
 import com.gathering.android.databinding.FrgFilterDialogBinding
 
 //TODO: this class does not keep the state of filtered options. it will be fixed in T28
-class FilterDialogFragment(private val eventListViewModel: EventListViewModel) : DialogFragment() {
+class FilterDialogFragment(private val eventListViewModel: HomeViewModel) : DialogFragment() {
 
     private lateinit var binding: FrgFilterDialogBinding
 
@@ -25,16 +25,16 @@ class FilterDialogFragment(private val eventListViewModel: EventListViewModel) :
         binding.btnFilterCancel.setOnClickListener {
             dialog.dismiss()
         }
-        binding.btnFilterApply.setOnClickListener {
-            eventListViewModel.onFilterChanged(
-                Filter(
-                    binding.myContactEvents.isChecked,
-                    binding.myEvents.isChecked,
-                    binding.todayEvents.isChecked
-                )
-            )
-            dialog.dismiss()
-        }
+//        binding.btnFilterApply.setOnClickListener {
+//            eventListViewModel.onFilterChanged(
+//                Filter(
+//                    binding.myContactEvents.isChecked,
+//                    binding.myEvents.isChecked,
+//                    binding.todayEvents.isChecked
+//                )
+//            )
+//            dialog.dismiss()
+//        }
         return dialog
     }
 
