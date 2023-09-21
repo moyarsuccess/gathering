@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
+import com.gathering.android.common.EventsDiffCallback
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.ItemEventBinding
 import com.gathering.android.event.Event
@@ -37,7 +38,7 @@ class MyEventAdapter @Inject constructor(
     }
 
     fun updateEvents(newEventList: List<Event>) {
-        val diffCallback = MyEventDiffCallback(this.myEventItemList, newEventList)
+        val diffCallback = EventsDiffCallback(this.myEventItemList, newEventList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         diffResult.dispatchUpdatesTo(this)
 

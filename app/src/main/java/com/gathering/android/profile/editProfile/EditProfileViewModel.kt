@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-class EditeProfileViewModel @Inject constructor(
+class EditProfileViewModel @Inject constructor(
     private val userRepo: UserRepo,
     private val profileRepository: ProfileRepository
 ) : ViewModel() {
@@ -24,7 +24,7 @@ class EditeProfileViewModel @Inject constructor(
     private var isImageUrlFilled: Boolean = false
     private var photoUrl = ""
 
-    private var editProfileNavigator: EditeProfileNavigator? = null
+    private var editProfileNavigator: EditProfileNavigator? = null
 
 
     private val viewModelState = MutableStateFlow(EditProfileViewModelState())
@@ -41,7 +41,7 @@ class EditeProfileViewModel @Inject constructor(
         initialValue = EditProfileUiState()
     )
 
-    fun onViewCreated(editProfileNavigator: EditeProfileNavigator) {
+    fun onViewCreated(editProfileNavigator: EditProfileNavigator) {
         this.editProfileNavigator = editProfileNavigator
         viewModelState.update { currentState ->
             val user = userRepo.getUser() ?: return

@@ -10,11 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.FullScreenBottomSheet
-import com.gathering.android.common.ImageLoader
-import com.gathering.android.common.getNavigationResultLiveData
-import com.gathering.android.common.setNavigationResult
-import com.gathering.android.common.showErrorText
+import com.gathering.android.common.*
 import com.gathering.android.databinding.ScreenEditProfileBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
@@ -24,12 +20,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EditProfileScreen : FullScreenBottomSheet(), EditeProfileNavigator {
+class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
 
     lateinit var binding: ScreenEditProfileBinding
 
     @Inject
-    lateinit var viewModel: EditeProfileViewModel
+    lateinit var viewModel: EditProfileViewModel
 
     @Inject
     lateinit var imageLoader: ImageLoader

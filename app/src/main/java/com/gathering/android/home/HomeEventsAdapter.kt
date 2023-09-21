@@ -1,12 +1,13 @@
 package com.gathering.android.home
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
+import com.gathering.android.common.EventsDiffCallback
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.databinding.ItemEventBinding
 import com.gathering.android.event.Event
@@ -15,48 +16,39 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class EventListAdapter @Inject constructor(
+class HomeEventsAdapter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val imageLoader: ImageLoader,
-) : RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<HomeEventsAdapter.ViewHolder>() {
 
     private var eventItemList: MutableList<Event> = mutableListOf()
     private var onEventClicked: (event: Event) -> Unit = {}
     private var onFavoriteImageClickListener: (event: Event) -> Unit = {}
     private val li = LayoutInflater.from(context)
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setEventItem(eventItemList: List<Event>) {
-        this.eventItemList.clear()
-        this.eventItemList.addAll(eventItemList)
-        notifyDataSetChanged()
-    }
-
-    fun appendEventItems(eventItemList: List<Event>) {
-        val startPosition = this.eventItemList.size
-        this.eventItemList.addAll(eventItemList)
-        notifyItemRangeInserted(startPosition, this.eventItemList.size)
-    }
-
     fun setOnEventClickListener(onEventClicked: (event: Event) -> Unit) {
         this.onEventClicked = onEventClicked
     }
 
-    fun updateEvent(event: Event) {
-        val indexOfItem = this.eventItemList.indexOfFirst { it.eventId == event.eventId }
-        this.eventItemList[indexOfItem] = event
-        notifyItemChanged(indexOfItem)
+    fun updateEvents(newEventList: List<Event>) {
+        val diffCallback = EventsDiffCallback(this.eventItemList, newEventList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        diffResult.dispatchUpdatesTo(this)
+
+        this.eventItemList = newEventList.toMutableList()
     }
 
     fun setOnFavoriteImageClick(onFavoriteImageClickListener: (event: Event) -> Unit) {
         this.onFavoriteImageClickListener = onFavoriteImageClickListener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup, viewType: Int
+    ): ViewHolder {
+        val itemBinding = ItemEventBinding.inflate(li, parent, false)
         return ViewHolder(
-            ItemEventBinding.inflate(li),
-            onEventClicked,
-            onFavoriteImageClickListener
+            itemBinding = itemBinding,
+            onFavoriteImageClickListener = onFavoriteImageClickListener,
+            onEventClickListener = onEventClicked
         )
     }
 

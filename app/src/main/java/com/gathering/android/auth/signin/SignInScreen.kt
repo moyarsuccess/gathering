@@ -68,7 +68,7 @@ class SignInScreen : DialogFragment(), SignInNavigator {
 
     override fun navigateToHome() {
         findNavController().navigate(
-            R.id.action_signInScreen_to_navigation_homeFragment
+            R.id.action_signInScreen_to_navigation_homeScreen
         )
     }
 

@@ -8,7 +8,7 @@ import com.gathering.android.R
 import com.gathering.android.databinding.FrgSortDialogBinding
 
 //TODO: this class does not keep the state of sorted options. it will be fixed in T28
-class SortDialogFragment(private val eventListViewModel: EventListViewModel) : DialogFragment() {
+class SortDialogFragment(private val eventListViewModel: HomeViewModel) : DialogFragment() {
 
     private lateinit var binding: FrgSortDialogBinding
 
@@ -25,24 +25,20 @@ class SortDialogFragment(private val eventListViewModel: EventListViewModel) : D
         binding.btnSortCancel.setOnClickListener {
             dialog.dismiss()
         }
-        binding.btnSortApply.setOnClickListener {
-            when (binding.sortRadioGroup.checkedRadioButtonId) {
-                R.id.sort_date -> {
-                    eventListViewModel.onSortChanged(SortType.SORT_BY_DATE)
-                }
-
-                R.id.sort_location -> {
-                    eventListViewModel.onSortChanged(SortType.SORT_BY_LOCATION)
-                }
-            }
-            dismiss()
-        }
+//        binding.btnSortApply.setOnClickListener {
+//            when (binding.sortRadioGroup.checkedRadioButtonId) {
+//                R.id.sort_date -> {
+//                    eventListViewModel.onSortChanged(SortType.SORT_BY_DATE)
+//                }
+//
+//                R.id.sort_location -> {
+//                    eventListViewModel.onSortChanged(SortType.SORT_BY_LOCATION)
+//                }
+//            }
+//            dismiss()
+//        }
         dialog.dismiss()
         return dialog
-    }
-
-    companion object {
-        const val TAG = "sort_dialog"
     }
 }
 

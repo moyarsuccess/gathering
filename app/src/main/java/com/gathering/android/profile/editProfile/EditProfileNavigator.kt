@@ -2,7 +2,7 @@ package com.gathering.android.profile.editProfile
 
 import com.gathering.android.auth.model.User
 
-interface EditeProfileNavigator {
+interface EditProfileNavigator {
 
     fun navigateToAddPic()
 
