@@ -171,7 +171,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
     override fun navigateToAttendeesPicker(attendees: String) {
         val bundle = bundleOf(ATTENDEE_LIST to attendees)
         findNavController().navigate(
-            R.id.action_putEventScreen_to_inviteFriendBottomSheet,
+            R.id.action_putEventScreen_to_addAttendees,
             bundle
         )
     }

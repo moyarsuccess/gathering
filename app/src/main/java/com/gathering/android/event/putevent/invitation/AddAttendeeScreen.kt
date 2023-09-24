@@ -7,23 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.setNavigationResult
-import com.gathering.android.common.showErrorText
-import com.gathering.android.databinding.BottomSheetAddAttendeesBinding
+import com.gathering.android.databinding.ScreenAddAttendeesBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.putevent.invitation.viewModel.AddAttendeesViewModel
-import com.gathering.android.event.putevent.invitation.viewModel.AddAttendeesViewState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddAttendeeScreen : FullScreenBottomSheet() {
+class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
 
-    private lateinit var binding: BottomSheetAddAttendeesBinding
+    private lateinit var binding: ScreenAddAttendeesBinding
 
     @Inject
     lateinit var adapter: AttendeeListAdapter
@@ -34,31 +35,18 @@ class AddAttendeeScreen : FullScreenBottomSheet() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetAddAttendeesBinding.inflate(LayoutInflater.from(requireContext()))
+        binding = ScreenAddAttendeesBinding.inflate(LayoutInflater.from(requireContext()))
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                AddAttendeesViewState.HideKeyboard -> hideKeyboard()
-                AddAttendeesViewState.CleaEditText -> binding.etAttendee.setText("")
-                is AddAttendeesViewState.SetAttendee -> binding.etAttendee.setText(state.attendee)
-                is AddAttendeesViewState.ShowError -> showErrorText(state.errorMessage)
-                is AddAttendeesViewState.AddAttendeeToRecyclerView -> adapter.addAttendeeItem(state.attendee)
-                is AddAttendeesViewState.RemoveAttendeeFromRecyclerView -> adapter.deleteAttendeeItem(
-                    state.attendee
-                )
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                adapter.updateAttendeeItems(state.attendeesEmailList)
 
-                is AddAttendeesViewState.NavigateToAddEvent -> {
-                    setNavigationResult(KEY_ARGUMENT_SELECTED_ATTENDEE_LIST, state.attendeeList)
-                    findNavController().popBackStack()
-                }
-
-                is AddAttendeesViewState.AddAttendeeButtonVisibility -> binding.btnAddAttendee.isEnabled =
-                    state.isAddAttendeeButtonEnabled
+                binding.btnAddAttendee.isEnabled = state.addAttendeeButtonEnable
             }
         }
 
@@ -78,17 +66,17 @@ class AddAttendeeScreen : FullScreenBottomSheet() {
         }
 
         binding.btnOk.setOnClickListener {
-            val attendeeList = adapter.getAttendeeItems()
-            viewModel.onOKButtonClicked(attendeeList)
+            viewModel.onOKButtonClicked()
         }
 
         binding.btnAddAttendee.setOnClickListener {
             viewModel.onAddAttendeeButtonClicked(binding.etAttendee.text.toString())
+            hideKeyboard()
         }
 
 
         val attendees = arguments?.getString(ATTENDEE_LIST)
-        viewModel.onViewCreated(attendees)
+        viewModel.onViewCreated(attendees = attendees, addAttendeeNavigator = this)
 
     }
 
@@ -96,5 +84,10 @@ class AddAttendeeScreen : FullScreenBottomSheet() {
         val inputSystemService = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
         val imm = inputSystemService as? InputMethodManager
         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    override fun navigateToAddEvent(attendeesEmailList: List<String>) {
+        setNavigationResult(KEY_ARGUMENT_SELECTED_ATTENDEE_LIST, attendeesEmailList)
+        findNavController().popBackStack()
     }
 }
