@@ -11,10 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.gathering.android.R
+import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenAddPicBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
@@ -45,12 +44,6 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
 
         lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
-
-                if (state.isInProgress) {
-                    binding.btnOk.startAnimation()
-                } else {
-                    binding.btnOk.revertAnimation()
-                }
 
                 state.rotatedImage?.let { rotatedImage ->
                     binding.imageView.setImageBitmap(rotatedImage)
@@ -119,8 +112,8 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
 
 
     override fun navigateToAddEvent(imagePath: String) {
-        val bundle = bundleOf(KEY_ARGUMENT_SELECTED_IMAGE to imagePath)
-        findNavController().navigate(R.id.action_back_to_add_event, bundle)
+        setNavigationResult(KEY_ARGUMENT_SELECTED_IMAGE, imagePath)
+        findNavController().popBackStack()
     }
 
     override fun navigateToCamera() {

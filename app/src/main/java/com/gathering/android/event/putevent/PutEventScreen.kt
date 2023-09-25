@@ -130,7 +130,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
 
 
     override fun navigateToImagePicker() {
-        findNavController().navigate(R.id.action_putEventScreen_to_addPicBottomSheet)
+        findNavController().navigate(R.id.action_putEventBottomSheetFragment_to_addPicScreen)
     }
 
     override fun navigateToDatePicker(year: Int, month: Int, day: Int) {

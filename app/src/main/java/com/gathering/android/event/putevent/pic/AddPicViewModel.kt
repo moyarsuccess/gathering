@@ -28,7 +28,6 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
     )
 
     data class UiState(
-        var isInProgress: Boolean = false,
         var errorMessage: String? = null,
         var showImage: Bitmap? = null,
         var rotatedImage: Bitmap? = null
@@ -45,7 +44,7 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
 
     fun onImageSelectedFromCamera(bitmap: Bitmap) {
         viewModelState.update { currentViewState ->
-            currentViewState.copy(showImage = bitmap, isInProgress = false)
+            currentViewState.copy(showImage = bitmap)
         }
     }
 
@@ -62,7 +61,7 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
                 }
             } else {
                 viewModelState.update { currentViewState ->
-                    currentViewState.copy(errorMessage = FAILED_TO_LOAD_IMAGE, isInProgress = false)
+                    currentViewState.copy(errorMessage = FAILED_TO_LOAD_IMAGE)
                 }
             }
         }
@@ -75,7 +74,7 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
         val rotatedBitmap =
             Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         viewModelState.update { currentViewState ->
-            currentViewState.copy(showImage = rotatedBitmap, isInProgress = false)
+            currentViewState.copy(showImage = rotatedBitmap)
         }
     }
 
