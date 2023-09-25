@@ -37,7 +37,6 @@ class MyEventViewModel @Inject constructor(
         this.myEventNavigator = myEventNavigator
         getMyEvents(page)
     }
-
     fun onEventAdded() {
         viewModelState.update { currentViewState ->
             currentViewState.copy(myEvents = emptyList())

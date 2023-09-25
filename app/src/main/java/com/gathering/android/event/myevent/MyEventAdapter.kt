@@ -38,11 +38,14 @@ class MyEventAdapter @Inject constructor(
     }
 
     fun updateEvents(newEventList: List<Event>) {
-        val diffCallback = EventsDiffCallback(this.myEventItemList, newEventList)
+        val distinctNewEvents = newEventList.distinctBy { it.eventId }
+        val diffCallback = EventsDiffCallback(myEventItemList, distinctNewEvents)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        diffResult.dispatchUpdatesTo(this)
 
-        this.myEventItemList = newEventList.toMutableList()
+        myEventItemList.clear()
+        myEventItemList.addAll(distinctNewEvents)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun setOnFavoriteImageClick(onFavoriteImageClickListener: (event: Event) -> Unit) {

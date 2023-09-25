@@ -89,8 +89,8 @@
         android:label="EventDetailScreen"
         tools:layout="@layout/screen_event_detail">
         <action
-            android:id="@+id/action_EventDetailScreen_to_attendeesDetailBottomSheet"
-            app:destination="@id/attendeesDetailBottomSheet" />
+            android:id="@+id/action_EventDetailScreen_to_attendeesDetailScreen"
+            app:destination="@id/attendeesDetailScreen" />
     </fragment>
     <dialog
         android:id="@+id/putEventScreen"
@@ -126,7 +126,7 @@
     </dialog>
     <dialog
         android:id="@+id/inviteFriendBottomSheet"
-        android:name="com.gathering.android.event.putevent.invitation.AddAttendeeBottomSheet"
+        android:name="com.gathering.android.event.putevent.invitation.AddAttendeeScreen"
         android:label="InviteFriendBottomSheet"
         tools:layout="@layout/bottom_sheet_add_attendees">
         <argument
@@ -195,8 +195,8 @@
 
     </dialog>
     <dialog
-        android:id="@+id/attendeesDetailBottomSheet"
+        android:id="@+id/attendeesDetailScreen"
         android:name="com.gathering.android.event.eventdetail.AttendeesDetailScreen"
-        android:label="attendeesDetailBottomSheet"
-        tools:layout="@layout/bottom_sheet_attendees_detail" />
+        android:label="attendeesDetailScreen"
+        tools:layout="@layout/screen_attendees_detail" />
 </navigation>
