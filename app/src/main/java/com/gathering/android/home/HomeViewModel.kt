@@ -87,8 +87,8 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onNextPageRequested() {
-        getEvents(page)
         page++
+        getEvents(page)
     }
 
 //    private fun List<EventModel>.applySortAndFilter(): List<EventModel> {

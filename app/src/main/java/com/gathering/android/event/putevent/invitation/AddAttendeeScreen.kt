@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddAttendeeBottomSheet : FullScreenBottomSheet() {
+class AddAttendeeScreen : FullScreenBottomSheet() {
 
     private lateinit var binding: BottomSheetAddAttendeesBinding
 

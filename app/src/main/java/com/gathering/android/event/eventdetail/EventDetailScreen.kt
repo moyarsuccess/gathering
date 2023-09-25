@@ -110,7 +110,7 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
     override fun navigateToAttendeesDetail(attendees: List<Attendee>) {
         val bundle = bundleOf(ATTENDEE_LIST to attendees)
         findNavController().navigate(
-            R.id.action_EventDetailScreen_to_attendeesDetailBottomSheet,
+            R.id.action_EventDetailScreen_to_attendeesDetailScreen,
             bundle
         )
     }

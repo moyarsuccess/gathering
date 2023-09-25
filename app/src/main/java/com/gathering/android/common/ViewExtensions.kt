@@ -15,5 +15,5 @@ fun <T> Fragment.setNavigationResult(key: String, result: T) {
 
 fun Fragment.showErrorText(text: String) {
     Log.i("WTF", "$this")
-    Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+    Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
 }

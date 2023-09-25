@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
-import com.gathering.android.databinding.BottomSheetAttendeesDetailBinding
+import com.gathering.android.databinding.ScreenAttendeesDetailBinding
 import com.gathering.android.event.model.Attendee
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AttendeesDetailScreen : FullScreenBottomSheet() {
 
-    private lateinit var binding: BottomSheetAttendeesDetailBinding
+    private lateinit var binding: ScreenAttendeesDetailBinding
 
     @Inject
     lateinit var adapter: AttendeesDetailAdapter
@@ -29,7 +29,7 @@ class AttendeesDetailScreen : FullScreenBottomSheet() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetAttendeesDetailBinding.inflate(LayoutInflater.from(requireContext()))
+        binding = ScreenAttendeesDetailBinding.inflate(LayoutInflater.from(requireContext()))
         binding.rvAttendees.adapter = adapter
         binding.rvAttendees.layoutManager =
             LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
