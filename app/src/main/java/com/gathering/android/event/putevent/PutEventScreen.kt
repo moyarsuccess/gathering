@@ -185,4 +185,5 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         if (this.text.toString() == text) return
         setText(text)
     }
+
 }

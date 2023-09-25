@@ -101,8 +101,8 @@
             android:id="@+id/action_putEventScreen_to_addLocationScreen"
             app:destination="@id/addLocationScreen" />
         <action
-            android:id="@+id/action_putEventScreen_to_addPicBottomSheet"
-            app:destination="@id/addPicBottomSheet" />
+            android:id="@+id/action_putEventBottomSheetFragment_to_addPicScreen"
+            app:destination="@id/addPicScreen" />
         <action
             android:id="@+id/action_putEventScreen_to_navigation_event"
             app:destination="@id/navigation_eventFragment" />
@@ -116,10 +116,10 @@
         android:label="addLocationScreen"
         tools:layout="@layout/screen_add_location" />
     <dialog
-        android:id="@+id/addPicBottomSheet"
-        android:name="com.gathering.android.event.putevent.pic.AddPicBottomSheet"
-        android:label="AddPicBottomSheet"
-        tools:layout="@layout/bottom_sheet_add_pic">
+        android:id="@+id/addPicScreen"
+        android:name="com.gathering.android.event.putevent.pic.AddPicScreen"
+        android:label="AddPicScreen"
+        tools:layout="@layout/screen_add_pic">
         <action
             android:id="@+id/action_back_to_add_event"
             app:destination="@id/putEventScreen" />
@@ -167,8 +167,8 @@
         android:label="PersonalDataBottomSheetFragment"
         tools:layout="@layout/screen_edit_profile">
         <action
-            android:id="@+id/action_editProfile_to_addPicBottomSheet"
-            app:destination="@id/addPicBottomSheet" />
+            android:id="@+id/action_edit_profile_to_addPicScreen"
+            app:destination="@id/addPicScreen" />
         <argument
             android:name="User"
             app:argType="com.gathering.android.auth.model.User" />

@@ -78,7 +78,7 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
     }
 
     override fun navigateToAddPic() {
-        findNavController().navigate(R.id.action_editProfile_to_addPicBottomSheet)
+        findNavController().navigate(R.id.action_edit_profile_to_addPicScreen)
     }
 
     override fun navigateToProfile(user: User) {
