@@ -107,7 +107,7 @@
             android:id="@+id/action_putEventScreen_to_navigation_event"
             app:destination="@id/navigation_eventFragment" />
         <action
-            android:id="@+id/action_putEventScreen_to_inviteFriendBottomSheet"
+            android:id="@+id/action_putEventScreen_to_addAttendees"
             app:destination="@id/inviteFriendBottomSheet" />
     </dialog>
     <dialog
@@ -128,7 +128,7 @@
         android:id="@+id/inviteFriendBottomSheet"
         android:name="com.gathering.android.event.putevent.invitation.AddAttendeeScreen"
         android:label="InviteFriendBottomSheet"
-        tools:layout="@layout/bottom_sheet_add_attendees">
+        tools:layout="@layout/screen_add_attendees">
         <argument
             android:name="AttendeesEmail"
             app:argType="string" />

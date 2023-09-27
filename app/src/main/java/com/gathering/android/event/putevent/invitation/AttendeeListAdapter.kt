@@ -3,7 +3,9 @@ package com.gathering.android.event.putevent.invitation
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.gathering.android.common.AttendeeDiffCallBack
 import com.gathering.android.databinding.ItemAttendeeBinding
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -16,18 +18,15 @@ class AttendeeListAdapter @Inject constructor(
     private var onAttendeeRemoveClicked: (attendee: String) -> Unit = {}
     private val li = LayoutInflater.from(context)
 
-    fun addAttendeeItem(attendee: String) {
-        this.attendeeItemList.add(attendee)
-        notifyItemInserted(this.attendeeItemList.lastIndex)
-    }
+    fun updateAttendeeItems(newAttendeeList: List<String>) {
+        val distinctNewEvents = newAttendeeList.distinctBy { it }
+        val diffCallback = AttendeeDiffCallBack(this.attendeeItemList, newAttendeeList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
 
-    fun deleteAttendeeItem(attendee: String) {
-        this.attendeeItemList.remove(attendee)
-        notifyItemRemoved(this.attendeeItemList.size)
-    }
+        attendeeItemList.clear()
 
-    fun getAttendeeItems(): List<String> {
-        return attendeeItemList
+        attendeeItemList.addAll(distinctNewEvents)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun setOnAttendeeRemoveListener(onAttendeeRemoveClicked: (attendee: String) -> Unit) {

@@ -1,65 +1,90 @@
 package com.gathering.android.event.putevent.invitation.viewModel
 
-import android.text.TextUtils
 import android.util.Patterns
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gathering.android.common.ActiveMutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.gathering.android.event.putevent.invitation.AddAttendeeNavigator
+import com.gathering.android.event.putevent.invitation.AddAttendeeUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class AddAttendeesViewModel @Inject constructor() : ViewModel() {
 
-    private val _viewState = ActiveMutableLiveData<AddAttendeesViewState>()
-    val viewState: MutableLiveData<AddAttendeesViewState> by ::_viewState
-    private var isAttendeeEmailValid: Boolean = false
+    private var addAttendeeNavigator: AddAttendeeNavigator? = null
 
-    private var attendeesEmailList = mutableListOf<String>()
+    private val viewModelState = MutableStateFlow(AddAttendeesViewModelState())
+    val uiState: StateFlow<AddAttendeeUiState> = viewModelState.map { viewModelState ->
+        AddAttendeeUiState(
+            attendeesEmailList = viewModelState.attendeesEmailList.toList(),
+            addAttendeeButtonEnable = viewModelState.addAttendeeButtonEnable,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = AddAttendeeUiState()
+    )
 
-    fun onOKButtonClicked(attendeesEmailList: List<String>) {
-        _viewState.setValue(AddAttendeesViewState.NavigateToAddEvent(attendeesEmailList))
-    }
-
-    fun onAttendeeEmailChanged(attendeeEmail: String) {
-        isAttendeeEmailValid = isAttendeeEmailValid(attendeeEmail)
-        val errorMessage =
-            if (isAttendeeEmailValid) "" else INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE
-        _viewState.setValue(AddAttendeesViewState.ShowError(errorMessage))
-        checkIsEmailField()
-    }
-
-    fun onAddAttendeeButtonClicked(attendeeEmail: String) {
-        if (attendeesEmailList.contains(attendeeEmail)) return
-        attendeesEmailList.add(attendeeEmail)
-        _viewState.setValue(AddAttendeesViewState.AddAttendeeToRecyclerView(attendeeEmail))
-        _viewState.setValue(AddAttendeesViewState.CleaEditText)
-        _viewState.setValue(AddAttendeesViewState.HideKeyboard)
-    }
-
-    fun onAttendeeRemoveItemClicked(attendeeEmail: String) {
-        attendeesEmailList.remove(attendeeEmail)
-        _viewState.setValue(AddAttendeesViewState.RemoveAttendeeFromRecyclerView(attendeeEmail))
-    }
-
-    fun onViewCreated(attendees: String?) {
+    fun onViewCreated(attendees: String?, addAttendeeNavigator: AddAttendeeNavigator) {
+        this.addAttendeeNavigator = addAttendeeNavigator
         if (attendees.isNullOrEmpty()) return
-        val attendeeList = attendees.split(",")
-        attendeeList.forEach { item ->
-            _viewState.setValue(AddAttendeesViewState.AddAttendeeToRecyclerView(item))
+
+        viewModelState.update { currentState ->
+            currentState.copy(
+                attendeesEmailList = attendees.split(",").toSet(),
+            )
         }
     }
 
-
-    private fun checkIsEmailField() {
-        _viewState.setValue(AddAttendeesViewState.AddAttendeeButtonVisibility(isAttendeeEmailValid))
+    fun onOKButtonClicked() {
+        addAttendeeNavigator?.navigateToAddEvent(viewModelState.value.attendeesEmailList.toList())
     }
 
+    fun onAttendeeEmailChanged(attendeeEmail: String) {
+        val isAttendeeEmailValid = isAttendeeEmailValid(attendeeEmail)
+        viewModelState.update { currentState ->
+            currentState.copy(
+                addAttendeeButtonEnable = isAttendeeEmailValid
+            )
+        }
+    }
+
+    fun onAddAttendeeButtonClicked(attendeeEmail: String) {
+        val emails = mutableSetOf<String>()
+        emails.addAll(viewModelState.value.attendeesEmailList)
+        emails.add(attendeeEmail)
+
+        viewModelState.update { currentState ->
+            currentState.copy(
+                attendeesEmailList = emails,
+            )
+        }
+    }
+
+    fun onAttendeeRemoveItemClicked(attendeeEmail: String) {
+        val emails = mutableSetOf<String>()
+        emails.addAll(viewModelState.value.attendeesEmailList)
+        emails.remove(attendeeEmail)
+
+        viewModelState.update { currentState ->
+            currentState.copy(
+                attendeesEmailList = emails,
+            )
+        }
+    }
 
     private fun isAttendeeEmailValid(email: String): Boolean {
-        return !(TextUtils.isEmpty(email)) && Patterns.EMAIL_ADDRESS.matcher(email)
-            .matches()
+        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    companion object {
-        const val INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE = "Enter valid email address"
-    }
+    data class AddAttendeesViewModelState(
+        val attendeesEmailList: Set<String> = setOf(),
+        val addAttendeeButtonEnable: Boolean = false,
+    )
 }
+
+
