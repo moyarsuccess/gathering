@@ -47,13 +47,11 @@ class AddLocationViewModel @Inject constructor(
 
     fun onViewCreated(address: String?, addLocationNavigator: AddLocationNavigator) {
         this.addLocationNavigator = addLocationNavigator
-        val selectedLocation = address.let {
-            it?.locationFromAddressLine()
-        }
+        if (address.isNullOrEmpty()) return
         viewModelState.update { currentState ->
             currentState.copy(
                 selectedAddress = address,
-                selectedLocation = selectedLocation ?: EventLocation(),
+                selectedLocation = address.locationFromAddressLine(),
                 okButtonEnable = false,
                 addMarker = true,
             )
