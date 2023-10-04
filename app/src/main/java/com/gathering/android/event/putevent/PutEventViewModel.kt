@@ -299,7 +299,7 @@ class PutEventViewModel @Inject constructor(
                 lat ?: 0.0,
                 lon ?: 0.0,
                 1
-            )?.getOrNull(0)?.getAddressLine(0).toString()
+            )?.getOrNull(0)?.getAddressLine(0) ?: ""
         }
 
     private fun String.locationFromAddressLine(): EventLocation {
