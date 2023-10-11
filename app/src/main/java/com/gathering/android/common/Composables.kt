@@ -30,12 +30,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailTextField(
+fun GatheringEmailTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -59,7 +58,7 @@ fun EmailTextField(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordTextField(
+fun GatheringPasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -128,7 +127,7 @@ fun CustomButton(
 }
 
 @Composable
-fun UnderlinedButton(text: String, onClick: () -> Unit) {
+fun CustomUnderlinedButton(text: String, onClick: () -> Unit) {
     val underlinedText = remember(text) {
         AnnotatedString.Builder(text).apply {
             addStyle(
