@@ -58,7 +58,7 @@
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="time">Time</string>
-    <string name="verification_email_sent_please_verify_your_email">verification email sent. please verify your email</string>
+    <string name="verification_email_sent_please_verify_your_email">Verification email sent. please verify your email</string>
     <string name="please_check_your_inbox_to_verify_your_email_address">please check your inbox to verify your email address</string>
     <string name="send_again">send email again</string>
     <string name="back_to_sign_in">back to sign in</string>
@@ -100,4 +100,6 @@
     <string name="edit_event">Edit event</string>
     <string name="nothing_to_show">Nothing to show!</string>
     <string name="event_detail_date_and_time">%s - %s</string>
+    <string name="congratulations">Congratulations</string>
+    <string name="Congratulations">\nCongratulations</string>
 </resources>

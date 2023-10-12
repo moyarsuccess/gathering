@@ -171,9 +171,7 @@ class SignInScreen : DialogFragment(), SignInNavigator {
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     CustomUnderlinedButton(text = "forgot password?",
-                        onClick = {
-                        viewModel.onForgotPassTvClicked()
-                    })
+                        onClick = { viewModel.onForgotPassTvClicked() })
                 }
 
                 CustomButton(
