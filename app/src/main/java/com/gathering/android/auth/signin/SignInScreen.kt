@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -146,9 +145,6 @@ class SignInScreen : DialogFragment(), SignInNavigator {
     private fun LogInScreen(isInProgress: Boolean, error: String? = null) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -190,5 +186,3 @@ class SignInScreen : DialogFragment(), SignInNavigator {
             }
         }
     }
-
-}
