@@ -1,5 +1,6 @@
 package com.gathering.android.common
 
+import android.widget.Button
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,10 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,6 +95,11 @@ fun GatheringPasswordTextField(
         colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
     )
 }
+@Composable
+@Preview
+fun CustomButtonPrev(){
+    CustomButton(text = "Button", onClick = { /*TODO*/ })
+}
 
 
 @Composable
@@ -98,15 +107,14 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
-    error: String? = null
+    isLoading: Boolean = false
 ) {
     Button(
         shape = RoundedCornerShape(0.dp),
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth(2f)
-            .padding(top = 30.dp),
+            .padding(top = 30.dp, bottom = 30.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.DarkGray
         )
@@ -116,13 +124,6 @@ fun CustomButton(
         } else {
             Text(text)
         }
-    }
-
-    if (error != null) {
-        Text(
-            text = error,
-            color = Color.Red
-        )
     }
 }
 
@@ -149,6 +150,20 @@ fun CustomUnderlinedButton(text: String, onClick: () -> Unit) {
             text = underlinedText
         )
     }
+}
+
+@Composable
+fun ErrorText(error: String) {
+    Text(
+        text = error,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            color = Color.Red
+        )
+    )
 }
 
 
