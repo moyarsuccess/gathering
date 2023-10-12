@@ -1,6 +1,8 @@
 package com.gathering.android.common
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,13 +24,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 
@@ -98,15 +104,14 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
-    error: String? = null
+    isLoading: Boolean = false
 ) {
     Button(
         shape = RoundedCornerShape(0.dp),
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth(2f)
-            .padding(top = 30.dp),
+            .padding(top = 30.dp, bottom = 30.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.DarkGray
         )
@@ -116,13 +121,6 @@ fun CustomButton(
         } else {
             Text(text)
         }
-    }
-
-    if (error != null) {
-        Text(
-            text = error,
-            color = Color.Red
-        )
     }
 }
 
@@ -151,5 +149,35 @@ fun CustomUnderlinedButton(text: String, onClick: () -> Unit) {
     }
 }
 
-
+@Composable
+fun CustomTextView(
+    modifier: Modifier = Modifier,
+    @StringRes textResId: Int,
+    textStyle: TextStyle = TextStyle.Default
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        val text = stringResource(id = textResId)
+        Text(
+            text = text,
+            style = textStyle,
+            modifier = modifier
+        )
+    }
+}
+@Composable
+fun ErrorText(error: String) {
+    Text(
+        text = error,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            color = Color.Red
+        )
+    )
+}
 

@@ -31,9 +31,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.CustomButton
+import com.gathering.android.common.CustomUnderlinedButton
+import com.gathering.android.common.ErrorText
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
-import com.gathering.android.common.CustomUnderlinedButton
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenSignInBinding
@@ -174,18 +175,18 @@ class SignInScreen : DialogFragment(), SignInNavigator {
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     CustomUnderlinedButton(text = "forgot password?",
-                        onClick = {
-                        viewModel.onForgotPassTvClicked()
-                    })
+                        onClick = { viewModel.onForgotPassTvClicked() })
                 }
 
                 CustomButton(
                     text = "SIGN IN",
                     onClick = { viewModel.onSignInButtonClicked(email, password) },
-                    isLoading = isInProgress,
-                    error = error
+                    isLoading = isInProgress
                 )
 
+                if (error != null) {
+                    ErrorText(error)
+                }
             }
         }
     }
