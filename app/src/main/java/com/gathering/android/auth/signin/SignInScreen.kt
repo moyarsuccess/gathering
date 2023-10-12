@@ -31,6 +31,7 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.CustomButton
 import com.gathering.android.common.CustomUnderlinedButton
+import com.gathering.android.common.ErrorText
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
 import com.gathering.android.common.isComposeEnabled
@@ -144,7 +145,6 @@ class SignInScreen : DialogFragment(), SignInNavigator {
     private fun LogInScreen(isInProgress: Boolean, error: String? = null) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -179,10 +179,12 @@ class SignInScreen : DialogFragment(), SignInNavigator {
                 CustomButton(
                     text = "SIGN IN",
                     onClick = { viewModel.onSignInButtonClicked(email, password) },
-                    isLoading = isInProgress,
-                    error = error
+                    isLoading = isInProgress
                 )
 
+                if (error != null) {
+                    ErrorText(error)
+                }
             }
         }
     }

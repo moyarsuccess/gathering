@@ -27,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,8 +107,7 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
-    error: String? = null
+    isLoading: Boolean = false
 ) {
     Button(
         shape = RoundedCornerShape(0.dp),
@@ -123,13 +124,6 @@ fun CustomButton(
         } else {
             Text(text)
         }
-    }
-
-    if (error != null) {
-        Text(
-            text = error,
-            color = Color.Red
-        )
     }
 }
 
@@ -156,6 +150,20 @@ fun CustomUnderlinedButton(text: String, onClick: () -> Unit) {
             text = underlinedText
         )
     }
+}
+
+@Composable
+fun ErrorText(error: String) {
+    Text(
+        text = error,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            color = Color.Red
+        )
+    )
 }
 
 

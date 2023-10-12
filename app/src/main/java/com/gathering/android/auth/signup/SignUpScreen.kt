@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.CustomButton
+import com.gathering.android.common.ErrorText
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
 import com.gathering.android.common.isComposeEnabled
@@ -128,7 +129,6 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var confirmPassword by rememberSaveable { mutableStateOf("") }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -159,10 +159,12 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
                 CustomButton(
                     text = "Sign Up",
                     onClick = { viewModel.onSignUpButtonClicked(email, password, confirmPassword) },
-                    error = error,
                     isLoading = isInProgress,
                 )
+
+                if (error != null) {
+                    ErrorText(error)
+                }
             }
     }
-
 }
