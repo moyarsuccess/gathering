@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +30,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.CustomButton
+import com.gathering.android.common.CustomUnderlinedButton
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
-import com.gathering.android.common.CustomUnderlinedButton
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenSignInBinding
@@ -145,9 +144,7 @@ class SignInScreen : DialogFragment(), SignInNavigator {
     private fun LogInScreen(isInProgress: Boolean, error: String? = null) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -189,5 +186,3 @@ class SignInScreen : DialogFragment(), SignInNavigator {
             }
         }
     }
-
-}

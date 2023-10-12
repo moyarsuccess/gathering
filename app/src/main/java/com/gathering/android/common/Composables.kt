@@ -1,5 +1,6 @@
 package com.gathering.android.common
 
+import android.widget.Button
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,6 +93,11 @@ fun GatheringPasswordTextField(
         colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
     )
 }
+@Composable
+@Preview
+fun CustomButtonPrev(){
+    CustomButton(text = "Button", onClick = { /*TODO*/ })
+}
 
 
 @Composable
@@ -106,7 +113,7 @@ fun CustomButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth(2f)
-            .padding(top = 30.dp),
+            .padding(top = 30.dp, bottom = 30.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.DarkGray
         )
