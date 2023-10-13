@@ -175,6 +175,7 @@ class SignInScreen : DialogFragment(), SignInNavigator {
                 }
 
                 CustomButton(
+                    modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
                     text = "SIGN IN",
                     onClick = { viewModel.onSignInButtonClicked(email, password) },
                     isLoading = isInProgress

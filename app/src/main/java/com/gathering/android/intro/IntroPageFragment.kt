@@ -35,10 +35,8 @@ class IntroPageFragment : Fragment() {
     data class AppIntro(var imageId: Int, var description: String)
 
     companion object {
-
         private const val ARG_IMAGE_RESOURCE = "imageResource"
         private const val ARG_TITLE = "title"
-
         fun newInstance(imageResource: Int, title: String) =
             IntroPageFragment().apply {
                 arguments = Bundle().apply {

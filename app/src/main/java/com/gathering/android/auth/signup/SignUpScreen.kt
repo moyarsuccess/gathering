@@ -157,6 +157,7 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
                 )
 
                 CustomButton(
+                    modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
                     text = "Sign Up",
                     onClick = { viewModel.onSignUpButtonClicked(email, password, confirmPassword) },
                     isLoading = isInProgress,

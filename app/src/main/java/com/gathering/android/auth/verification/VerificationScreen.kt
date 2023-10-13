@@ -174,6 +174,7 @@ class VerificationScreen : FullScreenBottomSheet(), VerificationNavigator {
             )
 
             CustomButton(
+                modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
                 text = "Send Email",
                 onClick = { viewModel.onSendEmailVerificationClicked(extractEmail()) },
                 isLoading = isInProgress
