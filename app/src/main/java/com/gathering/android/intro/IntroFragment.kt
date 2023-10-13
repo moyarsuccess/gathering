@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -120,11 +121,16 @@ class IntroFragment : DialogFragment() {
         val introPages = remember {
             listOf(
                 IntroPage(
-                    R.drawable.img4, "a platform to create events, such as parties, reunions, and gatherings!"),
+                    R.drawable.img4,
+                    "a platform to create events, such as parties, reunions, and gatherings!"
+                ),
                 IntroPage(
-                    R.drawable.img1, "Bringing your family and friends together has never been so easy!"),
+                    R.drawable.img1,
+                    "Bringing your family and friends together has never been so easy!"
+                ),
                 IntroPage(
-                    R.drawable.img5, "Invite guests and manage the event details!")
+                    R.drawable.img5, "Invite guests and manage the event details!"
+                )
             )
         }
         val pagerState = rememberPagerState(
@@ -132,6 +138,16 @@ class IntroFragment : DialogFragment() {
         ) {
             introPages.size
         }
+
+        ShowIntroScreen(pagerState, introPages)
+    }
+
+    @Composable
+    @OptIn(ExperimentalFoundationApi::class)
+    private fun ShowIntroScreen(
+        pagerState: PagerState,
+        introPages: List<IntroPage>
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -142,54 +158,72 @@ class IntroFragment : DialogFragment() {
             ) { page ->
                 val introPage = introPages[page]
                 val imageResource = introPages[page]
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Image(
-                        painter = painterResource(imageResource.imageResId),
-                        contentDescription = introPage.description,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = introPage.description,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(10.dp),
-                        style = TextStyle(
-                            color = Color.White,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
-                            fontStyle = FontStyle.Italic
-                        ),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                ShowImageAndDescriptions(imageResource, introPage)
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                introPages.forEachIndexed { index, _ ->
-                    val isSelected = index == pagerState.currentPage
-                    PageIndicatorView(
-                        isSelected = isSelected,
-                        selectedColor = Color.Black,
-                        defaultColor = Color.Gray,
-                        defaultRadius = 15.dp,
-                        selectedLength = 15.dp,
-                        animationDurationInMillis = 300,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-            }
-            IntroPageButtons()
+            PageIndicator(introPages, pagerState)
+            IntroButtons()
         }
     }
+
     @Composable
-    private fun IntroPageButtons() {
+    private fun ShowImageAndDescriptions(
+        imageResource: IntroPage,
+        introPage: IntroPage
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Image(
+                painter = painterResource(imageResource.imageResId),
+                contentDescription = introPage.description,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            Text(
+                text = introPage.description,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(10.dp),
+                style = TextStyle(
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    fontStyle = FontStyle.Italic
+                ),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun PageIndicator(
+        introPages: List<IntroPage>,
+        pagerState: PagerState
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            introPages.forEachIndexed { index, _ ->
+                val isSelected = index == pagerState.currentPage
+                PageIndicatorView(
+                    isSelected = isSelected,
+                    selectedColor = Color.Black,
+                    defaultColor = Color.Gray,
+                    defaultRadius = 15.dp,
+                    selectedLength = 15.dp,
+                    animationDurationInMillis = 300,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun IntroButtons() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
