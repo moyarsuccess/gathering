@@ -111,15 +111,16 @@ fun GatheringPasswordTextField(
         colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
     )
 }
+
 @Composable
 @Preview
-fun CustomButtonPrev(){
-    CustomButton(text = "Button", onClick = { /*TODO*/ })
+fun AuthButtonPreview() {
+    AuthButton(text = "Button", onClick = { /*TODO*/ })
 }
 
 
 @Composable
-fun CustomButton(
+fun AuthButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -201,12 +202,12 @@ fun ErrorText(error: String) {
 
 @Composable
 @Preview
-fun IntroScreenButtonPreview() {
-    IntroScreenButton(text = "Button", onClick = {}, modifier = Modifier)
+fun CustomActionButtonPreview() {
+    CustomActionButton(text = "Button", onClick = {}, modifier = Modifier)
 }
 
 @Composable
-fun IntroScreenButton(
+fun CustomActionButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -230,21 +231,6 @@ fun IntroScreenButton(
         }
     )
 }
-
-@Composable
-@Preview
-fun pageIndicatorPreview() {
-    PageIndicatorView(
-        isSelected = true,
-        selectedColor = Color.Red,
-        defaultColor = Color.Red,
-        defaultRadius = 5.dp,
-        selectedLength = 5.dp,
-        animationDurationInMillis = 1
-    )
-}
-
-
 @Composable
 fun PageIndicatorView(
     isSelected: Boolean,

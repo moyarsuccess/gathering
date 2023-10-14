@@ -27,7 +27,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.CustomButton
+import com.gathering.android.common.AuthButton
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
@@ -156,7 +156,7 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
                     label = "confirm Password"
                 )
 
-                CustomButton(
+                AuthButton(
                     modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
                     text = "Sign Up",
                     onClick = { viewModel.onSignUpButtonClicked(email, password, confirmPassword) },

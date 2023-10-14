@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.IntroScreenButton
+import com.gathering.android.common.CustomActionButton
 import com.gathering.android.common.PageIndicatorView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.FrgIntroBinding
@@ -195,33 +195,6 @@ class IntroFragment : DialogFragment() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    private fun PageIndicator(
-        introPages: List<IntroPage>,
-        pagerState: PagerState
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            introPages.forEachIndexed { index, _ ->
-                val isSelected = index == pagerState.currentPage
-                PageIndicatorView(
-                    isSelected = isSelected,
-                    selectedColor = Color.Black,
-                    defaultColor = Color.Gray,
-                    defaultRadius = 15.dp,
-                    selectedLength = 15.dp,
-                    animationDurationInMillis = 300,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-        }
-    }
-
     @Composable
     private fun IntroButtons() {
         Column(
@@ -231,13 +204,13 @@ class IntroFragment : DialogFragment() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IntroScreenButton(text = "SIGN IN", onClick = {
+            CustomActionButton(text = "SIGN IN", onClick = {
                 findNavController().navigate(R.id.action_introFragment_to_signInFragment)
             })
 
             Spacer(modifier = Modifier.padding(5.dp))
 
-            IntroScreenButton(text = "SIGN UP", onClick = {
+            CustomActionButton(text = "SIGN UP", onClick = {
                 findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
             })
 

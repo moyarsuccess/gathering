@@ -33,7 +33,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.CustomButton
+import com.gathering.android.common.AuthButton
 import com.gathering.android.common.CustomTextView
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
@@ -173,7 +173,7 @@ class VerificationScreen : FullScreenBottomSheet(), VerificationNavigator {
                 )
             )
 
-            CustomButton(
+            AuthButton(
                 modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
                 text = "Send Email",
                 onClick = { viewModel.onSendEmailVerificationClicked(extractEmail()) },
