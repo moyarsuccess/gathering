@@ -9,7 +9,6 @@ import com.gathering.android.R
 import com.gathering.android.databinding.ActNavHostBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class NavHostActivity : AppCompatActivity() {
 
@@ -17,10 +16,8 @@ class NavHostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActNavHostBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         binding.navView.setupWithNavController(findNavController())
     }
 

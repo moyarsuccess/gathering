@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -197,6 +198,39 @@ fun ErrorText(error: String) {
     )
 }
 
+
+@Composable
+fun ProgressBar(
+    text: String,
+    modifier: Modifier = Modifier,
+    isDisplayed: Boolean = false,
+    isNoData: Boolean = false,
+) {
+    Button(
+        shape = RoundedCornerShape(0.dp),
+        onClick = { },
+        modifier = modifier
+            .fillMaxWidth(2f)
+            .padding(top = 30.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White
+        )
+    ) {
+        if (isDisplayed) {
+            CircularProgressIndicator(
+                color = Color.DarkGray,
+                strokeWidth = 5.dp
+            )
+        }
+
+        if (isNoData) {
+            Text(
+                text = text,
+                color = Color.Gray
+            )
+        }
+    }
+}
 
 
 

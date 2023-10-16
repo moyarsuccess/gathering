@@ -18,7 +18,6 @@ class HomeViewModel @Inject constructor(
     private val eventDateComparator: EventDateComparator
 ) : ViewModel() {
 
-
     //    private var lastSortType = SortType.SORT_BY_DATE
     //    private var lastFilter = Filter()
     private var homeNavigator: HomeNavigator? = null
@@ -40,15 +39,15 @@ class HomeViewModel @Inject constructor(
 
     fun onViewCreated(homeNavigator: HomeNavigator) {
         this.homeNavigator = homeNavigator
-        if (!verificationRepository.isUserVerified()) {
-            homeNavigator.navigateToIntroScreen()
-        } else {
+        if (verificationRepository.isUserVerified()) {
             page = 1
             getEvents(page)
+        } else {
+            homeNavigator.navigateToIntroScreen()
         }
     }
 
-    private fun getEvents(page: Int) {
+    private fun  getEvents(page: Int) {
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
@@ -74,7 +73,7 @@ class HomeViewModel @Inject constructor(
                     } else {
                         viewModelState.update { currentViewState ->
                             currentViewState.copy(
-                                events = currentViewState.events.plus(currentPageEvents.map { it.toEvent() })
+                                events = currentViewState.events + currentPageEvents.map { it.toEvent() }
                             )
                         }
                     }
