@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,7 +88,14 @@ class HomeScreen : Fragment(), HomeNavigator {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-                            EventList(state.value.events)
+                            EventList(
+                                uiState = state.value,
+                                onItemClick = viewModel::onEventItemClicked,
+                                onEditClicked = {
+                                    println("WTF: Edit button clicked")
+                                },
+                                onFavClick = viewModel::onEventLikeClicked
+                            )
                         }
                     }
                 }
@@ -161,39 +169,67 @@ class HomeScreen : Fragment(), HomeNavigator {
     @Composable
     fun EventListPreview() {
         EventList(
-            listOf(
-                Event(
-                    eventId = 1,
-                    eventName = "Ani",
-                    eventHostEmail = "animan@gmail.com",
-                    description = "party",
-                    photoUrl = "",
-                    latitude = 0.0,
-                    longitude = null
-                )
-            )
+            HomeViewModel.UiState(
+                showNoData = false,
+                showProgress = false,
+                events = listOf(
+                    Event(
+                        eventId = 1,
+                        eventName = "Ani",
+                        eventHostEmail = "animan@gmail.com",
+                        description = "party",
+                        photoUrl = "",
+                        latitude = 0.0,
+                        longitude = null
+                    ), Event(
+                        eventId = 2,
+                        eventName = "Mo",
+                        eventHostEmail = "mo@gmail.com",
+                        description = "party2",
+                        photoUrl = "",
+                        latitude = 0.0,
+                        longitude = null
+                    )
+                ),
+                errorMessage = null,
+            ), {}, {}, {}
         )
     }
 
     @Composable
-    private fun EventList(events: List<Event>) {
+    private fun EventList(
+        uiState: HomeViewModel.UiState,
+        onItemClick: (Event) -> Unit,
+        onEditClicked: () -> Unit,
+        onFavClick: (Event) -> Unit,
+    ) {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            items(events) { event ->
-                EventItem(event = event, onClick = {
-                    viewModel.onEventItemClicked(event)
-                })
+            items(uiState.events) { event ->
+                EventItem(
+                    event = event,
+                    onItemClick = onItemClick,
+                    onEditClicked = onEditClicked,
+                    onFavClick = onFavClick,
+                )
             }
         }
     }
 
     @Composable
-    private fun EventItem(event: Event, onClick: () -> Unit) {
-
-        Card(Modifier.padding(10.dp)) {
+    private fun EventItem(
+        event: Event,
+        onItemClick: (Event) -> Unit,
+        onEditClicked: () -> Unit,
+        onFavClick: (Event) -> Unit,
+    ) {
+        Card(
+            Modifier
+                .padding(10.dp)
+                .clickable { onItemClick(event) }) {
             Column(Modifier.background(White)) {
-                ImageBox(event)
+                ImageBox(event, onEditClicked)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -203,7 +239,7 @@ class HomeScreen : Fragment(), HomeNavigator {
                         modifier = Modifier.padding(start = 10.dp),
                         text = event.eventName
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { onFavClick(event) }) {
                         Icon(
                             Icons.Filled.FavoriteBorder,
                             contentDescription = "", modifier = Modifier
@@ -222,7 +258,7 @@ class HomeScreen : Fragment(), HomeNavigator {
     }
 
     @Composable
-    fun ImageBox(event: Event) {
+    fun ImageBox(event: Event, onEditClicked: () -> Unit) {
 
         val painter = rememberImagePainter(
             data = "https://moyar.dev:8080/photo/${event.photoUrl}",
@@ -248,7 +284,7 @@ class HomeScreen : Fragment(), HomeNavigator {
                     .size(160.dp)
             )
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onEditClicked) {
                 Icon(
                     Icons.Filled.Edit,
                     contentDescription = "",

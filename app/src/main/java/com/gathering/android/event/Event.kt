@@ -16,4 +16,12 @@ data class Event(
     val isMyEvent: Boolean = false,
     val attendees: List<Attendee> = listOf(),
     val liked: Boolean = false,
-) : Serializable
+) : Serializable {
+    companion object {
+        fun getDefault() = Event(
+            eventId = -1,
+            latitude = 0.0,
+            longitude = 0.0
+        )
+    }
+}
