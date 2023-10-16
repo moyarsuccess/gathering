@@ -18,7 +18,7 @@ class ApiEventRepository @Inject constructor(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     ) {
-        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page, isMyEvent = true)
+        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
@@ -26,7 +26,7 @@ class ApiEventRepository @Inject constructor(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     ) {
-        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page, isMyEvent = false)
+        eventRemoteService.getALlEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 

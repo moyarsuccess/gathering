@@ -9,9 +9,15 @@ import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface EventRemoteService {
-    @GET("event")
+
+    @GET("all_event")
+    fun getALlEvents(
+        @Query("page_size") pageSize: Int,
+        @Query("page_number") pageNumber: Int,
+    ): Call<List<EventModel>>
+
+    @GET("my_event")
     fun getMyEvents(
-        @Query("my_own_events") isMyEvent: Boolean = true,
         @Query("page_size") pageSize: Int,
         @Query("page_number") pageNumber: Int,
     ): Call<List<EventModel>>
