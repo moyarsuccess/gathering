@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -51,8 +49,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.gathering.android.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GatheringEmailTextField(
     value: String,
@@ -70,13 +69,17 @@ fun GatheringEmailTextField(
             .fillMaxWidth()
             .clickable { }
             .padding(10.dp),
-        colors = TextFieldDefaults
-            .textFieldColors(containerColor = Color.Transparent),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-    )
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            cursorColor = Color.Black,
+            focusedIndicatorColor = Color.Black,
+            focusedLabelColor = Color.Gray,
+        ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GatheringPasswordTextField(
     value: String,
@@ -108,38 +111,50 @@ fun GatheringPasswordTextField(
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            cursorColor = Color.Black,
+            focusedIndicatorColor = Color.Black,
+            focusedLabelColor = Color.Gray,
+        )
     )
 }
 
 @Composable
 @Preview
-fun AuthButtonPreview() {
-    AuthButton(text = "Button", onClick = { /*TODO*/ })
+fun CustomActionButtonPreview() {
+    CustomActionButton(text = "Button", onClick = {}, modifier = Modifier, isLoading = false)
 }
 
-
 @Composable
-fun AuthButton(
+fun CustomActionButton(
+    isLoading: Boolean,
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = Color.DarkGray
+    )
 ) {
-    Button(
-        shape = RoundedCornerShape(0.dp),
+    Button(shape = RoundedCornerShape(0.dp),
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.DarkGray
-        )
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(color = Color.White)
-        } else {
-            Text(text)
-        }
+            .height(60.dp)
+            .width(170.dp),
+        colors = colors,
+        contentPadding = PaddingValues(8.dp),
+        content = {
+            Text(
+                text = text,
+                modifier = Modifier.padding(4.dp),
+            )
+        })
+    if (isLoading) {
+        CircularProgressIndicator(color = Color.White)
+    } else {
+        Text(text)
     }
 }
 
@@ -154,7 +169,6 @@ fun CustomUnderlinedButton(text: String, onClick: () -> Unit) {
             )
         }.toAnnotatedString()
     }
-
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -169,14 +183,45 @@ fun CustomUnderlinedButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
+@Preview
+fun AuthButtonPreview() {
+    AuthButton(text = "Button", onClick = { /*TODO*/ })
+}
+
+@Composable
+fun AuthButton(
+    text: String, onClick: () -> Unit, modifier: Modifier = Modifier, isLoading: Boolean = false
+) {
+    Button(
+        shape = RoundedCornerShape(0.dp),
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.DarkGray
+        )
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(color = Color.White)
+        } else {
+            Text(text)
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun CustomTextViewPreview() {
+    CustomTextView(textResId = R.string.fragment_1_text)
+}
+
+@Composable
 fun CustomTextView(
     modifier: Modifier = Modifier,
     @StringRes textResId: Int,
     textStyle: TextStyle = TextStyle.Default
 ) {
     Box(
-        modifier = modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxWidth()
     ) {
         val text = stringResource(id = textResId)
         Text(
@@ -186,6 +231,13 @@ fun CustomTextView(
         )
     }
 }
+
+@Composable
+@Preview(showBackground = true)
+fun ErrorTextPreview() {
+    ErrorText(error = "error")
+}
+
 @Composable
 fun ErrorText(error: String) {
     Text(
@@ -195,42 +247,11 @@ fun ErrorText(error: String) {
             .padding(10.dp),
         textAlign = TextAlign.Center,
         style = TextStyle(
-            color = Color.Red
+            fontSize = 17.sp, color = Color.Red
         )
     )
 }
 
-@Composable
-@Preview
-fun CustomActionButtonPreview() {
-    CustomActionButton(text = "Button", onClick = {}, modifier = Modifier)
-}
-
-@Composable
-fun CustomActionButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    colors: ButtonColors = ButtonDefaults.buttonColors(
-        containerColor = Color.DarkGray
-    )
-) {
-    Button(
-        shape = RoundedCornerShape(0.dp),
-        onClick = onClick,
-        modifier = modifier
-            .height(60.dp)
-            .width(170.dp),
-        colors = colors,
-        contentPadding = PaddingValues(8.dp),
-        content = {
-            Text(
-                text = text,
-                modifier = Modifier.padding(4.dp),
-            )
-        }
-    )
-}
 @Composable
 fun PageIndicatorView(
     isSelected: Boolean,
