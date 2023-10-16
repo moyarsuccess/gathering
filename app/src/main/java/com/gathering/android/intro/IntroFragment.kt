@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +38,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.PageIndicatorView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.FrgIntroBinding
 import com.gathering.android.ui.theme.GatheringTheme
@@ -206,13 +204,13 @@ class IntroFragment : DialogFragment() {
         ) {
             CustomActionButton(text = "SIGN IN", onClick = {
                 findNavController().navigate(R.id.action_introFragment_to_signInFragment)
-            })
+            }, isLoading = false)
 
             Spacer(modifier = Modifier.padding(5.dp))
 
             CustomActionButton(text = "SIGN UP", onClick = {
                 findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
-            })
+            }, isLoading = false)
 
             Spacer(modifier = Modifier.padding(5.dp))
         }
