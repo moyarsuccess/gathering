@@ -29,7 +29,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.CustomButton
+import com.gathering.android.common.AuthButton
 import com.gathering.android.common.CustomUnderlinedButton
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.GatheringEmailTextField
@@ -174,7 +174,8 @@ class SignInScreen : DialogFragment(), SignInNavigator {
                         onClick = { viewModel.onForgotPassTvClicked() })
                 }
 
-                CustomButton(
+                AuthButton(
+                    modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
                     text = "SIGN IN",
                     onClick = { viewModel.onSignInButtonClicked(email, password) },
                     isLoading = isInProgress
