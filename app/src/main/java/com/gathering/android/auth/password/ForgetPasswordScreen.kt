@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -135,8 +134,7 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
             CustomTextView(
                 textResId = R.string.reset_pass_msg,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
+                    .fillMaxWidth(),
                 textStyle = TextStyle(
                     fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black
                 )
@@ -146,19 +144,11 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
                 onValueChange = { email = it },
                 label = "Email"
             )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(40.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
                 CustomActionButton(
                     text = "SEND LINK", onClick = {
                         viewModel.onSendLinkBtnClicked(email)
                     }, isLoading = isInProgress
                 )
-            }
             if (error != null) {
                 ErrorText(error)
             }

@@ -9,14 +9,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,7 +39,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.PageIndicatorView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.FrgIntroBinding
 import com.gathering.android.ui.theme.GatheringTheme
@@ -199,22 +198,25 @@ class IntroFragment : DialogFragment() {
     private fun IntroButtons() {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(40.dp),
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomActionButton(text = "SIGN IN", onClick = {
-                findNavController().navigate(R.id.action_introFragment_to_signInFragment)
-            })
-
-            Spacer(modifier = Modifier.padding(5.dp))
-
-            CustomActionButton(text = "SIGN UP", onClick = {
-                findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
-            })
-
-            Spacer(modifier = Modifier.padding(5.dp))
+            CustomActionButton(
+                text = "SIGN IN",
+                onClick = {
+                    findNavController().navigate(R.id.action_introFragment_to_signInFragment)
+                },
+                isLoading = false
+            )
+            CustomActionButton(
+                text = "SIGN UP",
+                onClick = {
+                    findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
+                },
+                isLoading = false
+            )
         }
     }
 }

@@ -164,8 +164,7 @@ class VerificationScreen : FullScreenBottomSheet(), VerificationNavigator {
             CustomTextView(
                 textResId = R.string.verification_email_sent_please_verify_your_email,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
+                    .fillMaxWidth(),
                 textStyle = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,

@@ -29,8 +29,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.AuthButton
-import com.gathering.android.common.CustomUnderlinedButton
+import com.gathering.android.auth.AuthButton
+import com.gathering.android.auth.CustomUnderlinedButton
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
