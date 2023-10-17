@@ -4,41 +4,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Person2
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
 import com.gathering.android.common.CustomActionButton
@@ -81,22 +72,26 @@ class ProfileScreen : Fragment(), ProfileNavigator {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-                            state.value.displayName?.let {
-                                state.value.email?.let { it1 ->
-                                    ProfileScreenWithCompose(
-                                        it,
-                                        it1,
-                                        state.value.imageUri
-                                    )
-                                }
-                            }
-                        }
 
+                            ProfileScreenWithCompose(
+                                email = state.value.email ?: "",
+                                displayName = state.value.displayName ?: "",
+                                imageUri = state.value.imageUri,
+                                onFavoriteEventLayoutClicked = {
+                                    viewModel.onFavoriteEventLayoutClicked()
+                                },
+                                onPersonalDataLayoutClicked = {
+                                    viewModel.onPersonalDataLayoutClicked()
+                                },
+                                onSignOutButtonClicked = {
+                                    viewModel.onSignOutButtonClicked()
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -151,113 +146,83 @@ class ProfileScreen : Fragment(), ProfileNavigator {
     @Composable
     @Preview(showBackground = true, device = "id:pixel_7")
     fun ProfileScreenWithComposePreview() {
-        ProfileScreenWithCompose("ida", "Idaoskooei@gmail.com", "1234")
+        ProfileScreenWithCompose(
+            "ida",
+            "Idaoskooei@gmail.com",
+            "1234",
+            onFavoriteEventLayoutClicked = {},
+            onPersonalDataLayoutClicked = {},
+            onSignOutButtonClicked = {}
+        )
     }
 
     @Composable
     fun ProfileScreenWithCompose(
-        displayName: String, email: String, imageUri: String?
+        displayName: String,
+        email: String,
+        imageUri: String?,
+        onFavoriteEventLayoutClicked: () -> Unit,
+        onPersonalDataLayoutClicked: () -> Unit,
+        onSignOutButtonClicked: () -> Unit
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(100.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState())
+                .padding(15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             ShowProfilePicture(imageUri)
 
-            ShowUserDetails(displayName)
+            ShowUserDetails(displayName, email)
 
-            ShowUserDetails(email)
+            HorizontalDivider()
 
-            ShowFavoriteButton()
-
-            ShowPersonalDataButton()
+            ShowProfileContents(onFavoriteEventLayoutClicked, onPersonalDataLayoutClicked)
 
             CustomActionButton(
-                onClick = { viewModel.onSignOutButtonClicked() },
+                onClick = { onSignOutButtonClicked() },
                 isLoading = false,
                 text = "SIGN OUT"
             )
-        }
-    }
 
-    @Composable
-    private fun ShowPersonalDataButton() {
-        Row(
-            modifier = Modifier
-                .clickable {
-                    viewModel.onPersonalDataLayoutClicked()
-                }
-        ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "",
-                tint = Color.Black
-            )
-            Text(
-                modifier = Modifier.padding(start = 5.dp),
-                text = "PERSONAL DATA",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-
-    @OptIn(ExperimentalCoilApi::class)
-    @Composable
-    private fun ShowProfilePicture(imageUri: String?) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth().padding(bottom = 20.dp)
-                .clip(CircleShape)
-                .border(2.dp, Color.Gray, CircleShape),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White,
-                contentColor = Color.Transparent
-            )
-        ) {
-            val painter = if (imageUri.isNullOrEmpty()) {
-                painterResource(id = R.drawable.ic_person)
-            } else {
-                rememberImagePainter(data = imageUri)
-            }
-            Image(
-                painter = painter,
-                contentDescription = "Profile picture",
+            Spacer(
                 modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.White, CircleShape)
+                    .height(50.dp)
+                    .navigationBarsPadding()
             )
         }
     }
 
     @Composable
-    private fun ShowFavoriteButton() {
-        Row(
+    private fun ShowProfileContents(
+        onFavoriteEventLayoutClicked: () -> Unit,
+        onPersonalDataLayoutClicked: () -> Unit
+    ) {
+        Column(
             modifier = Modifier
-                .clickable {
-                    viewModel.onFavoriteEventLayoutClicked()
-                }
+                .fillMaxWidth()
+                .padding(top = 30.dp, bottom = 30.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "",
-                tint = Color.Black
-            )
-            Text(
-                modifier = Modifier.padding(start = 5.dp),
-                text = "FAVORITES",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            ProfileIconButtonWithText(
+                icon = Icons.Filled.Favorite,
+                text = "MY FAVORITE EVENTS"
+            ) {
+                onFavoriteEventLayoutClicked()
+            }
+            ProfileIconButtonWithText(
+                icon = Icons.Filled.Person2,
+                text = "EDIT MY PROFILE"
+            ) {
+                onPersonalDataLayoutClicked()
+            }
+            ProfileIconButtonWithText(
+                icon = Icons.Filled.NotificationsActive,
+                text = "NOTIFICATIONS"
+            ) {
+                // TODO() TICKET NUMBER 74
+            }
         }
-    }
-
-    @Composable
-    private fun ShowUserDetails(text: String) {
-        Text(
-            modifier = Modifier.padding(5.dp),
-            text = text,
-            style = MaterialTheme.typography.bodyMedium
-        )
     }
 }
