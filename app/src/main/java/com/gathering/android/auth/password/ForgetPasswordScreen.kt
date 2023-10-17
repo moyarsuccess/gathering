@@ -70,14 +70,14 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
                             val state = viewModel.uiState.collectAsState()
                             ForgetPasswordScreenCompose(
                                 state.value.isInProgress,
-                                state.value.errorMessage
+                                state.value.errorMessage,
+                                viewModel::onSendLinkBtnClicked
                             )
                         }
                     }
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -117,11 +117,15 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
     @Composable
     @Preview(showBackground = true)
     fun ForgetPasswordScreenPreview() {
-        ForgetPasswordScreenCompose(isInProgress = true, error = "error")
+        ForgetPasswordScreenCompose(isInProgress = true, error = "error") {}
     }
 
     @Composable
-    fun ForgetPasswordScreenCompose(isInProgress: Boolean, error: String? = null) {
+    fun ForgetPasswordScreenCompose(
+        isInProgress: Boolean,
+        error: String? = null,
+        onSendLinkBtnClicked: (email: String) -> Unit
+    ) {
         var email by rememberSaveable { mutableStateOf("") }
         Column(
             modifier = Modifier
@@ -145,14 +149,13 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
                 label = "Email"
             )
                 CustomActionButton(
-                    text = "SEND LINK", onClick = {
-                        viewModel.onSendLinkBtnClicked(email)
-                    }, isLoading = isInProgress
+                    text = "SEND LINK",
+                    onClick = { onSendLinkBtnClicked(email) },
+                    isLoading = isInProgress
                 )
             if (error != null) {
                 ErrorText(error)
             }
-
         }
     }
 }
