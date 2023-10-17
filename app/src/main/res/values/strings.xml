@@ -58,7 +58,7 @@
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="time">Time</string>
-    <string name="verification_email_sent_please_verify_your_email">Verification email sent. please verify your email</string>
+    <string name="verification_email_sent_please_verify_your_email">Verification email sent. please verify your email.</string>
     <string name="please_check_your_inbox_to_verify_your_email_address">please check your inbox to verify your email address</string>
     <string name="send_again">send email again</string>
     <string name="back_to_sign_in">back to sign in</string>
@@ -66,7 +66,7 @@
     <string name="verified">Verified</string>
     <string name="verified_your_email_address_click_below">verified your email address? click below!</string>
     <string name="reset_pass_text"><u>Forgot password?</u></string>
-    <string name="reset_pass_msg">Enter the email for your Gathering\'s account and we\'ll send you a link to reset your password.</string>
+    <string name="reset_pass_msg">Enter the email address for your Gathering account and we\'ll send you a link to reset your password.</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="reset_pass_info1">You should receive your reset link soon.</string>
     <string name="reset_pass_info2">Can\'t find the email?</string>
