@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -203,20 +204,17 @@ class IntroFragment : DialogFragment() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomActionButton(
-                text = "SIGN IN",
-                onClick = {
-                    findNavController().navigate(R.id.action_introFragment_to_signInFragment)
-                },
-                isLoading = false
-            )
-            CustomActionButton(
-                text = "SIGN UP",
-                onClick = {
-                    findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
-                },
-                isLoading = false
-            )
+            CustomActionButton(text = "SIGN IN", onClick = {
+                findNavController().navigate(R.id.action_introFragment_to_signInFragment)
+            }, isLoading = false)
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            CustomActionButton(text = "SIGN UP", onClick = {
+                findNavController().navigate(R.id.action_introFragment_to_signUpScreen)
+            }, isLoading = false)
+
+            Spacer(modifier = Modifier.padding(5.dp))
         }
     }
 }
