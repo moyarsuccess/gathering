@@ -8,8 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -155,10 +154,9 @@ class ProfileScreen : Fragment(), ProfileNavigator {
         ProfileScreenWithCompose("ida", "Idaoskooei@gmail.com", "1234")
     }
 
-    @OptIn(ExperimentalCoilApi::class)
     @Composable
     fun ProfileScreenWithCompose(
-        displayName: String, email: String, imageUri: String? // Use your image loading logic here
+        displayName: String, email: String, imageUri: String?
     ) {
         Column(
             modifier = Modifier
@@ -189,7 +187,7 @@ class ProfileScreen : Fragment(), ProfileNavigator {
         Row(
             modifier = Modifier
                 .clickable {
-                    viewModel.onFavoriteEventLayoutClicked()
+                    viewModel.onPersonalDataLayoutClicked()
                 }
         ) {
             Icon(
@@ -208,13 +206,15 @@ class ProfileScreen : Fragment(), ProfileNavigator {
     @OptIn(ExperimentalCoilApi::class)
     @Composable
     private fun ShowProfilePicture(imageUri: String?) {
-        Box(
-            contentAlignment = Alignment.Center,
+        Card(
             modifier = Modifier
+                .fillMaxWidth().padding(bottom = 20.dp)
                 .clip(CircleShape)
-                .padding(30.dp)
-                .size(150.dp)
-                .border(2.dp, Color.Gray, CircleShape)
+                .border(2.dp, Color.Gray, CircleShape),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White,
+                contentColor = Color.Transparent
+            )
         ) {
             val painter = if (imageUri.isNullOrEmpty()) {
                 painterResource(id = R.drawable.ic_person)
@@ -226,7 +226,6 @@ class ProfileScreen : Fragment(), ProfileNavigator {
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(200.dp)
-                    .clip(CircleShape)
                     .background(Color.White, CircleShape)
             )
         }
