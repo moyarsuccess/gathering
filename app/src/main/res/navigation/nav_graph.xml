@@ -153,12 +153,12 @@
         android:label="forgetPasswordScreen"
         tools:layout="@layout/screen_forget_password_email_input">
         <action
-            android:id="@+id/action_forgetPasswordScreen_to_resetPassInfoBottomSheet"
+            android:id="@+id/action_forgetPasswordScreen_to_resetPasswordInfo"
             app:destination="@id/forgetPassInfoBottomSheet" />
     </dialog>
     <dialog
         android:id="@+id/forgetPassInfoBottomSheet"
-        android:name="com.gathering.android.auth.password.ResetPassInfoBottomSheet"
+        android:name="com.gathering.android.auth.password.ResetPasswordInfo"
         android:label="forgetPassInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_forget_pass_info" />
     <dialog
