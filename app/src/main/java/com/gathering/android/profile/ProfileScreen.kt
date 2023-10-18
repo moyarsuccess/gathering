@@ -217,11 +217,12 @@ class ProfileScreen : Fragment(), ProfileNavigator {
             ) {
                 onPersonalDataLayoutClicked()
             }
+
+            // TODO() TICKET NUMBER 74
             ProfileIconButtonWithText(
                 icon = Icons.Filled.NotificationsActive,
                 text = "NOTIFICATIONS"
             ) {
-                // TODO() TICKET NUMBER 74
             }
         }
     }

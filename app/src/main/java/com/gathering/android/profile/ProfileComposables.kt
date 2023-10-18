@@ -28,11 +28,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.gathering.android.R
 
-@OptIn(ExperimentalCoilApi::class)
+@Composable
+@Preview(showBackground = true)
+fun ShowProfilePicturePreview() {
+    ShowProfilePicture(imageUri = "")
+}
+
 @Composable
 fun ShowProfilePicture(imageUri: String?) {
     Card(
@@ -41,14 +45,13 @@ fun ShowProfilePicture(imageUri: String?) {
             .clip(CircleShape)
             .border(2.dp, Color.Gray, CircleShape),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.Transparent
+            containerColor = Color.White
         )
     ) {
         val painter = if (imageUri.isNullOrEmpty()) {
             painterResource(id = R.drawable.ic_person)
         } else {
-            rememberImagePainter(data = imageUri)
+            rememberAsyncImagePainter(model = "https://moyar.dev:8080/photo/${imageUri}")
         }
         Image(
             painter = painter,
