@@ -71,7 +71,11 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-                            LogUpScreen(state.value.isInProgress, state.value.errorMessage)
+                            LogUpScreen(
+                                state.value.isInProgress,
+                                state.value.errorMessage,
+                                viewModel::onSignUpButtonClicked
+                            )
                         }
 
                     }
@@ -121,51 +125,55 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
     @Preview(showBackground = true, device = "spec:parent=pixel_7")
     @Composable
     fun SignUpScreenPreview() {
-        LogUpScreen(false, "")
+        LogUpScreen(false, "") { _, _, _ -> run {} }
     }
 
     @Composable
-    private fun LogUpScreen(isInProgress: Boolean, error: String? = null) {
+    private fun LogUpScreen(
+        isInProgress: Boolean,
+        error: String? = null,
+        onSignUpButtonClicked: (email: String, password: String, confirmPassword: String) -> Unit
+    ) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var confirmPassword by rememberSaveable { mutableStateOf("") }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-                GatheringEmailTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = "email"
-                )
+            GatheringEmailTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = "email"
+            )
 
-                GatheringPasswordTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = "password"
-                )
+            GatheringPasswordTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = "password"
+            )
 
-                GatheringPasswordTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = "confirm Password"
-                )
+            GatheringPasswordTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = "confirm Password"
+            )
 
-                AuthButton(
-                    modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
-                    text = "SIGN UP",
-                    onClick = { viewModel.onSignUpButtonClicked(email, password, confirmPassword) },
-                    isLoading = isInProgress,
-                )
+            AuthButton(
+                modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
+                text = "SIGN UP",
+                onClick = { onSignUpButtonClicked(email, password, confirmPassword) },
+                isLoading = isInProgress,
+            )
 
-                if (error != null) {
-                    ErrorText(error)
-                }
+            if (error != null) {
+                ErrorText(error)
+            }
             }
     }
 }

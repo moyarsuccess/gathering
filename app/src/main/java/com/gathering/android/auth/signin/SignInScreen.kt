@@ -73,7 +73,12 @@ class SignInScreen : DialogFragment(), SignInNavigator {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-                            LogInScreen(state.value.isInProgress, state.value.errorMessage)
+                            LogInScreen(
+                                state.value.isInProgress,
+                                state.value.errorMessage,
+                                viewModel::onForgotPassTvClicked,
+                                viewModel::onSignInButtonClicked
+                            )
                         }
 
                     }
@@ -138,52 +143,56 @@ class SignInScreen : DialogFragment(), SignInNavigator {
     @Preview(showBackground = true, device = "spec:parent=pixel_7")
     @Composable
     fun SignInScreenPreview() {
-        LogInScreen(true, "user does not exist!!")
+        LogInScreen(true, "user does not exist!!", {}, { _, _ -> run {} })
     }
 
     @Composable
-    private fun LogInScreen(isInProgress: Boolean, error: String? = null) {
+    private fun LogInScreen(
+        isInProgress: Boolean,
+        error: String? = null,
+        onForgotPasswordClicked: () -> Unit,
+        onSignInButtonClicked: (email: String, password: String) -> Unit
+    ) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            GatheringEmailTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = "Email"
+            )
+
+            GatheringPasswordTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = "Password"
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
             ) {
-                GatheringEmailTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = "Email"
-                )
+                CustomUnderlinedButton(text = "forgot password?",
+                    onClick = { onForgotPasswordClicked() })
+            }
 
-                GatheringPasswordTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = "Password"
-                )
+            AuthButton(
+                modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
+                text = "SIGN IN",
+                onClick = { onSignInButtonClicked(email, password) },
+                isLoading = isInProgress
+            )
 
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
-                ) {
-                    CustomUnderlinedButton(text = "forgot password?",
-                        onClick = { viewModel.onForgotPassTvClicked() })
-                }
-
-                AuthButton(
-                    modifier = Modifier.padding(top = 30.dp, bottom = 30.dp),
-                    text = "SIGN IN",
-                    onClick = { viewModel.onSignInButtonClicked(email, password) },
-                    isLoading = isInProgress
-                )
-
-                if (error != null) {
-                    ErrorText(error)
-                }
+            if (error != null) {
+                ErrorText(error)
             }
         }
     }
+}

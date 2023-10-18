@@ -74,15 +74,14 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
                             val state = viewModel.uiState.collectAsState()
                             InputNewPasswordScreenByCompose(
                                 state.value.isInProgress,
-                                state.value.errorMessage
+                                state.value.errorMessage,
+                                viewModel::onSubmitBtnClicked
                             )
                         }
-
                     }
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -111,7 +110,6 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
             }
             viewModel.onViewCreated(this)
         }
-
     }
 
     private fun extractToken(): String? {
@@ -131,11 +129,18 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
     @Composable
     @Preview(showBackground = true, device = "id:pixel_7")
     fun InputNewPasswordScreenByComposePreview() {
-        InputNewPasswordScreenByCompose(isInProgress = false, error = "error message shown")
+        InputNewPasswordScreenByCompose(
+            isInProgress = false, error = "error message shown"
+        ) { _, _, _ -> run {} }
     }
 
     @Composable
-    fun InputNewPasswordScreenByCompose(isInProgress: Boolean, error: String? = null) {
+    fun InputNewPasswordScreenByCompose(
+        isInProgress: Boolean,
+        error: String? = null,
+        onSubmitBtnClicked: (token: String?, password: String, confirmedPassword: String) -> Unit
+
+    ) {
         var password by rememberSaveable { mutableStateOf("") }
         var confirmPassword by rememberSaveable { mutableStateOf("") }
         Column(
@@ -172,7 +177,8 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
             CustomActionButton(
                 text = "SUBMIT",
                 onClick = {
-                    viewModel.onSubmitBtnClicked(extractToken(), password, confirmPassword)
+                    val token = extractToken()
+                    onSubmitBtnClicked(token, password, confirmPassword)
                 },
                 isLoading = isInProgress
             )
