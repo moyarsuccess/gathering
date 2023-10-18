@@ -36,10 +36,12 @@ class ResetPasswordInfo : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(
-            DialogFragment.STYLE_NORMAL,
-            R.style.CustomBottomSheetDialogTheme
-        )
+        if (!isComposeEnabled) {
+            setStyle(
+                DialogFragment.STYLE_NORMAL,
+                R.style.CustomBottomSheetDialogTheme
+            )
+        }
     }
 
     override fun onCreateView(
