@@ -4,7 +4,6 @@ import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-
 class PicassoImageLoader @Inject constructor(
     private val baseurl: String,
     private val picasso: Picasso,
