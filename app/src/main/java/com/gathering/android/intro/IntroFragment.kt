@@ -52,10 +52,12 @@ class IntroFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(
-            STYLE_NORMAL,
-            android.R.style.Theme_Light_NoTitleBar_Fullscreen
-        )
+        if (!isComposeEnabled) {
+            setStyle(
+                STYLE_NORMAL,
+                android.R.style.Theme_Light_NoTitleBar_Fullscreen
+            )
+        }
     }
 
     override fun onCreateView(
