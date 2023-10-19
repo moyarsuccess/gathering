@@ -11,23 +11,43 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RotateRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.gathering.android.common.CustomActionButton
+import com.gathering.android.common.ErrorText
+import com.gathering.android.common.ShowImage
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenAddPicBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.ui.theme.GatheringTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,17 +74,27 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                 setContent {
                     GatheringTheme {
                         Surface(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.wrapContentSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
                             AddPicScreenWithCompose(
                                 errorMessage = state.value.errorMessage ?: "",
                                 onCameraClick = viewModel::onCameraClicked,
-                                onGalleryClick = viewModel::onGalleryClicked
-//                                onOkClick = viewModel::onSaveButtonClicked,
-//                                onRotateImageClick = viewModel::onRotateClicked
-                            )
+                                onGalleryClick = viewModel::onGalleryClicked,
+                                imageUri = state.value.showImage,
+                                onSaveClick = {
+                                    state.value.showImage?.let {
+                                        viewModel.onSaveButtonClicked(bitmap = it)
+                                    }
+                                },
+                                onRotateClick = {
+                                    state.value.showImage?.let { bitmap ->
+                                        viewModel.onRotateClicked(
+                                            bitmap, 90F
+                                        )
+                                    }
+                                })
                         }
                     }
                 }
@@ -170,18 +200,63 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
     @Composable
     @Preview(showBackground = true, device = "id:Nexus S")
     fun AddPicScreenPreview() {
-        AddPicScreenWithCompose("", {}, {})
+        AddPicScreenWithCompose("error", null, {}, {}, {}, {})
     }
 
+    @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     fun AddPicScreenWithCompose(
         errorMessage: String,
-//        onRotateImageClick: () -> Unit,
+        imageUri: Bitmap?,
         onCameraClick: () -> Unit,
         onGalleryClick: () -> Unit,
+        onSaveClick: () -> Unit,
+        onRotateClick: () -> Unit
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+//        val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
+        Column(
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box {
+                IconButton(
+                    onClick = {
+                        if (imageUri != null) {
+                            onRotateClick()
+                        }
+                    }, modifier = Modifier.size(80.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RotateRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+                ShowImage(imageUri = imageUri)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(onClick = { onCameraClick() }) {
+                    Text(text = "OPEN CAMERA")
+                }
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Button(onClick = { onGalleryClick() }) {
+                    Text(text = "OPEN GALLERY")
+                }
+            }
+            CustomActionButton(
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = false,
+                text = "OK",
+                onClick = { onSaveClick() },
+                colors = ButtonDefaults.buttonColors()
+            )
+            ErrorText(error = errorMessage)
         }
     }
 }

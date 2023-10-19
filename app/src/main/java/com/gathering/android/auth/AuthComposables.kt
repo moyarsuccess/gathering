@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -29,7 +30,10 @@ fun AuthButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = Color.DarkGray
+    )
 ) {
     Button(
         shape = RoundedCornerShape(0.dp),
@@ -37,9 +41,7 @@ fun AuthButton(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.DarkGray
-        )
+        colors = colors
     ) {
         if (isLoading) {
             CircularProgressIndicator(color = Color.White)
