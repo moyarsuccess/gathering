@@ -1,7 +1,8 @@
-package com.gathering.android.event.eventdetail
+package com.gathering.android.event.attendeeDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.event.eventdetail.AcceptType
 import com.gathering.android.event.model.Attendee
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject

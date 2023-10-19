@@ -1,4 +1,4 @@
-package com.gathering.android.event.eventdetail
+package com.gathering.android.event.attendeeDetail
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
