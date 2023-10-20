@@ -202,7 +202,7 @@ fun ErrorText(error: String) {
 fun ProgressBar(
     text: String,
     modifier: Modifier = Modifier,
-    isDisplayed: Boolean = false,
+    isLoading: Boolean = false,
     isNoData: Boolean = false,
 ) {
     Button(
@@ -215,7 +215,7 @@ fun ProgressBar(
             containerColor = Color.White
         )
     ) {
-        if (isDisplayed) {
+        if (isLoading) {
             CircularProgressIndicator(
                 color = Color.DarkGray,
                 strokeWidth = 5.dp

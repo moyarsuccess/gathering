@@ -62,7 +62,7 @@ fun EventListPreview() {
         onEditClicked = {},
         onItemClick = {},
         onFavClick = {},
-        isDisplayed = false,
+        isLoading = false,
         isNoData = false,
         isMyEvent = false
     )
@@ -74,13 +74,13 @@ fun EventList(
     onItemClick: (Event) -> Unit,
     onEditClicked: () -> Unit,
     onFavClick: (Event) -> Unit,
-    isDisplayed: Boolean,
+    isLoading: Boolean,
     isNoData: Boolean,
     isMyEvent: Boolean
 ) {
     ProgressBar(
         text = "No event yet",
-        isDisplayed = isDisplayed,
+        isLoading = isLoading,
         isNoData = isNoData
     )
     LazyColumn(
