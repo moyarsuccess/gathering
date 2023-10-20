@@ -23,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.AuthButton
 import com.gathering.android.common.ErrorText
+import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.GatheringPasswordTextField
 import com.gathering.android.common.isComposeEnabled
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignUpScreen : DialogFragment(), SignUpNavigator {
+class SignUpScreen : FullScreenBottomSheet(), SignUpNavigator {
 
     private lateinit var binding: ScreenSignUpBinding
 
@@ -50,11 +50,9 @@ class SignUpScreen : DialogFragment(), SignUpNavigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!isComposeEnabled) {
-            setStyle(
-                STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
+        setStyle(
+            STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
             )
-        }
     }
 
     override fun onCreateView(
