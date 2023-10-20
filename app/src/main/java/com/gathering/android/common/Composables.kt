@@ -152,6 +152,7 @@ fun CustomActionButton(
     }
 
 }
+
 @Composable
 @Preview(showBackground = true)
 fun CustomTextViewPreview() {
@@ -197,7 +198,6 @@ fun ErrorText(error: String) {
         )
     )
 }
-
 
 @Composable
 fun ProgressBar(
