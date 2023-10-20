@@ -6,6 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.SEPARATOR
+import com.gathering.android.common.getDay
+import com.gathering.android.common.getHour
+import com.gathering.android.common.getMinute
+import com.gathering.android.common.getMonth
+import com.gathering.android.common.getYear
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.Attendee
 import com.gathering.android.event.model.EventLocation
@@ -66,17 +71,17 @@ class PutEventViewModel @Inject constructor(
 
         fun getFormattedDate(): String? {
             val cal = Calendar.getInstance()
-            cal.set(Calendar.YEAR, year ?: 0)
-            cal.set(Calendar.MONTH, month ?: 0)
-            cal.set(Calendar.DAY_OF_MONTH, day ?: 0)
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, month)
+            cal.set(Calendar.DAY_OF_MONTH, day)
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             return simpleDateFormat.format(cal.time)
         }
 
         fun getFormattedTime(): String? {
             val cal = Calendar.getInstance()
-            cal.set(Calendar.HOUR_OF_DAY, hour ?: 0)
-            cal.set(Calendar.MINUTE, minute ?: 0)
+            cal.set(Calendar.HOUR_OF_DAY, hour)
+            cal.set(Calendar.MINUTE, minute)
             val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             return simpleDateFormat.format(cal.time)
         }
@@ -314,26 +319,6 @@ class PutEventViewModel @Inject constructor(
 
     companion object {
         private const val EVENT_REQUEST_FAILED = "EVENT_REQUEST_FAILED"
-
-        private fun Calendar.getYear(): Int {
-            return get(Calendar.YEAR)
-        }
-
-        private fun Calendar.getMonth(): Int {
-            return get(Calendar.MONTH)
-        }
-
-        private fun Calendar.getDay(): Int {
-            return get(Calendar.DAY_OF_MONTH)
-        }
-
-        private fun Calendar.getHour(): Int {
-            return get(Calendar.HOUR_OF_DAY)
-        }
-
-        private fun Calendar.getMinute(): Int {
-            return get(Calendar.MINUTE)
-        }
 
         private fun List<Attendee>?.toCommaSeparatedString(): String {
             return this?.joinToString(SEPARATOR) { it.email ?: "" } ?: ""
