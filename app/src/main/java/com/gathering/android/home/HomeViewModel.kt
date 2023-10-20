@@ -8,18 +8,18 @@ import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     private val verificationRepository: VerificationRepository,
     private val eventRepository: EventRepository,
-    private val eventLocationComparator: EventLocationComparator,
-    private val eventDateComparator: EventDateComparator
 ) : ViewModel() {
 
-    //    private var lastSortType = SortType.SORT_BY_DATE
-    //    private var lastFilter = Filter()
     private var homeNavigator: HomeNavigator? = null
     private var page = 1
 
@@ -47,7 +47,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun  getEvents(page: Int) {
+    private fun getEvents(page: Int) {
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
@@ -62,6 +62,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is ResponseState.Success<List<EventModel>> -> {
                     val currentPageEvents = request.data as? List<EventModel>
                     if (currentPageEvents.isNullOrEmpty()) {
@@ -90,29 +91,6 @@ class HomeViewModel @Inject constructor(
         getEvents(page)
     }
 
-//    private fun List<EventModel>.applySortAndFilter(): List<EventModel> {
-//        return filter { event ->
-//            if (!lastFilter.isContactsFilterOn) true
-//            else !event.isMyEvent
-//        }.filter { event ->
-//            if (!lastFilter.isMyEventsFilterOn) true
-//            else event.isMyEvent
-//        }.filter { event ->
-//            if (!lastFilter.isTodayFilterOn) true
-//            else DateUtils.isToday(event.dateTime ?: 0)
-//        }.sortedWith(lastSortType.getProperComparator())
-//    }
-
-//    fun onSortChanged(sortType: SortType) {
-////        loadEventList(sortType = sortType, filter = lastFilter)
-//        lastSortType = sortType
-//    }
-
-//    fun onFilterChanged(filter: Filter) {
-////        loadEventList(filter = filter, lastSortType)
-//        lastFilter = filter
-//    }
-
     fun onEventItemClicked(event: Event) {
         homeNavigator?.navigateToEventDetail(event)
     }
@@ -135,23 +113,19 @@ class HomeViewModel @Inject constructor(
 
                 is ResponseState.Success -> {
                     viewModelState.update { currentViewState ->
-                        currentViewState.copy(showProgress = false,
-                            events = currentViewState.events.apply {
-                                val index = this.indexOfFirst { it.eventId == eventId }
-                                this.toMutableList()[index] = event.copy(liked = liked)
-                            })
+                        val list = currentViewState.events.toMutableList()
+                        val index = list.indexOfFirst { it.eventId == eventId }
+                        val newEvent = list[index].copy(liked = liked)
+                        list[index] = newEvent
+                        currentViewState.copy(
+                            showProgress = false,
+                            events = list
+                        )
                     }
                 }
             }
         }
     }
-
-//    private fun SortType.getProperComparator(): Comparator<EventModel> {
-//        return when (this) {
-//            SortType.SORT_BY_LOCATION -> eventLocationComparator
-//            SortType.SORT_BY_DATE -> eventDateComparator
-//        }
-//    }
 
     companion object {
         private const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
