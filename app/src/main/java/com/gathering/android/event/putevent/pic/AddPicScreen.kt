@@ -48,6 +48,8 @@ import com.gathering.android.databinding.ScreenAddPicBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.ui.theme.GatheringTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
@@ -198,7 +200,7 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
     }
 
     @Composable
-    @Preview(showBackground = true, device = "id:Nexus S")
+    @Preview(showBackground = true, device = "id:pixel_2")
     fun AddPicScreenPreview() {
         AddPicScreenWithCompose("error", null, {}, {}, {}, {})
     }
@@ -213,7 +215,9 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
         onSaveClick: () -> Unit,
         onRotateClick: () -> Unit
     ) {
-//        val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+        val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+        val galleryPermissionState =
+            rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
 
         Column(
             modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -232,7 +236,7 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                         modifier = Modifier.size(36.dp)
                     )
                 }
-                ShowImage(imageUri = imageUri)
+                ShowImage(bmp = imageUri)
             }
             Row(
                 modifier = Modifier
@@ -240,12 +244,24 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                     .padding(10.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Button(onClick = { onCameraClick() }) {
+                Button(onClick = {
+                    if (cameraPermissionState.status.isGranted) {
+                        onCameraClick()
+                    } else {
+                        cameraPermissionState.launchPermissionRequest()
+                    }
+                }) {
                     Text(text = "OPEN CAMERA")
                 }
                 Spacer(modifier = Modifier.padding(10.dp))
 
-                Button(onClick = { onGalleryClick() }) {
+                Button(onClick = {
+                    if (galleryPermissionState.status.isGranted) {
+                        onGalleryClick()
+                    } else {
+                        galleryPermissionState.launchPermissionRequest()
+                    }
+                }) {
                     Text(text = "OPEN GALLERY")
                 }
             }

@@ -277,7 +277,7 @@ fun ShowImage(imageUri: String?) {
 }
 
 @Composable
-fun ShowImage(imageUri: Bitmap?) {
+fun ShowImage(bmp: Bitmap?) {
     Card(
         modifier = Modifier
             .padding(25.dp)
@@ -287,10 +287,10 @@ fun ShowImage(imageUri: Bitmap?) {
             containerColor = Color.White
         )
     ) {
-        val painter = if (imageUri == null) {
+        val painter = if (bmp == null) {
             painterResource(id = R.drawable.ic_person)
         } else {
-            rememberAsyncImagePainter(model = imageUri)
+            rememberAsyncImagePainter(model = bmp)
         }
         Image(
             contentScale = ContentScale.Crop,
@@ -302,6 +302,3 @@ fun ShowImage(imageUri: Bitmap?) {
         )
     }
 }
-
-
-
