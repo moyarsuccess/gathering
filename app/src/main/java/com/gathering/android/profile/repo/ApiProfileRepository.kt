@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.FAIL_TO_CREATE_FILE_PART
+import com.gathering.android.common.LOCAL_CONTENT_URL_PREFIX
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UpdateProfileResponse
@@ -11,7 +12,6 @@ import com.gathering.android.common.UserRepo
 import com.gathering.android.common.createRequestPartFromUri
 import com.gathering.android.common.requestBody
 import dagger.hilt.android.qualifiers.ApplicationContext
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,19 +23,20 @@ class ApiProfileRepository @Inject constructor(
     private val profileRemoteService: ProfileRemoteService,
     private val userRepo: UserRepo,
 ) : ProfileRepository {
-
     override fun updateProfile(
-        displayName: String,
-        photoUri: String,
+        displayName: String?,
+        photoUri: String?,
         onResponseReady: (ResponseState<UpdateProfileResponse>) -> Unit
     ) {
-        val filePart = context.createRequestPartFromUri(photoUri)
-        if (filePart == null) {
-            onResponseReady(ResponseState.Failure(IOException(FAIL_TO_CREATE_FILE_PART)))
-            return
+        val filePart = photoUri?.let { context.createRequestPartFromUri(it) }
+        if (photoUri?.startsWith(LOCAL_CONTENT_URL_PREFIX) == true) {
+            if (filePart == null) {
+                onResponseReady(ResponseState.Failure(IOException(FAIL_TO_CREATE_FILE_PART)))
+                return
+            }
         }
 
-        val name: RequestBody = displayName.requestBody()
+        val name = displayName?.requestBody()
 
         profileRemoteService.uploadProfile(name, filePart)
             .enqueue(object : Callback<UpdateProfileResponse> {

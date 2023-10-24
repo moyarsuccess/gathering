@@ -13,7 +13,7 @@ interface ProfileRemoteService {
     @Multipart
     @PUT("profile")
     fun uploadProfile(
-        @Part("display_name") displayName: RequestBody,
-        @Part photo: MultipartBody.Part,
+        @Part("display_name") displayName: RequestBody?,
+        @Part photo: MultipartBody.Part?,
     ): Call<UpdateProfileResponse>
 }
