@@ -70,7 +70,9 @@ class HomeScreen : Fragment(), HomeNavigator {
                                 onFavClick = viewModel::onEventLikeClicked,
                                 isLoading = state.value.showProgress,
                                 isNoData = state.value.showNoData,
-                                onFabClick = {}
+                                onFabClick = {},
+                                onDeleteClick = {},
+                                onUndoClick = {}
                             )
                         }
                     }

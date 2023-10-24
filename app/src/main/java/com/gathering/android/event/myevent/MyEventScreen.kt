@@ -64,6 +64,7 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
+
                             EventList(
                                 showEditIcon = true,
                                 showFavoriteIcon = false,
@@ -73,7 +74,9 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                                 onFavClick = {},
                                 isLoading = state.value.showProgress,
                                 isNoData = state.value.showNoData,
-                                onFabClick = viewModel::onFabButtonClicked
+                                onFabClick = viewModel::onFabButtonClicked,
+                                onDeleteClick = { viewModel.onSwipedToDelete(it) },
+                                onUndoClick = { viewModel.onUndoDeleteEvent() }
                             )
                         }
                     }

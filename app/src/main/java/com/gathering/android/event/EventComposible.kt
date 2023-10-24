@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,19 +15,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +52,8 @@ import coil.request.ImageRequest
 import com.gathering.android.R
 import com.gathering.android.common.NavigationBarPaddingSpacer
 import com.gathering.android.common.ProgressBar
+import com.gathering.android.common.ShowText
+import com.gathering.android.ui.theme.customBackgroundColor
 
 @Preview(showBackground = true, device = "id:pixel_2")
 @Composable
@@ -59,9 +73,13 @@ fun EventListPreview() {
         showEditIcon = true,
         onEditClick = {},
         onItemClick = {},
-        onFavClick = {}
+        onFavClick = {},
+        onDeleteClick = {},
+        onUndoClick = {},
     )
 }
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EventList(
     showFavoriteIcon: Boolean = true,
@@ -72,8 +90,13 @@ fun EventList(
     isLoading: Boolean,
     isNoData: Boolean,
     onFabClick: () -> Unit,
-    showEditIcon: Boolean
+    showEditIcon: Boolean,
+    onDeleteClick: (Event) -> Unit,
+    onUndoClick: (Event) -> Unit
 ) {
+
+    var deletedEvent by remember { mutableStateOf<Event?>(null) }
+
     ProgressBar(
         text = "No event yet",
         isLoading = isLoading,
@@ -83,7 +106,8 @@ fun EventList(
         modifier = Modifier
             .fillMaxSize()
             .padding(7.dp)
-            .background(Color.Transparent)
+            .background(androidx.compose.ui.graphics.Color.Transparent),
+        verticalArrangement = Arrangement.Center
     ) {
         LazyColumn(
             modifier = Modifier
@@ -92,15 +116,41 @@ fun EventList(
         ) {
             items(events.distinctBy { it.eventId })
             { event ->
-                EventItem(
-                    event = event,
-                    onItemClick = { onItemClick(event) },
-                    onEditClick = { onEditClick(event) },
-                    onFavClick = { onFavClick(event) },
-                    showFavoriteIcon = showFavoriteIcon,
-                    showEditIcon = showEditIcon
+                val state = rememberDismissState(confirmStateChange = {
+                    if (it == DismissValue.DismissedToStart) {
+                        deletedEvent = event
+                        onDeleteClick(event)
+                        true
+                    } else {
+                        false
+                    }
+                })
+
+                SwipeToDismiss(
+                    state = state,
+                    background = {
+                        val color = when (state.dismissDirection) {
+                            DismissDirection.StartToEnd -> Color.Transparent
+                            DismissDirection.EndToStart -> Color.Red
+                            null -> Color.Transparent
+                        }
+                        ShowDeleteIcon(color)
+
+                    }, dismissContent = {
+                        EventItem(
+                            event = event,
+                            onItemClick = { onItemClick(event) },
+                            onEditClick = { onEditClick(event) },
+                            onFavClick = { onFavClick(event) },
+                            showFavoriteIcon = showFavoriteIcon,
+                            showEditIcon = showEditIcon
+                        )
+                    },
+                    directions = setOf(DismissDirection.EndToStart)
                 )
+
                 Spacer(modifier = Modifier.padding(15.dp))
+
             }
         }
         if (!showFavoriteIcon) {
@@ -108,36 +158,29 @@ fun EventList(
         } else {
             NavigationBarPaddingSpacer()
         }
-    }
-}
 
-@Composable
-fun ShowFabButton(
-    onFabClick: () -> Unit
-) {
-    Column(Modifier.padding(5.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-        ) {
-            val customBackgroundColor = Color(0xFFEEEBEB)
-
-            FloatingActionButton(
-                onClick = {
-                    onFabClick()
-                },
-                modifier = Modifier
-                    .padding(5.dp)
-                    .size(56.dp),
-                backgroundColor = customBackgroundColor
+        deletedEvent?.let { event ->
+            Snackbar(
+                modifier = Modifier.padding(16.dp),
+                action = {
+                    TextButton(
+                        onClick = {
+                            deletedEvent = null // Clear deleted event
+                            onUndoClick(event)
+                            // Implement the action to undo the deletion
+                            // You can call a function to restore the event or handle it accordingly
+                        }
+                    ) {
+                        ShowText("Undo", modifier = Modifier)
+                    }
+                }
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
-                )
+                ShowText("${event.eventName} deleted", modifier = Modifier)
             }
         }
-        NavigationBarPaddingSpacer()
     }
+
+
 }
 
 @Composable
@@ -147,7 +190,7 @@ fun EventItem(
     onItemClick: (Event) -> Unit,
     onEditClick: (Event) -> Unit,
     onFavClick: (Event) -> Unit,
-    showEditIcon: Boolean,
+    showEditIcon: Boolean
 ) {
     Card(
         modifier = Modifier
@@ -169,10 +212,8 @@ fun EventItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    modifier = Modifier.padding(start = 10.dp),
-                    text = event.eventName
-                )
+                ShowText(text = event.eventName, modifier = Modifier.padding(10.dp))
+
                 if (showEditIcon) {
                     ShowEditIcon(event = event, onEditClick)
                 }
@@ -180,11 +221,50 @@ fun EventItem(
                     ShowFavoriteIcon(event = event, onFavClick)
                 }
             }
-            Text(
-                modifier = Modifier.padding(10.dp),
-                text = event.eventHostEmail
-            )
+            ShowText(text = event.eventHostEmail, modifier = Modifier.padding(10.dp))
         }
+    }
+}
+
+@Composable
+fun ShowEventImage(
+    event: Event
+) {
+    val painter = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current)
+            .data(data = "https://moyar.dev:8080/photo/${event.photoUrl}")
+            .apply(block = fun ImageRequest.Builder.() {
+                crossfade(true)
+                placeholder(R.drawable.ic_launcher_foreground)
+                error(com.google.android.material.R.drawable.mtrl_ic_error)
+            }).build()
+    )
+    Card(colors = CardDefaults.cardColors(customBackgroundColor)) {
+        Image(
+            painter = painter,
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .size(200.dp)
+        )
+    }
+}
+
+@Composable
+private fun ShowDeleteIcon(color: Color) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = color)
+            .padding(8.dp)
+    ) {
+        androidx.compose.material.Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete",
+            tint = Color.White,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
     }
 }
 
@@ -223,24 +303,29 @@ fun ShowFavoriteIcon(event: Event, onFavClick: (Event) -> Unit) {
 }
 
 @Composable
-fun ShowEventImage(
-    event: Event
+fun ShowFabButton(
+    onFabClick: () -> Unit
 ) {
-    val painter = rememberAsyncImagePainter(
-        ImageRequest.Builder(LocalContext.current)
-            .data(data = "https://moyar.dev:8080/photo/${event.photoUrl}")
-            .apply(block = fun ImageRequest.Builder.() {
-                crossfade(true)
-                placeholder(R.drawable.ic_launcher_foreground)
-                error(com.google.android.material.R.drawable.mtrl_ic_error)
-            }).build()
-    )
-    Image(
-        painter = painter,
-        contentScale = ContentScale.Crop,
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxSize()
-            .size(200.dp)
-    )
+    Column(Modifier.padding(5.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+        ) {
+            val customBackgroundColor = Color(0xFFEEEBEB)
+            FloatingActionButton(
+                onClick = {
+                    onFabClick()
+                },
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(56.dp),
+                backgroundColor = customBackgroundColor
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add",
+                )
+            }
+        }
+        NavigationBarPaddingSpacer()
+    }
 }

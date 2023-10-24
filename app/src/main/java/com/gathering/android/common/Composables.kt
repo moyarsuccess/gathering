@@ -242,4 +242,14 @@ fun NavigationBarPaddingSpacer() {
     )
 }
 
+@Composable
+fun ShowText(
+    text: String,
+    modifier: Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = text
+    )
+}
 
