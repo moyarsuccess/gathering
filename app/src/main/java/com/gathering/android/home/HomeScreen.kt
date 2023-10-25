@@ -66,7 +66,7 @@ class HomeScreen : Fragment(), HomeNavigator {
                                 onItemClick = viewModel::onEventItemClicked,
                                 onEditClicked = {},
                                 onFavClick = viewModel::onEventLikeClicked,
-                                isDisplayed = state.value.showProgress,
+                                isLoading = state.value.showProgress,
                                 isNoData = state.value.showNoData,
                                 isMyEvent = false
                             )
