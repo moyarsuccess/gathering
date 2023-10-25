@@ -17,7 +17,6 @@ import javax.inject.Inject
 class MyEventViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ) : ViewModel() {
-
     private var deletedEvent: Event? = null
     private var deletedEventIndex: Int = 0
     private var page = 1
@@ -119,7 +118,6 @@ class MyEventViewModel @Inject constructor(
             }
         }
     }
-
     fun onUndoDeleteEvent(event: Event) {
         val deletedEventIndex = viewModelState.value.myEvents.indexOf(event)
         if (deletedEventIndex != -1) {

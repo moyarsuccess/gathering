@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -211,7 +212,7 @@ fun ProgressBar(
         shape = RoundedCornerShape(0.dp),
         onClick = { },
         modifier = modifier
-            .fillMaxWidth(1f)
+            .fillMaxSize()
             .padding(top = 30.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent

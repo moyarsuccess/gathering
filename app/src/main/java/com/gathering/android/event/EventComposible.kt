@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
@@ -62,9 +63,19 @@ fun EventListPreview() {
         showFavoriteIcon = false,
         events = listOf(
             Event(
-                1, "ani", "animansoubi@gmail.com", "party", "", 0.0, null
+                1,
+                "ani",
+                "animansoubi@gmail.com",
+                "party",
+                "",
+                0.0, null
             ), Event(
-                2, "mo", "animansoubi@gmail.com", "party", "", 0.0, null
+                2,
+                "mo",
+                "animansoubi@gmail.com",
+                "party",
+                "",
+                0.0, null
             )
         ),
         isLoading = false,
@@ -75,26 +86,27 @@ fun EventListPreview() {
         onItemClick = {},
         onFavClick = {},
         onDeleteClick = {},
-        onUndoDeleteEvent = {}
+        onUndoDeleteEvent = {},
+        swipeEnabled = true
     )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EventList(
-    showFavoriteIcon: Boolean = true,
+    showFavoriteIcon: Boolean,
+    isLoading: Boolean,
+    isNoData: Boolean,
+    showEditIcon: Boolean,
+    swipeEnabled: Boolean,
     events: List<Event>,
     onItemClick: (Event) -> Unit,
     onEditClick: (Event) -> Unit,
     onFavClick: (Event) -> Unit,
-    isLoading: Boolean,
-    isNoData: Boolean,
     onFabClick: () -> Unit,
-    showEditIcon: Boolean,
     onDeleteClick: (Event) -> Unit,
-    onUndoDeleteEvent: (Event) -> Unit
+    onUndoDeleteEvent: (Event) -> Unit,
 ) {
-
     var deletedEvent by remember { mutableStateOf<Event?>(null) }
 
     ProgressBar(
@@ -125,29 +137,27 @@ fun EventList(
                         false
                     }
                 })
+                if (swipeEnabled) {
+                    EnableSwipeOnEventItems(
+                        state,
+                        event,
+                        onItemClick,
+                        onEditClick,
+                        onFavClick,
+                        showFavoriteIcon,
+                        showEditIcon
+                    )
+                } else {
+                    EventItem(
+                        event = event,
+                        onItemClick = { onItemClick(event) },
+                        onEditClick = { onEditClick(event) },
+                        onFavClick = { onFavClick(event) },
+                        showFavoriteIcon = showFavoriteIcon,
+                        showEditIcon = showEditIcon
+                    )
+                }
 
-                SwipeToDismiss(
-                    state = state,
-                    background = {
-                        val color = when (state.dismissDirection) {
-                            DismissDirection.StartToEnd -> Color.Transparent
-                            DismissDirection.EndToStart -> Color.Red
-                            null -> Color.Transparent
-                        }
-                        ShowDeleteIcon(color)
-
-                    }, dismissContent = {
-                        EventItem(
-                            event = event,
-                            onItemClick = { onItemClick(event) },
-                            onEditClick = { onEditClick(event) },
-                            onFavClick = { onFavClick(event) },
-                            showFavoriteIcon = showFavoriteIcon,
-                            showEditIcon = showEditIcon
-                        )
-                    },
-                    directions = setOf(DismissDirection.EndToStart)
-                )
                 Spacer(modifier = Modifier.padding(15.dp))
             }
         }
@@ -215,6 +225,42 @@ fun EventItem(
 }
 
 @Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun EnableSwipeOnEventItems(
+    state: DismissState,
+    event: Event,
+    onItemClick: (Event) -> Unit,
+    onEditClick: (Event) -> Unit,
+    onFavClick: (Event) -> Unit,
+    showFavoriteIcon: Boolean,
+    showEditIcon: Boolean
+) {
+    SwipeToDismiss(
+        state = state,
+        background = {
+            val color = when (state.dismissDirection) {
+                DismissDirection.StartToEnd -> Color.Transparent
+                DismissDirection.EndToStart -> Color.Red
+                null -> Color.Transparent
+            }
+            ShowDeleteIcon(color)
+
+        }, dismissContent = {
+            EventItem(
+                event = event,
+                onItemClick = { onItemClick(event) },
+                onEditClick = { onEditClick(event) },
+                onFavClick = { onFavClick(event) },
+                showFavoriteIcon = showFavoriteIcon,
+                showEditIcon = showEditIcon
+            )
+        },
+        directions = setOf(DismissDirection.EndToStart)
+    )
+}
+
+
+@Composable
 fun ShowEventImage(
     event: Event
 ) {
@@ -248,7 +294,7 @@ private fun ShowDeleteIcon(color: Color) {
                 .background(color = color)
                 .padding(8.dp)
         ) {
-            androidx.compose.material.Icon(
+            Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
                 tint = Color.White,
@@ -270,7 +316,7 @@ fun ShowEditIcon(event: Event, onEditClick: (Event) -> Unit) {
             contentDescription = "",
             modifier = Modifier
                 .padding(10.dp)
-                .size(24.dp)
+                .size(30.dp)
         )
     }
 }
@@ -331,9 +377,11 @@ private fun ShowSnackBar(
 fun ShowFabButton(
     onFabClick: () -> Unit
 ) {
-    Column(Modifier.padding(5.dp)) {
+    Column(Modifier.padding(5.dp))
+    {
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             val customBackgroundColor = Color(0xFFEEEBEB)
             FloatingActionButton(

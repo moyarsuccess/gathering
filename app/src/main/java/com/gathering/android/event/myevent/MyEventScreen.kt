@@ -76,7 +76,8 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                                 isNoData = state.value.showNoData,
                                 onFabClick = viewModel::onFabButtonClicked,
                                 onDeleteClick = { viewModel.onSwipedToDelete(it) },
-                                onUndoDeleteEvent = {viewModel.onUndoDeleteEvent(it)}
+                                onUndoDeleteEvent = {viewModel.onUndoDeleteEvent(it)},
+                                swipeEnabled = true
                             )
                         }
                     }
