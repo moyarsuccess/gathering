@@ -72,7 +72,7 @@ class HomeScreen : Fragment(), HomeNavigator {
                                 isNoData = state.value.showNoData,
                                 onFabClick = {},
                                 onDeleteClick = {},
-                                onUndoClick = {}
+                                onUndoDeleteEvent = {}
                             )
                         }
                     }

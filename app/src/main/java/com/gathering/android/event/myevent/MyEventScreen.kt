@@ -76,7 +76,7 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                                 isNoData = state.value.showNoData,
                                 onFabClick = viewModel::onFabButtonClicked,
                                 onDeleteClick = { viewModel.onSwipedToDelete(it) },
-                                onUndoClick = { viewModel.onUndoDeleteEvent() }
+                                onUndoDeleteEvent = {viewModel.onUndoDeleteEvent(it)}
                             )
                         }
                     }
@@ -107,7 +107,7 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                                 binding.root, EVENT_DELETED, Snackbar.LENGTH_LONG
                             )
                             snackBar.setAction(UNDO) {
-                                viewModel.onUndoDeleteEvent()
+                                viewModel.onUndoDeleteEvent(event)
                             }
                             snackBar.show()
                         }

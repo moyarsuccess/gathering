@@ -75,7 +75,7 @@ fun EventListPreview() {
         onItemClick = {},
         onFavClick = {},
         onDeleteClick = {},
-        onUndoClick = {},
+        onUndoDeleteEvent = {}
     )
 }
 
@@ -92,7 +92,7 @@ fun EventList(
     onFabClick: () -> Unit,
     showEditIcon: Boolean,
     onDeleteClick: (Event) -> Unit,
-    onUndoClick: (Event) -> Unit
+    onUndoDeleteEvent: (Event) -> Unit
 ) {
 
     var deletedEvent by remember { mutableStateOf<Event?>(null) }
@@ -106,7 +106,7 @@ fun EventList(
         modifier = Modifier
             .fillMaxSize()
             .padding(7.dp)
-            .background(androidx.compose.ui.graphics.Color.Transparent),
+            .background(Color.Transparent),
         verticalArrangement = Arrangement.Center
     ) {
         LazyColumn(
@@ -148,41 +148,21 @@ fun EventList(
                     },
                     directions = setOf(DismissDirection.EndToStart)
                 )
-
                 Spacer(modifier = Modifier.padding(15.dp))
-
             }
         }
+
+        if (deletedEvent != null) {
+            ShowSnackBar(deletedEvent, onUndoDeleteEvent)
+        }
+
         if (!showFavoriteIcon) {
             ShowFabButton(onFabClick = onFabClick)
         } else {
             NavigationBarPaddingSpacer()
         }
-
-        deletedEvent?.let { event ->
-            Snackbar(
-                modifier = Modifier.padding(16.dp),
-                action = {
-                    TextButton(
-                        onClick = {
-                            deletedEvent = null // Clear deleted event
-                            onUndoClick(event)
-                            // Implement the action to undo the deletion
-                            // You can call a function to restore the event or handle it accordingly
-                        }
-                    ) {
-                        ShowText("Undo", modifier = Modifier)
-                    }
-                }
-            ) {
-                ShowText("${event.eventName} deleted", modifier = Modifier)
-            }
-        }
     }
-
-
 }
-
 @Composable
 fun EventItem(
     showFavoriteIcon: Boolean,
@@ -196,9 +176,11 @@ fun EventItem(
         modifier = Modifier
             .clickable {
                 onItemClick(event)
-            }, colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ), border = BorderStroke(1.dp, Color.Gray)
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        border = BorderStroke(1.dp, Color.Gray)
     ) {
         Column(
             Modifier
@@ -212,7 +194,10 @@ fun EventItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ShowText(text = event.eventName, modifier = Modifier.padding(10.dp))
+                ShowText(
+                    text = event.eventName,
+                    modifier = Modifier.padding(10.dp),
+                )
 
                 if (showEditIcon) {
                     ShowEditIcon(event = event, onEditClick)
@@ -221,7 +206,10 @@ fun EventItem(
                     ShowFavoriteIcon(event = event, onFavClick)
                 }
             }
-            ShowText(text = event.eventHostEmail, modifier = Modifier.padding(10.dp))
+            ShowText(
+                text = event.eventHostEmail,
+                modifier = Modifier.padding(10.dp),
+            )
         }
     }
 }
@@ -246,25 +234,29 @@ fun ShowEventImage(
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .size(200.dp)
+                .size(170.dp)
         )
     }
 }
 
 @Composable
 private fun ShowDeleteIcon(color: Color) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = color)
-            .padding(8.dp)
-    ) {
-        androidx.compose.material.Icon(
-            imageVector = Icons.Default.Delete,
-            contentDescription = "Delete",
-            tint = Color.White,
-            modifier = Modifier.align(Alignment.CenterEnd)
-        )
+    Card {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = color)
+                .padding(8.dp)
+        ) {
+            androidx.compose.material.Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(40.dp)
+            )
+        }
     }
 }
 
@@ -299,6 +291,39 @@ fun ShowFavoriteIcon(event: Event, onFavClick: (Event) -> Unit) {
             ),
             contentDescription = "thumb",
         )
+    }
+}
+
+@Composable
+private fun ShowSnackBar(
+    deletedEvent: Event?,
+    onUndoDeleteEvent: (event: Event) -> Unit
+) {
+    var deletedEvent1 by remember { mutableStateOf(deletedEvent) }
+
+    deletedEvent1?.let { event ->
+        Snackbar(
+            modifier = Modifier.padding(16.dp),
+            backgroundColor = customBackgroundColor,
+            action = {
+                TextButton(
+                    onClick = {
+                        deletedEvent1 = null
+                        onUndoDeleteEvent(event)
+                    }
+                ) {
+                    ShowText(
+                        "Undo",
+                        modifier = Modifier,
+                    )
+                }
+            }
+        ) {
+            ShowText(
+                "${event.eventName} deleted",
+                modifier = Modifier,
+            )
+        }
     }
 }
 
