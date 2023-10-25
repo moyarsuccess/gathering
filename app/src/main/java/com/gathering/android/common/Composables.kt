@@ -1,6 +1,10 @@
 package com.gathering.android.common
 
+import android.graphics.Bitmap
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +13,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -18,6 +24,8 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,7 +38,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.gathering.android.R
 
 @Composable
@@ -209,7 +221,7 @@ fun ProgressBar(
         shape = RoundedCornerShape(0.dp),
         onClick = { },
         modifier = modifier
-            .fillMaxWidth(2f)
+            .fillMaxWidth(1f)
             .padding(top = 30.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White
@@ -231,5 +243,62 @@ fun ProgressBar(
     }
 }
 
+@Composable
+@Preview(showBackground = true)
+fun ShowProfilePicturePreviewWithString() {
+    ShowImage(imageUri = "")
+}
 
+@Composable
+fun ShowImage(imageUri: String?) {
+    Card(
+        modifier = Modifier
+            .padding(25.dp)
+            .clip(CircleShape)
+            .border(2.dp, Color.Gray, CircleShape),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    ) {
+        val painter = if (imageUri.isNullOrEmpty()) {
+            painterResource(id = R.drawable.ic_person)
+        } else {
+            rememberAsyncImagePainter(model = "https://moyar.dev:8080/photo/${imageUri}")
+        }
+        Image(
+            contentScale = ContentScale.Crop,
+            painter = painter,
+            contentDescription = "Profile picture",
+            modifier = Modifier
+                .size(200.dp)
+                .background(Color.White, CircleShape)
+        )
+    }
+}
 
+@Composable
+fun ShowImage(bmp: Bitmap?) {
+    Card(
+        modifier = Modifier
+            .padding(25.dp)
+            .clip(CircleShape)
+            .border(2.dp, Color.Gray, CircleShape),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    ) {
+        val painter = if (bmp == null) {
+            painterResource(id = R.drawable.ic_person)
+        } else {
+            rememberAsyncImagePainter(model = bmp)
+        }
+        Image(
+            contentScale = ContentScale.Crop,
+            painter = painter,
+            contentDescription = "",
+            modifier = Modifier
+                .size(200.dp)
+                .background(Color.White, CircleShape)
+        )
+    }
+}

@@ -11,12 +11,45 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RotateRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.gathering.android.common.CustomActionButton
+import com.gathering.android.common.ErrorText
+import com.gathering.android.common.ShowImage
+import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenAddPicBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
+import com.gathering.android.ui.theme.GatheringTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,63 +68,95 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = ScreenAddPicBinding.inflate(LayoutInflater.from(requireContext()))
-        return binding.root
+        return if (!isComposeEnabled) {
+            binding = ScreenAddPicBinding.inflate(LayoutInflater.from(requireContext()))
+            return binding.root
+        } else {
+            ComposeView(requireContext()).apply {
+                setContent {
+                    GatheringTheme {
+                        Surface(
+                            modifier = Modifier.wrapContentSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            val state = viewModel.uiState.collectAsState()
+                            AddPicScreenWithCompose(
+                                errorMessage = state.value.errorMessage ?: "",
+                                onCameraClick = viewModel::onCameraClicked,
+                                onGalleryClick = viewModel::onGalleryClicked,
+                                imageUri = state.value.showImage,
+                                onSaveClick = {
+                                    state.value.showImage?.let {
+                                        viewModel.onSaveButtonClicked(bitmap = it)
+                                    }
+                                },
+                                onRotateClick = {
+                                    state.value.showImage?.let { bitmap ->
+                                        viewModel.onRotateClicked(
+                                            bitmap, 90F
+                                        )
+                                    }
+                                })
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            viewModel.uiState.collectLatest { state ->
+        if (isComposeEnabled) {
+            viewModel.onViewCreated(this)
+            return
+        } else {
+            lifecycleScope.launch {
+                viewModel.uiState.collectLatest { state ->
 
-                state.rotatedImage?.let { rotatedImage ->
-                    binding.imageView.setImageBitmap(rotatedImage)
-                }
+                    state.rotatedImage?.let { rotatedImage ->
+                        binding.imageView.setImageBitmap(rotatedImage)
+                    }
 
-                state.errorMessage?.let {
-                    showErrorText(it)
-                }
+                    state.errorMessage?.let {
+                        showErrorText(it)
+                    }
 
-                state.showImage?.let { image ->
-                    binding.imageView.setImageBitmap(image)
-                }
-            }
-        }
-
-        binding.btnCamera.setOnClickListener {
-            PermissionX.init(this).permissions(Manifest.permission.CAMERA)
-                .request { allGranted, _, _ ->
-                    if (allGranted) {
-                        viewModel.onCameraClicked()
-                    } else {
-                        showErrorText(CAMERA_PERMISSION_DENIED)
+                    state.showImage?.let { image ->
+                        binding.imageView.setImageBitmap(image)
                     }
                 }
-        }
-
-
-        binding.btnGallery.setOnClickListener {
-            viewModel.onGalleryClicked()
-        }
-
-        binding.rotateImage.setOnClickListener {
-            val bitmap = binding.imageView.getBitmap()
-            if (bitmap != null) {
-                viewModel.onRotateClicked(bitmap, -90f)
-            } else showErrorText(SELECT_VALID_PICTURE)
-        }
-
-        binding.btnOk.setOnClickListener {
-            val image = binding.imageView.getBitmap()
-            if (image != null) {
-                viewModel.onSaveButtonClicked(image)
-            } else {
-                showErrorText(SELECT_VALID_PICTURE)
             }
-        }
+            binding.btnCamera.setOnClickListener {
+                PermissionX.init(this).permissions(Manifest.permission.CAMERA)
+                    .request { allGranted, _, _ ->
+                        if (allGranted) {
+                            viewModel.onCameraClicked()
+                        } else {
+                            showErrorText(CAMERA_PERMISSION_DENIED)
+                        }
+                    }
+            }
+            binding.btnGallery.setOnClickListener {
+                viewModel.onGalleryClicked()
+            }
 
-        viewModel.onViewCreated(this)
+            binding.rotateImage.setOnClickListener {
+                val bitmap = binding.imageView.getBitmap()
+                if (bitmap != null) {
+                    viewModel.onRotateClicked(bitmap, -90f)
+                } else showErrorText(SELECT_VALID_PICTURE)
+            }
+            binding.btnOk.setOnClickListener {
+                val image = binding.imageView.getBitmap()
+                if (image != null) {
+                    viewModel.onSaveButtonClicked(image)
+                } else {
+                    showErrorText(SELECT_VALID_PICTURE)
+                }
+            }
+            viewModel.onViewCreated(this)
+        }
     }
 
     private fun ImageView.getBitmap(): Bitmap? {
@@ -132,5 +197,82 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
         private const val OPERATION_CANCELED_BY_USER = "Operation cancelled by user"
         private const val CAMERA_PERMISSION_DENIED = "camera permission denied"
         const val SELECT_VALID_PICTURE = "SELECT A VALID PICTURE PLEASE"
+    }
+
+    @Composable
+    @Preview(showBackground = true, device = "id:pixel_2")
+    fun AddPicScreenPreview() {
+        AddPicScreenWithCompose("error", null, {}, {}, {}, {})
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun AddPicScreenWithCompose(
+        errorMessage: String,
+        imageUri: Bitmap?,
+        onCameraClick: () -> Unit,
+        onGalleryClick: () -> Unit,
+        onSaveClick: () -> Unit,
+        onRotateClick: () -> Unit
+    ) {
+        val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+        val galleryPermissionState =
+            rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        Column(
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box {
+                IconButton(
+                    onClick = {
+                        if (imageUri != null) {
+                            onRotateClick()
+                        }
+                    }, modifier = Modifier.size(80.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RotateRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+                ShowImage(bmp = imageUri)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(onClick = {
+                    if (cameraPermissionState.status.isGranted) {
+                        onCameraClick()
+                    } else {
+                        cameraPermissionState.launchPermissionRequest()
+                    }
+                }) {
+                    Text(text = "OPEN CAMERA")
+                }
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Button(onClick = {
+                    if (galleryPermissionState.status.isGranted) {
+                        onGalleryClick()
+                    } else {
+                        galleryPermissionState.launchPermissionRequest()
+                    }
+                }) {
+                    Text(text = "OPEN GALLERY")
+                }
+            }
+            CustomActionButton(
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = false,
+                text = "OK",
+                onClick = { onSaveClick() },
+                colors = ButtonDefaults.buttonColors()
+            )
+            ErrorText(error = errorMessage)
+        }
     }
 }
