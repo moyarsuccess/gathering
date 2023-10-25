@@ -6,6 +6,7 @@ import com.gathering.android.auth.model.User
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UpdateProfileResponse
 import com.gathering.android.common.UserRepo
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.profile.repo.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +23,6 @@ class EditProfileViewModel @Inject constructor(
 
     private var isDisplayNameFilled: Boolean = false
     private var isImageUrlFilled: Boolean = false
-    private var photoUrl = ""
 
     private var editProfileNavigator: EditProfileNavigator? = null
 
@@ -46,7 +46,7 @@ class EditProfileViewModel @Inject constructor(
         viewModelState.update { currentState ->
             val user = userRepo.getUser() ?: return
             currentState.copy(
-                imageUri = user.photoName,
+                imageUri = user.photoName.toImageUrl(),
                 displayName = user.displayName,
                 email = user.email,
                 saveButtonEnable = false
@@ -58,12 +58,11 @@ class EditProfileViewModel @Inject constructor(
         editProfileNavigator?.navigateToAddPic()
     }
 
-    fun onImageURLChanged(photo_Url: String) {
-        isImageUrlFilled = isImageUrlFilled(photo_Url)
-        photoUrl = photo_Url
+    fun onImageURLChanged(photoUri: String) {
+        isImageUrlFilled = isImageUrlFilled(photoUri)
         val errorMessage = if (isImageUrlFilled) null else IMAGE_NOT_FILLED_MESSAGE
         viewModelState.update { currentState ->
-            currentState.copy(errorMessage = errorMessage)
+            currentState.copy(imageUri = photoUri, errorMessage = errorMessage)
         }
         checkAllFieldsReady()
     }
@@ -76,7 +75,6 @@ class EditProfileViewModel @Inject constructor(
         }
         checkAllFieldsReady()
     }
-
 
     private fun isDisplayNameFilled(imgUrl: String): Boolean {
         return imgUrl.isNotEmpty() && imgUrl.isNotBlank()
@@ -97,8 +95,11 @@ class EditProfileViewModel @Inject constructor(
                 isImageUrlFilled
     }
 
-    fun onSaveButtonClicked(displayName: String) {
-        profileRepository.updateProfile(displayName, photoUrl) { responseState ->
+    fun onSaveButtonClicked(displayName: String?, imageUrl: String?) {
+        profileRepository.updateProfile(
+            displayName = displayName,
+            photoUri = imageUrl
+        ) { responseState ->
             when (responseState) {
                 is ResponseState.Failure -> {
                     viewModelState.update { currentState ->
@@ -110,13 +111,15 @@ class EditProfileViewModel @Inject constructor(
                     viewModelState.update { currentState ->
                         editProfileNavigator?.navigateToProfile(
                             User(
-                                displayName = displayName,
-                                photoName = photoUrl
+                                displayName = displayName ?: "",
+                                photoName = imageUrl ?: ""
                             )
                         )
-                        currentState.copy(displayName = displayName, imageUri = photoUrl)
+                        currentState.copy(displayName = displayName, imageUri = imageUrl)
                     }
                 }
+
+                else -> {}
             }
         }
     }

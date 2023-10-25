@@ -5,8 +5,8 @@ import com.gathering.android.common.UpdateProfileResponse
 
 interface ProfileRepository {
     fun updateProfile(
-        displayName: String,
-        photoUri: String,
+        displayName: String?,
+        photoUri: String?,
         onResponseReady: (ResponseState<UpdateProfileResponse>) -> Unit
     )
 }
