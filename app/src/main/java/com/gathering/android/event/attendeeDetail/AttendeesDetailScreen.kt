@@ -6,35 +6,36 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.HorizontalDivider
+import com.gathering.android.common.ShowImage
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
 import com.gathering.android.event.eventdetail.AcceptType
@@ -46,7 +47,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AttendeesDetailScreen : FullScreenBottomSheet() {
+class AttendeesDetailScreen : DialogFragment() {
 
     private lateinit var binding: ScreenAttendeesDetailBinding
 
@@ -65,19 +66,23 @@ class AttendeesDetailScreen : FullScreenBottomSheet() {
                 setContent {
                     GatheringTheme {
                         Surface(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp),
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state =
                                 viewModel.uiState.collectAsState(AttendeesDetailViewModel.UiState())
-                            AttendeeDetailScreenWithCompose(AttendeesDetailViewModel())
+                            AttendeeDetailScreenWithCompose(
+                                attendees = state.value.selectedAttendeesList,
+                                showNoData = state.value.showNoData
+                            )
                         }
 
                     }
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,97 +93,87 @@ class AttendeesDetailScreen : FullScreenBottomSheet() {
             viewModel.onViewCreated(attendees)
             return
         } else {
-            binding = ScreenAttendeesDetailBinding.inflate(LayoutInflater.from(requireContext()))
-            binding.rvAttendees.adapter = adapter
-            binding.rvAttendees.layoutManager =
-                LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+            recyclerviewAndInteractions()
+        }
+    }
 
-            lifecycleScope.launch {
-                viewModel.uiState.collectLatest { uiState ->
+    private fun recyclerviewAndInteractions() {
+        binding = ScreenAttendeesDetailBinding.inflate(LayoutInflater.from(requireContext()))
+        binding.rvAttendees.adapter = adapter
+        binding.rvAttendees.layoutManager =
+            LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
 
-                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
-                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { uiState ->
 
-                    when (uiState.selectedAcceptType) {
-                        AcceptType.Yes -> {
-                            binding.btnYes.setBackgroundResource(R.color.gray)
-                        }
+                binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                binding.btnNo.setBackgroundResource(R.drawable.custom_button)
+                binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
 
-                        AcceptType.Maybe -> {
-                            binding.btnMaybe.setBackgroundResource(R.color.gray)
-                        }
-
-                        AcceptType.No -> {
-                            binding.btnNo.setBackgroundResource(R.color.gray)
-                        }
+                when (uiState.selectedAcceptType) {
+                    AcceptType.Yes -> {
+                        binding.btnYes.setBackgroundResource(R.color.gray)
                     }
-                    adapter.setItems(uiState.selectedAttendeesList)
 
-                    if (uiState.showNoData) {
-                        binding.noData.visibility = View.VISIBLE
-                    } else {
-                        binding.noData.visibility = View.GONE
+                    AcceptType.Maybe -> {
+                        binding.btnMaybe.setBackgroundResource(R.color.gray)
+                    }
+
+                    AcceptType.No -> {
+                        binding.btnNo.setBackgroundResource(R.color.gray)
                     }
                 }
-            }
+                adapter.setItems(uiState.selectedAttendeeEmails)
 
-            val attendees = arguments?.getSerializable(ATTENDEE_LIST) as List<Attendee>
-            viewModel.onViewCreated(attendees)
-
-            binding.btnYes.setOnClickListener {
-                viewModel.onAcceptTypeSelectionChanged(AcceptType.Yes)
+                if (uiState.showNoData) {
+                    binding.noData.visibility = View.VISIBLE
+                } else {
+                    binding.noData.visibility = View.GONE
+                }
             }
+        }
 
-            binding.btnNo.setOnClickListener {
-                viewModel.onAcceptTypeSelectionChanged(AcceptType.No)
-            }
+        val attendees = arguments?.getSerializable(ATTENDEE_LIST) as List<Attendee>
+        viewModel.onViewCreated(attendees)
 
-            binding.btnMaybe.setOnClickListener {
-                viewModel.onAcceptTypeSelectionChanged(AcceptType.Maybe)
-            }
+        binding.btnYes.setOnClickListener {
+            viewModel.onAcceptTypeSelectionChanged(AcceptType.Yes)
+        }
+
+        binding.btnNo.setOnClickListener {
+            viewModel.onAcceptTypeSelectionChanged(AcceptType.No)
+        }
+
+        binding.btnMaybe.setOnClickListener {
+            viewModel.onAcceptTypeSelectionChanged(AcceptType.Maybe)
         }
     }
 
     @Composable
     @Preview(showBackground = true, device = "id:Nexus S")
     fun AttendeeDetailScreenPreview() {
-        AttendeeDetailScreenWithCompose(AttendeesDetailViewModel())
+        AttendeeDetailScreenWithCompose(listOf(), showNoData = false)
     }
 
     @Composable
-    fun AttendeeDetailScreenWithCompose(viewModel: AttendeesDetailViewModel) {
-        var selectedTabIndex by remember { mutableIntStateOf(0) }
-        val acceptTypes = listOf("Yes", "No", "Maybe")
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            val uiState by viewModel.uiState.collectAsState(initial = AttendeesDetailViewModel.UiState())
-            val attendeesList = uiState.selectedAttendeesList
-
-            // Create a TabRow to switch between "Yes," "No," and "Maybe" options
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                modifier = Modifier.fillMaxWidth(),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                acceptTypes.forEachIndexed { index, type ->
-                    Tab(
-                        text = { Text(text = type) },
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index }
-                    )
-                }
-            }
+    fun AttendeeDetailScreenWithCompose(
+        attendees: List<Attendee>,
+        showNoData: Boolean
+    ) {
+        Column(modifier = Modifier)
+        {
+            Tab(
+                modifier = Modifier.background(Color.DarkGray),
+                text = { Text(text = "LIST OF EVENT ATTENDEES", color = Color.White) },
+                selected = true,
+                onClick = {},
+                selectedContentColor = Color.LightGray
+            )
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             ) {
-
                 item {
-                    if (uiState.showNoData) {
+                    if (showNoData) {
                         Text(
                             text = "No data to show",
                             style = MaterialTheme.typography.bodyMedium,
@@ -188,26 +183,28 @@ class AttendeesDetailScreen : FullScreenBottomSheet() {
                         )
                     }
                 }
-
-                items(attendeesList) { attendeeEmail ->
-                    AttendeeListItem(email = attendeeEmail)
+                items(attendees) { attendee ->
+                    AttendeeItem(attendee)
+                    HorizontalDivider()
                 }
             }
         }
     }
 
     @Composable
-    fun AttendeeListItem(email: String) {
-        Card(
+    fun AttendeeItem(attendee: Attendee) {
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp).background(Color.Red),
-            elevation = CardDefaults.cardElevation()
-        ) {
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            ShowImage(imageUri = attendee.imageName, imageSize = 50.dp)
             Text(
-                text = email,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp)
+                style = TextStyle(textAlign = TextAlign.Left, fontSize = 14.sp),
+                text = attendee.email ?: "",
+                modifier = Modifier,
+                fontWeight = FontWeight.Bold,
             )
         }
     }
