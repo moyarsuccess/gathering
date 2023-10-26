@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.gathering.android.R
+import com.gathering.android.common.NavigationBarPaddingSpacer
 
 
 @Preview(showBackground = true)
@@ -82,6 +83,7 @@ fun EventDetail(
             onNoButtonClick = onNoButtonClick,
             onMaybeButtonClick = onMaybeButtonClick
         )
+        NavigationBarPaddingSpacer()
     }
 }
 
