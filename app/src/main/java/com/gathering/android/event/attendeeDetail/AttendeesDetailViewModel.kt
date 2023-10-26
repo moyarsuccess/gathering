@@ -1,24 +1,26 @@
-package com.gathering.android.event.eventdetail
+package com.gathering.android.event.attendeeDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.event.eventdetail.AcceptType
 import com.gathering.android.event.model.Attendee
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
 
     private val viewModelState = MutableStateFlow(ViewModelState())
     val uiState: Flow<UiState> = viewModelState.map { viewModelState ->
-        val selectedAttendeesList = viewModelState.attendees.filter { attendee ->
-            attendee.accepted == viewModelState.selectedAcceptType.type
-        }.map { attendee ->
-            attendee.email ?: ""
-        }
         UiState(
             viewModelState.selectedAcceptType,
-            selectedAttendeesList,
-            selectedAttendeesList.isEmpty()
+            viewModelState.attendees,
+            viewModelState.attendees.isEmpty()
         )
     }.stateIn(
         scope = viewModelScope,
@@ -33,13 +35,19 @@ class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
 
     data class UiState(
         val selectedAcceptType: AcceptType = AcceptType.Yes,
-        val selectedAttendeesList: List<String> = emptyList(),
+        val selectedAttendeesList: List<Attendee> = emptyList(),
         val showNoData: Boolean = false
     )
 
     fun onViewCreated(attendees: List<Attendee>) {
         viewModelState.update { currentViewState ->
-            currentViewState.copy(attendees = attendees)
+            currentViewState.copy(attendees = attendees.filter {
+                if (isComposeEnabled) {
+                    it.accepted == AcceptType.Yes.type
+                } else {
+                    true
+                }
+            })
         }
     }
 
@@ -48,6 +56,4 @@ class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
             currentViewState.copy(selectedAcceptType = acceptType)
         }
     }
-
-
 }

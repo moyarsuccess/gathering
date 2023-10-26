@@ -40,8 +40,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.common.CustomActionButton
 import com.gathering.android.common.ErrorText
-import com.gathering.android.common.ImageView
 import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.common.ImageView
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenAddPicBinding

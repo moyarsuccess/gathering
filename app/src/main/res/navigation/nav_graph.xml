@@ -196,7 +196,7 @@
     </dialog>
     <dialog
         android:id="@+id/attendeesDetailScreen"
-        android:name="com.gathering.android.event.eventdetail.AttendeesDetailScreen"
+        android:name="com.gathering.android.event.attendeeDetail.AttendeesDetailScreen"
         android:label="attendeesDetailScreen"
         tools:layout="@layout/screen_attendees_detail" />
 </navigation>
