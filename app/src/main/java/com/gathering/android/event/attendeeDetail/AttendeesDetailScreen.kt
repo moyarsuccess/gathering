@@ -34,7 +34,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.ShowImage
+import com.gathering.android.common.ImageView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
 import com.gathering.android.event.eventdetail.AcceptType
@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AttendeesDetailScreen1 : DialogFragment() {
+class AttendeesDetailScreen : DialogFragment() {
 
     private lateinit var binding: ScreenAttendeesDetailBinding
 
@@ -59,6 +59,7 @@ class AttendeesDetailScreen1 : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return if (!isComposeEnabled) {
+            binding = ScreenAttendeesDetailBinding.inflate(inflater, container, false)
             binding.root
         } else {
             ComposeView(requireContext()).apply {
@@ -72,8 +73,9 @@ class AttendeesDetailScreen1 : DialogFragment() {
                         ) {
                             val state =
                                 viewModel.uiState.collectAsState(AttendeesDetailViewModel.UiState())
+
                             AttendeeDetailScreenWithCompose(
-                                attendees = listOf(),
+                                attendees = state.value.selectedAttendeesList,
                                 showNoData = state.value.showNoData,
                             )
                         }
@@ -150,14 +152,13 @@ class AttendeesDetailScreen1 : DialogFragment() {
     @Composable
     @Preview(showBackground = true, device = "id:Nexus S")
     fun AttendeeDetailScreenPreview() {
-        AttendeeDetailScreenWithCompose(listOf(), showNoData = false)
+        AttendeeDetailScreenWithCompose(attendees = listOf(), showNoData = false)
     }
 
     @Composable
     fun AttendeeDetailScreenWithCompose(
         attendees: List<Attendee>,
         showNoData: Boolean,
-
         ) {
         Column(modifier = Modifier)
         {
@@ -173,13 +174,7 @@ class AttendeesDetailScreen1 : DialogFragment() {
             ) {
                 item {
                     if (showNoData) {
-                        Text(
-                            text = "No data to show",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        )
+                        NoDataMessage()
                     }
                 }
 
@@ -191,6 +186,17 @@ class AttendeesDetailScreen1 : DialogFragment() {
     }
 
     @Composable
+    fun NoDataMessage() {
+        Text(
+            text = "No data to show",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+    }
+
+    @Composable
     fun AttendeeItem(attendee: Attendee) {
         Row(
             modifier = Modifier
@@ -198,7 +204,7 @@ class AttendeesDetailScreen1 : DialogFragment() {
             verticalAlignment = Alignment.CenterVertically
         )
         {
-            ShowImage(imageUri = attendee.imageName, imageSize = 50.dp)
+            ImageView(imageUri = attendee.email, size = 50.dp) {}
             Text(
                 style = TextStyle(textAlign = TextAlign.Left, fontSize = 14.sp),
                 text = attendee.email ?: "",

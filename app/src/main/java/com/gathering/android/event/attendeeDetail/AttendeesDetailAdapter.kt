@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.databinding.ItemAttendeeEmailBinding
+import com.gathering.android.event.model.Attendee
 import javax.inject.Inject
 
 class AttendeesDetailAdapter @Inject constructor() :
     RecyclerView.Adapter<AttendeesDetailAdapter.ViewHolder>() {
 
-    private var attendeesList: List<String> = mutableListOf()
+    private var attendeesList: List<Attendee> = mutableListOf()
 
     class ViewHolder(val itemBinding: ItemAttendeeEmailBinding) :
         RecyclerView.ViewHolder(itemBinding.root)
@@ -26,11 +27,11 @@ class AttendeesDetailAdapter @Inject constructor() :
     override fun getItemCount(): Int = attendeesList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemBinding.tvEmail.text = attendeesList[position]
+        holder.itemBinding.tvEmail.text = attendeesList[position].email
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setItems(attendees: List<String>) {
+    fun setItems(attendees: List<Attendee>) {
         this.attendeesList = attendees
         notifyDataSetChanged()
     }
