@@ -92,70 +92,73 @@ class MyEventScreen : Fragment(), MyEventNavigator {
             viewModel.onViewCreated(this)
             return
         } else {
-            val linearLayoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            binding.rvEvent.layoutManager = linearLayoutManager
+            setupRecyclerViewAndInteractions()
+        }
+    }
 
-            swipeGesture = object : SwipeGesture(requireContext()) {
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.absoluteAdapterPosition
-                    val event = adapter.getEventAtPosition(position)
-                    event?.let {
-                        if (direction == ItemTouchHelper.LEFT) {
-                            viewModel.onSwipedToDelete(it)
-                            // Show a snack bar with an "Undo" option for the delete action
-                            val snackBar = Snackbar.make(
-                                binding.root, EVENT_DELETED, Snackbar.LENGTH_LONG
-                            )
-                            snackBar.setAction(UNDO) {
-                                viewModel.onUndoDeleteEvent(event)
-                            }
-                            snackBar.show()
+    private fun setupRecyclerViewAndInteractions() {
+        val linearLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvEvent.layoutManager = linearLayoutManager
+
+        swipeGesture = object : SwipeGesture(requireContext()) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.absoluteAdapterPosition
+                val event = adapter.getEventAtPosition(position)
+                event?.let {
+                    if (direction == ItemTouchHelper.LEFT) {
+                        viewModel.onSwipedToDelete(it)
+                        // Show a snack bar with an "Undo" option for the delete action
+                        val snackBar = Snackbar.make(
+                            binding.root, EVENT_DELETED, Snackbar.LENGTH_LONG
+                        )
+                        snackBar.setAction(UNDO) {
+                            viewModel.onUndoDeleteEvent(event)
                         }
+                        snackBar.show()
                     }
                 }
             }
-
-            itemTouchHelper = ItemTouchHelper(swipeGesture)
-
-            binding.rvEvent.adapter = adapter
-            binding.rvEvent.addOnScrollListener(EndlessScrollListener {
-                viewModel.onNextPageRequested()
-            })
-            itemTouchHelper.attachToRecyclerView(binding.rvEvent)
-
-
-            lifecycleScope.launch {
-                viewModel.uiState.collectLatest { state ->
-                    binding.prg.isVisible = state.showProgress
-
-                    state.errorMessage?.let {
-                        showErrorText(it)
-                    }
-                    binding.tvNoData.isVisible = state.showNoData
-                    adapter.updateEvents(state.myEvents)
-                }
-            }
-            binding.btnFab.setOnClickListener {
-                viewModel.onFabButtonClicked()
-            }
-
-            adapter.setOnFavoriteImageClick { event ->
-                viewModel.onEventLikeClicked(event)
-            }
-
-            adapter.setOnEditImageClick { event ->
-                viewModel.onEditEventClicked(event)
-            }
-
-            getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(
-                viewLifecycleOwner
-            ) {
-                viewModel.onEventAdded()
-            }
-            viewModel.onViewCreated(this)
         }
 
+        itemTouchHelper = ItemTouchHelper(swipeGesture)
+
+        binding.rvEvent.adapter = adapter
+        binding.rvEvent.addOnScrollListener(EndlessScrollListener {
+            viewModel.onNextPageRequested()
+        })
+        itemTouchHelper.attachToRecyclerView(binding.rvEvent)
+
+
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                binding.prg.isVisible = state.showProgress
+
+                state.errorMessage?.let {
+                    showErrorText(it)
+                }
+                binding.tvNoData.isVisible = state.showNoData
+                adapter.updateEvents(state.myEvents)
+            }
+        }
+        binding.btnFab.setOnClickListener {
+            viewModel.onFabButtonClicked()
+        }
+
+        adapter.setOnFavoriteImageClick { event ->
+            viewModel.onEventLikeClicked(event)
+        }
+
+        adapter.setOnEditImageClick { event ->
+            viewModel.onEditEventClicked(event)
+        }
+
+        getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(
+            viewLifecycleOwner
+        ) {
+            viewModel.onEventAdded()
+        }
+        viewModel.onViewCreated(this)
     }
 
     override fun navigateToAddEvent() {

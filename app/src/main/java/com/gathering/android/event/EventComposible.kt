@@ -138,7 +138,7 @@ fun EventList(
                     }
                 })
                 if (swipeEnabled) {
-                    EnableSwipeOnEventItems(
+                    SwipeableEventItem(
                         state,
                         event,
                         onItemClick,
@@ -163,11 +163,11 @@ fun EventList(
         }
 
         if (deletedEvent != null) {
-            ShowSnackBar(deletedEvent, onUndoDeleteEvent)
+            CustomSnackbar(deletedEvent, onUndoDeleteEvent)
         }
 
         if (!showFavoriteIcon) {
-            ShowFabButton(onFabClick = onFabClick)
+            FabButton(onFabClick = onFabClick)
         } else {
             NavigationBarPaddingSpacer()
         }
@@ -196,7 +196,7 @@ fun EventItem(
             Modifier
                 .background(Color.Transparent)
         ) {
-            ShowEventImage(
+            EventImage(
                 event = event
             )
             Row(
@@ -210,10 +210,10 @@ fun EventItem(
                 )
 
                 if (showEditIcon) {
-                    ShowEditIcon(event = event, onEditClick)
+                    EditIcon(event = event, onEditClick)
                 }
                 if (showFavoriteIcon) {
-                    ShowFavoriteIcon(event = event, onFavClick)
+                    FavoriteIcon(event = event, onFavClick)
                 }
             }
             ShowText(
@@ -226,7 +226,7 @@ fun EventItem(
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-private fun EnableSwipeOnEventItems(
+private fun SwipeableEventItem(
     state: DismissState,
     event: Event,
     onItemClick: (Event) -> Unit,
@@ -243,7 +243,7 @@ private fun EnableSwipeOnEventItems(
                 DismissDirection.EndToStart -> Color.Red
                 null -> Color.Transparent
             }
-            ShowDeleteIcon(color)
+            DeleteIcon(color)
 
         }, dismissContent = {
             EventItem(
@@ -261,7 +261,7 @@ private fun EnableSwipeOnEventItems(
 
 
 @Composable
-fun ShowEventImage(
+fun EventImage(
     event: Event
 ) {
     val painter = rememberAsyncImagePainter(
@@ -286,7 +286,7 @@ fun ShowEventImage(
 }
 
 @Composable
-private fun ShowDeleteIcon(color: Color) {
+private fun DeleteIcon(color: Color) {
     Card {
         Box(
             modifier = Modifier
@@ -307,7 +307,7 @@ private fun ShowDeleteIcon(color: Color) {
 }
 
 @Composable
-fun ShowEditIcon(event: Event, onEditClick: (Event) -> Unit) {
+fun EditIcon(event: Event, onEditClick: (Event) -> Unit) {
     IconButton(
         onClick = { onEditClick(event) }
     ) {
@@ -322,7 +322,7 @@ fun ShowEditIcon(event: Event, onEditClick: (Event) -> Unit) {
 }
 
 @Composable
-fun ShowFavoriteIcon(event: Event, onFavClick: (Event) -> Unit) {
+fun FavoriteIcon(event: Event, onFavClick: (Event) -> Unit) {
     IconButton(
         onClick = { onFavClick(event) },
         colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Red)
@@ -341,7 +341,7 @@ fun ShowFavoriteIcon(event: Event, onFavClick: (Event) -> Unit) {
 }
 
 @Composable
-private fun ShowSnackBar(
+private fun CustomSnackbar(
     deletedEvent: Event?,
     onUndoDeleteEvent: (event: Event) -> Unit
 ) {
@@ -374,7 +374,7 @@ private fun ShowSnackBar(
 }
 
 @Composable
-fun ShowFabButton(
+fun FabButton(
     onFabClick: () -> Unit
 ) {
     Column(Modifier.padding(5.dp))
