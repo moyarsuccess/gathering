@@ -38,6 +38,7 @@ import com.gathering.android.common.CustomActionButton
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.GatheringEmailTextField
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.ImageView
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
@@ -45,7 +46,6 @@ import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenEditProfileBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
-import com.gathering.android.profile.ShowProfilePicture
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -178,7 +178,7 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ShowProfilePicture(imageUri = imageUri) {
+            ImageView(imageUri = imageUri, size = 200.dp) {
                 onImageClicked()
             }
             GatheringEmailTextField(

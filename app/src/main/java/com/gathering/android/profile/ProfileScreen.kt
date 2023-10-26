@@ -30,8 +30,10 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
 import com.gathering.android.common.CustomActionButton
+import com.gathering.android.common.HorizontalDivider
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.NavigationBarPaddingSpacer
+import com.gathering.android.common.ImageView
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenProfileBinding
@@ -169,7 +171,7 @@ class ProfileScreen : Fragment(), ProfileNavigator {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            ShowProfilePicture(imageUri) {}
+            ImageView(imageUri, size = 200.dp) {}
 
             ShowUserDetails(displayName, email)
 
