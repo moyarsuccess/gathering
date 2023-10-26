@@ -13,12 +13,11 @@ import java.io.IOException
 
 const val FAIL_TO_CREATE_FILE_PART = "Fail to create the file part"
 private const val CONTENT_TYPE = "text/plain"
-private const val PHOTO = "photo"
 private const val FILE_PATH = "image/*"
 private const val TEMP_FILE_NAME_PREFIX = "temp_image_"
 private const val JPEG_FILE_TYPE = "jpg"
 
-fun Context.createRequestPartFromUri(photoUri: String): MultipartBody.Part? {
+fun Context.createRequestPartFromUri(photoUri: String?): MultipartBody.Part? {
     try {
         val contentUri = Uri.parse(photoUri)
         val tempFile = createJpegTempFile()

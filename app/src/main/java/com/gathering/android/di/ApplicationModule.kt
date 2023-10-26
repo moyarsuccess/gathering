@@ -23,8 +23,8 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideImageLoader(baseUrl: String, picasso: Picasso): ImageLoader {
-        return PicassoImageLoader(baseUrl, picasso)
+    fun provideImageLoader(picasso: Picasso): ImageLoader {
+        return PicassoImageLoader(picasso)
     }
 
     @Provides

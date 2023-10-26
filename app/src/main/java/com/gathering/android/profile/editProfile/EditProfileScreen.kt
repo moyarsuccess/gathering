@@ -5,15 +5,48 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.*
+import com.gathering.android.common.CustomActionButton
+import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.GatheringEmailTextField
+import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.getNavigationResultLiveData
+import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.common.setNavigationResult
+import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenEditProfileBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
+import com.gathering.android.profile.ShowProfilePicture
+import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,12 +68,45 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ScreenEditProfileBinding.inflate(LayoutInflater.from(requireContext()))
-        return binding.root
+        return if (!isComposeEnabled) {
+            binding = ScreenEditProfileBinding.inflate(LayoutInflater.from(requireContext()))
+            return binding.root
+        } else {
+            ComposeView(requireContext()).apply {
+                setContent {
+                    GatheringTheme {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            val state = viewModel.uiState.collectAsState()
+                            EditProfile(
+                                displayName = state.value.displayName,
+                                email = state.value.email,
+                                imageUri = state.value.imageUri,
+                                onImageClicked = viewModel::onImageButtonClicked,
+                                onSaveChangeButtonClicked = viewModel::onSaveButtonClicked,
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        getNavigationResultLiveData<String>(KEY_ARGUMENT_SELECTED_IMAGE)?.observe(
+            viewLifecycleOwner
+        ) { photoUri ->
+            viewModel.onImageURLChanged(photoUri)
+        }
+
+        if (isComposeEnabled) {
+            viewModel.onViewCreated(this)
+            return
+        }
 
         lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
@@ -48,6 +114,7 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
                 binding.tvEmail.text = state.email
                 binding.etDisplayName.setText(state.displayName)
                 binding.btnSave.isEnabled = state.saveButtonEnable!!
+                binding.imgProfile.setImageURI(Uri.parse(state.imageUri))
                 if (!state.errorMessage.isNullOrEmpty()) {
                     showErrorText(state.errorMessage)
                 }
@@ -59,21 +126,15 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
         }
 
         binding.btnSave.setOnClickListener {
-            viewModel.onSaveButtonClicked(displayName = binding.etDisplayName.text.toString())
+            viewModel.onSaveButtonClicked(
+                displayName = binding.etDisplayName.text.toString(),
+                imageUrl = ""
+            )
         }
-
 
         binding.etDisplayName.doOnTextChanged { text, _, _, _ ->
             viewModel.onDisplayNameChanged(text.toString())
         }
-
-        getNavigationResultLiveData<String>(KEY_ARGUMENT_SELECTED_IMAGE)?.observe(
-            viewLifecycleOwner
-        ) { image ->
-            viewModel.onImageURLChanged(image)
-            binding.imgProfile.setImageURI(Uri.parse(image))
-        }
-
         viewModel.onViewCreated(this)
     }
 
@@ -84,6 +145,67 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
     override fun navigateToProfile(user: User) {
         setNavigationResult(KEY_ARGUMENT_UPDATE_USER, user)
         findNavController().popBackStack()
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun EditProfilePreview() {
+        EditProfile(
+            displayName = "Ani",
+            email = "animansoubi@gmail.com",
+            imageUri = "",
+            onImageClicked = {},
+            onSaveChangeButtonClicked = { _, _ -> },
+        )
+    }
+
+    @Composable
+    fun EditProfile(
+        displayName: String?,
+        email: String?,
+        imageUri: String?,
+        onImageClicked: () -> Unit,
+        onSaveChangeButtonClicked: (displayName: String?, imageUrl: String?) -> Unit,
+    ) {
+
+        var displayNameState by rememberSaveable { mutableStateOf(displayName) }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ShowProfilePicture(imageUri = imageUri) {
+                onImageClicked()
+            }
+            GatheringEmailTextField(
+                value = displayNameState ?: "",
+                onValueChange = {
+                    displayNameState = it
+                },
+                label = ""
+            )
+
+            Text(
+                text = email ?: "",
+                maxLines = 1,
+                color = Color.Black,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(22.dp)
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+            CustomActionButton(
+                isLoading = true,
+                text = "Save Changes",
+                onClick = {
+                    onSaveChangeButtonClicked(displayNameState, imageUri)
+                }
+            )
+        }
     }
 }
 

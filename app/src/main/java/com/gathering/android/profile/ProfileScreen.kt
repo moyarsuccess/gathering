@@ -95,6 +95,10 @@ class ProfileScreen : Fragment(), ProfileNavigator {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getNavigationResultLiveData<User>(KEY_ARGUMENT_UPDATE_USER)?.observe(viewLifecycleOwner) {
+            viewModel.onUserProfileUpdated()
+        }
+
         if (isComposeEnabled) {
             viewModel.onViewCreated(this)
             return
@@ -119,14 +123,8 @@ class ProfileScreen : Fragment(), ProfileNavigator {
                 viewModel.onSignOutButtonClicked()
             }
 
-            getNavigationResultLiveData<User>(KEY_ARGUMENT_UPDATE_USER)?.observe(viewLifecycleOwner) {
-                viewModel.onUserProfileUpdated()
-            }
-
             viewModel.onViewCreated(this)
         }
-
-
     }
 
     override fun navigateToFavoriteEvent() {
@@ -171,7 +169,7 @@ class ProfileScreen : Fragment(), ProfileNavigator {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            ShowProfilePicture(imageUri)
+            ShowProfilePicture(imageUri) {}
 
             ShowUserDetails(displayName, email)
 

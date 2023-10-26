@@ -34,11 +34,11 @@ import com.gathering.android.R
 @Composable
 @Preview(showBackground = true)
 fun ShowProfilePicturePreview() {
-    ShowProfilePicture(imageUri = "")
+    ShowProfilePicture(imageUri = "") {}
 }
 
 @Composable
-fun ShowProfilePicture(imageUri: String?) {
+fun ShowProfilePicture(imageUri: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(25.dp)
@@ -51,7 +51,7 @@ fun ShowProfilePicture(imageUri: String?) {
         val painter = if (imageUri.isNullOrEmpty()) {
             painterResource(id = R.drawable.ic_person)
         } else {
-            rememberAsyncImagePainter(model = "https://moyar.dev:8080/photo/${imageUri}")
+            rememberAsyncImagePainter(model = imageUri)
         }
         Image(
             painter = painter,
@@ -59,6 +59,7 @@ fun ShowProfilePicture(imageUri: String?) {
             modifier = Modifier
                 .size(200.dp)
                 .background(Color.White, CircleShape)
+                .clickable { onClick() }
         )
     }
 }
@@ -123,4 +124,3 @@ fun ProfileIconButtonWithText(
         )
     }
 }
-

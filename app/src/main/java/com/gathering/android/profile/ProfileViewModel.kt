@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.TokenRepo
 import com.gathering.android.common.UserRepo
+import com.gathering.android.common.toImageUrl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,7 +60,7 @@ class ProfileViewModel @Inject constructor(
         viewModelState.update { currentState ->
             val user = userRepo.getUser() ?: return
             currentState.copy(
-                imageUri = user.photoName,
+                imageUri = user.photoName.toImageUrl(),
                 displayName = user.displayName,
                 email = user.email,
             )
