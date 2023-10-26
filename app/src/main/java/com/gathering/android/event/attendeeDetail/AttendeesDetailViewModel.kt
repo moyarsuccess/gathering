@@ -15,16 +15,13 @@ import javax.inject.Inject
 class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
 
     private val viewModelState = MutableStateFlow(ViewModelState())
-
     val uiState: Flow<UiState> = viewModelState.map { viewModelState ->
         val selectedAttendeesList = viewModelState.attendees.filter { attendee ->
             attendee.accepted == viewModelState.selectedAcceptType.type
-        }
-        val selectedAttendeeEmails = selectedAttendeesList.map { attendee ->
+        }.map { attendee ->
             attendee.email ?: ""
         }
         UiState(
-            selectedAttendeeEmails,
             viewModelState.selectedAcceptType,
             selectedAttendeesList,
             selectedAttendeesList.isEmpty()
@@ -41,9 +38,8 @@ class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
     )
 
     data class UiState(
-        val selectedAttendeeEmails: List<String> = emptyList(),
         val selectedAcceptType: AcceptType = AcceptType.Yes,
-        val selectedAttendeesList: List<Attendee> = emptyList(),
+        val selectedAttendeesList: List<String> = emptyList(),
         val showNoData: Boolean = false
     )
 

@@ -34,7 +34,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.HorizontalDivider
 import com.gathering.android.common.ShowImage
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
@@ -47,7 +46,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AttendeesDetailScreen : DialogFragment() {
+class AttendeesDetailScreen1 : DialogFragment() {
 
     private lateinit var binding: ScreenAttendeesDetailBinding
 
@@ -74,11 +73,10 @@ class AttendeesDetailScreen : DialogFragment() {
                             val state =
                                 viewModel.uiState.collectAsState(AttendeesDetailViewModel.UiState())
                             AttendeeDetailScreenWithCompose(
-                                attendees = state.value.selectedAttendeesList,
-                                showNoData = state.value.showNoData
+                                attendees = listOf(),
+                                showNoData = state.value.showNoData,
                             )
                         }
-
                     }
                 }
             }
@@ -123,7 +121,7 @@ class AttendeesDetailScreen : DialogFragment() {
                         binding.btnNo.setBackgroundResource(R.color.gray)
                     }
                 }
-                adapter.setItems(uiState.selectedAttendeeEmails)
+                adapter.setItems(uiState.selectedAttendeesList)
 
                 if (uiState.showNoData) {
                     binding.noData.visibility = View.VISIBLE
@@ -158,8 +156,9 @@ class AttendeesDetailScreen : DialogFragment() {
     @Composable
     fun AttendeeDetailScreenWithCompose(
         attendees: List<Attendee>,
-        showNoData: Boolean
-    ) {
+        showNoData: Boolean,
+
+        ) {
         Column(modifier = Modifier)
         {
             Tab(
@@ -183,9 +182,9 @@ class AttendeesDetailScreen : DialogFragment() {
                         )
                     }
                 }
+
                 items(attendees) { attendee ->
-                    AttendeeItem(attendee)
-                    HorizontalDivider()
+                    AttendeeItem(attendee = attendee)
                 }
             }
         }
