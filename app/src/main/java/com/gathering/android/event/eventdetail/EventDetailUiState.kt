@@ -10,6 +10,7 @@ data class EventDetailUiState(
     val eventDate: String? = null,
     val eventTime: String? = null,
     val errorMessage: String? = null,
+    val acceptType: AcceptType = AcceptType.No,
     val acceptButtonBackColor: Int = 0,
     val declineButtonBackColor: Int = 0,
     val maybeButtonBackColor: Int = 0,

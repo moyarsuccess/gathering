@@ -14,6 +14,7 @@ import com.gathering.android.common.getHour
 import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepo
 import com.gathering.android.event.model.Attendee
@@ -44,7 +45,7 @@ class EventDetailViewModel @Inject constructor(
         val acceptButtonBackColor = viewModelState.getYesBackColor()
         val declineButtonBackColor = viewModelState.getNoBackColor()
         val maybeButtonBackColor = viewModelState.getMaybeBackColor()
-        println("Back_color: ${viewModelState.acceptType} $acceptButtonBackColor, $declineButtonBackColor,$maybeButtonBackColor ")
+
         EventDetailUiState(
             eventId = viewModelState.eventId,
             imageUri = viewModelState.imageUri,
@@ -57,6 +58,7 @@ class EventDetailViewModel @Inject constructor(
             acceptButtonBackColor = acceptButtonBackColor,
             declineButtonBackColor = declineButtonBackColor,
             maybeButtonBackColor = maybeButtonBackColor,
+            acceptType = viewModelState.acceptType
         )
     }.stateIn(
         scope = viewModelScope,
@@ -73,7 +75,7 @@ class EventDetailViewModel @Inject constructor(
             val acceptType = userRepo.getUser().obtainAttendeeAcceptType(event)
             currentState.copy(
                 eventId = event?.eventId,
-                imageUri = event?.photoUrl,
+                imageUri = event?.photoUrl?.toImageUrl(),
                 eventName = event?.eventName,
                 eventHostEmail = event?.eventHostEmail,
                 eventDescription = event?.description,
