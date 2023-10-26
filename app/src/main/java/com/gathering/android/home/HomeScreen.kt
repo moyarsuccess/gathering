@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
@@ -57,18 +57,23 @@ class HomeScreen : Fragment(), HomeNavigator {
                 setContent {
                     GatheringTheme {
                         Surface(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.wrapContentSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
                             EventList(
-                                state.value.events,
+                                showEditIcon = false,
+                                showFavoriteIcon = true,
+                                events = state.value.events,
                                 onItemClick = viewModel::onEventItemClicked,
-                                onEditClicked = {},
+                                onEditClick = {},
                                 onFavClick = viewModel::onEventLikeClicked,
                                 isLoading = state.value.showProgress,
                                 isNoData = state.value.showNoData,
-                                isMyEvent = false
+                                onFabClick = {},
+                                onDeleteClick = {},
+                                onUndoDeleteEvent = {},
+                                swipeEnabled = false
                             )
                         }
                     }

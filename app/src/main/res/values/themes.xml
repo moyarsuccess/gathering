@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/peach</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/peach</item>
+        <item name="android:statusBarColor">@color/gray</item>
         <!-- Customize your theme here. -->
         <item name="android:timePickerDialogTheme">@style/DialogTheme</item>
         <item name="android:datePickerDialogTheme">@style/DialogTheme</item>

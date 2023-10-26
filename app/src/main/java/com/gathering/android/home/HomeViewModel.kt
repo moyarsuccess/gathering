@@ -132,5 +132,3 @@ class HomeViewModel @Inject constructor(
         private const val EVENTS_REQUEST_FAILED = "FAILED TO LOAD EVENTS."
     }
 }
-
-
