@@ -1,6 +1,5 @@
 package com.gathering.android.event.putevent.invitation
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -86,13 +86,15 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                             val state = viewModel.uiState.collectAsState()
                             AddAttendeeScreenWithCompose(
                                 attendees = state.value.attendeesEmailList,
+                                onAddClick = { viewModel.onAddAttendeeButtonClicked(it) },
+                                onRemoveClick = { viewModel.onAttendeeRemoveItemClicked(it) },
+                                onSaveClick = { viewModel.onOKButtonClicked() }
                             )
                         }
                     }
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -162,30 +164,20 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
         AddAttendeeScreenWithCompose(
             attendees = listOf(
                 "idaoskooei@gmail.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
-                "esii_pisces@yahoo.com",
                 "esii_pisces@yahoo.com"
-            )
+            ),
+            onAddClick = {},
+            onSaveClick = {},
+            onRemoveClick = {},
         )
     }
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     fun AddAttendeeScreenWithCompose(
-        attendees: List<String>
+        attendees: List<String>,
+        onAddClick: (attendeeEmail: String) -> Unit,
+        onRemoveClick: (attendeeEmail: String) -> Unit,
+        onSaveClick: () -> Unit,
     ) {
 
         var email by rememberSaveable { mutableStateOf("") }
@@ -195,49 +187,65 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                GatheringEmailTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp),
-                    label = "add attendee email"
-                )
-                IconButtonAdd()
-            }
-
-            LazyColumn {
-                items(attendees) {
-                    AttendeeItem(attendeeEmail = email)
-                }
-            }
+            AttendeeInputSection(
+                email = email,
+                onAddClick = { attendeeEmail ->
+                    onAddClick(attendeeEmail)
+                    email = ""
+                },
+                onEmailChange = { email = it }
+            )
+            AttendeeList(attendees, onRemoveClick, email)
         }
-
-        ButtonSave()
+        ButtonSave(onSaveClick = { onSaveClick() })
     }
 
+
     @Composable
-    private fun ButtonSave() {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom
-        )
-        {
-            CustomActionButton(
-                isLoading = false,
-                text = "CLICK TO SAVE",
-                onClick = {}
+    fun AttendeeInputSection(
+        email: String,
+        onAddClick: (String) -> Unit,
+        onEmailChange: (String) -> Unit
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            GatheringEmailTextField(
+                value = email,
+                onValueChange = { onEmailChange(it) },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                label = "Add attendee email"
             )
+            IconButtonAdd { onAddClick(email) }
+        }
+    }
+
+
+    @Composable
+    private fun AttendeeList(
+        attendees: List<String>,
+        onRemoveClick: (attendeeEmail: String) -> Unit,
+        email: String
+    ) {
+        Box(modifier = Modifier.padding(bottom = 60.dp)) {
+            LazyColumn {
+                items(attendees) { attendeeEmail ->
+                    AttendeeItem(
+                        attendeeEmail = attendeeEmail,
+                        onRemoveClick = { onRemoveClick(email) }
+                    )
+                }
+            }
         }
     }
 
     @Composable
     fun AttendeeItem(
-        attendeeEmail: String
+        attendeeEmail: String,
+        onRemoveClick: () -> Unit
     ) {
         Card(
             modifier = Modifier.padding(7.dp),
@@ -254,18 +262,27 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start
                 )
-                IconButtonRemove()
+                IconButtonRemove(onRemoveClick = onRemoveClick)
             }
         }
     }
 
     @Composable
-    private fun IconButtonRemove() {
+    private fun ButtonSave(onSaveClick: () -> Unit) {
+        Column(
+            modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom
+        ) {
+            CustomActionButton(isLoading = false,
+                text = "CLICK TO SAVE",
+                onClick = { onSaveClick() })
+        }
+    }
+
+    @Composable
+    private fun IconButtonRemove(onRemoveClick: () -> Unit) {
         IconButton(
-            onClick = { },
-            modifier = Modifier
-        )
-        {
+            onClick = { onRemoveClick() }, modifier = Modifier
+        ) {
             Icon(
                 imageVector = Icons.Default.RemoveCircle,
                 contentDescription = "Remove",
@@ -275,9 +292,9 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
     }
 
     @Composable
-    private fun IconButtonAdd() {
+    private fun IconButtonAdd(onAddClick: () -> Unit) {
         IconButton(
-            onClick = { },
+            onClick = { onAddClick() },
             modifier = Modifier.then(Modifier.size(48.dp))
         ) {
             Icon(
