@@ -266,7 +266,6 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                 }
             }
             CustomActionButton(
-                modifier = Modifier.fillMaxWidth(),
                 isLoading = false,
                 text = "OK",
                 onClick = { onSaveClick() },

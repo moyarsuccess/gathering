@@ -1,10 +1,8 @@
-package com.gathering.android.event.putevent.invitation.viewModel
+package com.gathering.android.event.putevent.invitation
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.event.putevent.invitation.AddAttendeeNavigator
-import com.gathering.android.event.putevent.invitation.AddAttendeeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -72,7 +70,7 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
 
         viewModelState.update { currentState ->
             currentState.copy(
-                attendeesEmailList = emails,
+                attendeesEmailList = emails
             )
         }
     }
@@ -86,5 +84,3 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
         val addAttendeeButtonEnable: Boolean = false,
     )
 }
-
-

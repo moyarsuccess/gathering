@@ -181,7 +181,7 @@ fun AttendeeListButton(onClick: () -> Unit) {
             Text(
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                text = "Click to see attendee",
+                text = "Click to see list of attendees",
             )
         }
     )

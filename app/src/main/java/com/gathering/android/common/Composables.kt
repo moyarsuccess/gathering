@@ -132,7 +132,12 @@ fun GatheringPasswordTextField(
 @Composable
 @Preview
 fun CustomActionButtonPreview() {
-    CustomActionButton(text = "Button", onClick = {}, modifier = Modifier, isLoading = false)
+    CustomActionButton(
+        isLoading = false,
+        text = "Button",
+        onClick = {},
+        modifier = Modifier,
+    )
 }
 
 @Composable
