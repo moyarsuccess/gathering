@@ -199,11 +199,11 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
             )
             Spacer(modifier = Modifier.height(40.dp))
             CustomActionButton(
-                isLoading = true,
                 text = "Save Changes",
                 onClick = {
                     onSaveChangeButtonClicked(displayNameState, imageUri)
-                }
+                },
+                isLoading = false
             )
         }
     }
