@@ -173,19 +173,20 @@ fun EventList(
         }
     }
 }
+
 @Composable
 fun EventItem(
     showFavoriteIcon: Boolean,
-    event: Event,
+    event: Event?,
     onItemClick: (Event) -> Unit,
-    onEditClick: (Event) -> Unit,
-    onFavClick: (Event) -> Unit,
+    onEditClick: (Event?) -> Unit,
+    onFavClick: (Event?) -> Unit,
     showEditIcon: Boolean
 ) {
     Card(
         modifier = Modifier
             .clickable {
-                onItemClick(event)
+                event?.let { onItemClick(it) }
             },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
@@ -196,30 +197,34 @@ fun EventItem(
             Modifier
                 .background(Color.Transparent)
         ) {
-            EventImage(
-                event = event
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            event?.let { validEvent ->
+                EventImage(event = validEvent)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ShowText(
+                        text = validEvent.eventName,
+                        modifier = Modifier.padding(10.dp),
+                    )
+
+                    if (showEditIcon) {
+                        EditIcon(event = validEvent) {
+                            onEditClick(validEvent)
+                        }
+                    }
+                    if (showFavoriteIcon) {
+                        FavoriteIcon(event = validEvent) {
+                            onFavClick(validEvent)
+                        }
+                    }
+                }
                 ShowText(
-                    text = event.eventName,
+                    text = validEvent.eventHostEmail,
                     modifier = Modifier.padding(10.dp),
                 )
-
-                if (showEditIcon) {
-                    EditIcon(event = event, onEditClick)
-                }
-                if (showFavoriteIcon) {
-                    FavoriteIcon(event = event, onFavClick)
-                }
             }
-            ShowText(
-                text = event.eventHostEmail,
-                modifier = Modifier.padding(10.dp),
-            )
         }
     }
 }

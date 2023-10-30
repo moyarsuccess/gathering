@@ -175,9 +175,9 @@
     </dialog>
     <dialog
         android:id="@+id/favoriteEvent"
-        android:name="com.gathering.android.profile.favoriteEvent.FavoriteEvent"
+        android:name="com.gathering.android.profile.favoriteEvent.FavoriteEventScreen"
         android:label="FavoriteEvent"
-        tools:layout="@layout/bottom_sheet_favorite_event" />
+        tools:layout="@layout/screen_favorite_event" />
 
     <dialog
         android:id="@+id/newPasswordInputScreen"
@@ -199,4 +199,15 @@
         android:name="com.gathering.android.event.attendeeDetail.AttendeesDetailScreen"
         android:label="attendeesDetailScreen"
         tools:layout="@layout/screen_attendees_detail" />
+
+    <fragment
+        android:id="@+id/navigation_favoriteEvent"
+        android:name="com.gathering.android.profile.favoriteEvent.FavoriteEventScreen"
+        android:label="FavoriteEventScreen"
+        tools:layout="@layout/screen_favorite_event">
+        <action
+            android:id="@+id/action_navigation_favoriteEvent_to_EventDetailScreen"
+            app:destination="@id/EventDetailScreen" />
+
+    </fragment>
 </navigation>

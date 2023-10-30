@@ -77,7 +77,7 @@
     <string name="phone">Phone Number</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="save_changes">Save changes</string>
-    <string name="favorite_events">Favorite Events</string>
+    <string name="favorite_events">My Favorite Events</string>
     <string name="personal_data">Personal Data</string>
     <string name="favorite_event">Favorite Event</string>
     <string name="sign_out">Sign out</string>

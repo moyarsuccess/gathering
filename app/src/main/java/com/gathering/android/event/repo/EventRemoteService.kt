@@ -1,8 +1,13 @@
 package com.gathering.android.event.repo
 
+import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
+import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.EventModel
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PUT
@@ -32,4 +37,10 @@ interface EventRemoteService {
     fun deleteEvent(
         @Query("event_id") eventId: Long,
     ): Call<GeneralApiResponse>
+
+    @GET("my_event")
+    fun likedMyEvents(
+        @Query("page_size") pageSize: Int,
+        @Query("page_number") pageNumber: Int,
+    ): Call<List<EventModel>>
 }
