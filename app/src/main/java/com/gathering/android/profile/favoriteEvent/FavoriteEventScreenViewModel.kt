@@ -24,13 +24,16 @@ class FavoriteEventScreenViewModel @Inject constructor(
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.stateIn(
-        scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = UiState()
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = UiState()
     )
 
     data class UiState(
         val favoriteEvents: List<Event> = emptyList(),
         val showNoData: Boolean = false,
-        val errorMessage: String = ""
+        val errorMessage: String? = null,
+        val showProgress: Boolean = false,
     )
 
     fun onViewCreated(favoriteEventNavigator: FavoriteEventScreen) {
@@ -40,36 +43,55 @@ class FavoriteEventScreenViewModel @Inject constructor(
     }
 
     private fun loadFavoriteEvents(page: Int) {
-        eventRepository.likedMyEvents(page) { request ->
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(showProgress = true)
+        }
+        eventRepository.getMyLikedEvents(page) { request ->
             when (request) {
                 is ResponseState.Failure -> {
                     viewModelState.update { currentViewState ->
-                        currentViewState.copy(errorMessage = FAILED_TO_LOAD_FAVORITE_EVENTS)
+                        currentViewState.copy(
+                            errorMessage = FAILED_TO_LOAD_FAVORITE_EVENTS,
+                            showProgress = false,
+                            showNoData = true
+                        )
                     }
                 }
 
                 is ResponseState.Success<List<EventModel>> -> {
                     val currentPageEvents = request.data as? List<EventModel>
-                    if (currentPageEvents.isNullOrEmpty()) {
+                    val likedEvents = currentPageEvents?.filter { it.liked }
+                    if (likedEvents.isNullOrEmpty()) {
                         if (page == 1) {
                             viewModelState.update { currentViewState ->
-                                currentViewState.copy(showNoData = true)
+                                currentViewState.copy(
+                                    showNoData = true,
+                                    showProgress = false
+                                )
                             }
                         }
                     } else {
-                        val likedEvents = currentPageEvents.filter { it.liked }
                         viewModelState.update { currentViewState ->
-                            currentViewState.copy(favoriteEvents = currentViewState.favoriteEvents
-                                .plus(likedEvents.map { it.toEvent() }
-                                )
+                            currentViewState.copy(
+                                favoriteEvents = currentViewState.favoriteEvents
+                                    .plus(likedEvents.map { it.toEvent() }
+                                    ),
+                                showNoData = false,
+                                showProgress = false
                             )
                         }
-
                     }
                 }
             }
         }
     }
+
+    // TODO pagination will be handled in T#151
+    fun onNextPageRequested() {
+        page++
+        loadFavoriteEvents(page)
+    }
+
     fun onEventItemClicked(event: Event) {
         favoriteEventNavigator?.navigateToEventDetail(event)
     }

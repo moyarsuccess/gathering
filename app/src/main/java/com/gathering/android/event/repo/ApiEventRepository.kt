@@ -52,7 +52,7 @@ class ApiEventRepository @Inject constructor(
         })
     }
 
-    override fun likedMyEvents(
+    override fun getMyLikedEvents(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     ) {

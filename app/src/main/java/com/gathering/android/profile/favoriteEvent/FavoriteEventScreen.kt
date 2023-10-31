@@ -27,6 +27,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.ProgressBar
 import com.gathering.android.databinding.ScreenFavoriteEventBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.EventItem
@@ -58,6 +59,8 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
                         FavoriteEventScreenWithCompose(
                             likedEvents = state.value.favoriteEvents,
                             onItemClick = { viewModel.onEventItemClicked(it) },
+                            isLoading = state.value.showProgress,
+                            isNoData = state.value.showNoData
                         )
                     }
                 }
@@ -75,7 +78,10 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
     override fun navigateToEventDetail(event: Event) {
         val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
         findNavController().navigate(
-            R.id.action_navigation_favoriteEvent_to_EventDetailScreen, bundle
+            resId = R.id.action_navigation_favoriteEventScreen_to_EventDetailScreen,
+            args = bundle,
+            navOptions = null,
+            navigatorExtras = null
         )
     }
 
@@ -91,28 +97,25 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
                     "ida",
                     "party",
                     "", 0.0, 0.0
-                ), Event(
-                    1,
-                    "ida",
-                    "ida",
-                    "party",
-                    "", 0.0, 0.0
-                ), Event(
-                    1,
-                    "ida",
-                    "ida",
-                    "party",
-                    "", 0.0, 0.0
                 )
-            )
+            ),
+            isLoading = false,
+            isNoData = false
         )
     }
 
     @Composable
     fun FavoriteEventScreenWithCompose(
         likedEvents: List<Event>,
-        onItemClick: (Event) -> Unit
+        onItemClick: (Event) -> Unit,
+        isLoading: Boolean,
+        isNoData: Boolean
     ) {
+        ProgressBar(
+            text = "oops. no Favorite events yet!!",
+            isLoading = isLoading,
+            isNoData = isNoData
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
