@@ -2,6 +2,8 @@ package com.gathering.android.event.eventdetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,14 +12,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.gathering.android.R
 import com.gathering.android.common.NavigationBarPaddingSpacer
+import com.gathering.android.ui.theme.customBackgroundColor
 
 
 @Preview(showBackground = true)
@@ -65,9 +80,12 @@ fun EventDetail(
 ) {
     Column(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(5.dp)
             .fillMaxSize()
-    ) {
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.SpaceBetween
+    )
+    {
         EventImage(photoUrl)
         EventInfo(
             eventName = eventName,
@@ -89,7 +107,8 @@ fun EventDetail(
 
 @Composable
 fun EventImage(imageUrl: String) {
-    Card {
+    Card(Modifier.border(2.dp, Color.Gray, RoundedCornerShape(10.dp)))
+    {
         val painter = if (imageUrl.isEmpty()) {
             painterResource(id = R.drawable.ic_launcher_foreground)
         } else {
@@ -115,31 +134,58 @@ private fun EventInfo(
     date: String,
     time: String
 ) {
-    EventTitle(eventName)
-    TextInfo(eventHostEmail)
-    TextInfo(description)
-    TextInfo(address)
-    TextInfo(date)
-    TextInfo(time)
+    EventTitle(eventName, imageVector = Icons.Filled.Person)
+    TextInfo(eventHostEmail, imageVector = Icons.Filled.Email)
+    TextInfo(description, imageVector = Icons.Filled.Description)
+    TextInfo(address, imageVector = Icons.Filled.LocationOn)
+    TextInfo(date, imageVector = Icons.Filled.DateRange)
+    TextInfo(time, imageVector = Icons.Filled.AccessTime)
 }
 
 @Composable
-fun EventTitle(eventName: String) {
-    Text(
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        text = eventName,
-        modifier = Modifier.padding(start = 10.dp, 40.dp)
-    )
+fun EventTitle(eventName: String, imageVector: ImageVector) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        CustomIcon(imageVector)
+        Text(
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            text = eventName,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
 }
 
 @Composable
-fun TextInfo(text: String) {
-    Text(
-        fontSize = 16.sp,
-        text = text,
-        modifier = Modifier.padding(10.dp)
-    )
+fun TextInfo(text: String, imageVector: ImageVector) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        CustomIcon(imageVector)
+        Text(
+            fontSize = 16.sp,
+            text = text,
+            modifier = Modifier.padding(10.dp)
+        )
+    }
+}
+
+@Composable
+private fun CustomIcon(imageVector: ImageVector) {
+    Card(
+        modifier = Modifier.padding(10.dp),
+        colors = CardDefaults.cardColors(containerColor = customBackgroundColor)
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = "",
+        )
+    }
 }
 
 @Composable
@@ -153,9 +199,8 @@ fun AttendeeButton(
         shape = RoundedCornerShape(0.dp),
         onClick = { onClick() },
         modifier = Modifier
-            .height(60.dp)
+            .height(50.dp)
             .width(120.dp)
-            .padding(5.dp)
             .background(backgroundColor),
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
         contentPadding = PaddingValues(8.dp),
@@ -181,7 +226,7 @@ fun AttendeeListButton(onClick: () -> Unit) {
             Text(
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                text = "Click to see list of attendees",
+                text = "Click to see the list of attendees",
             )
         }
     )
@@ -194,7 +239,10 @@ private fun AcceptTypeAttendee(
     onNoButtonClick: () -> Unit,
     onMaybeButtonClick: () -> Unit
 ) {
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         AttendeeButton(
             text = "YES",
             onClick = {

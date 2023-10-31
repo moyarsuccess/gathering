@@ -1,5 +1,6 @@
 package com.gathering.android.event.eventdetail
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -92,60 +93,64 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
             viewModel.onViewCreated(event, this)
             return
         } else {
-            lifecycleScope.launch {
-                viewModel.uiState.collectLatest { state ->
-                    imageLoader.loadImage(state.imageUri, binding.imgEvent)
-                    binding.tvEventTitle.text = state.eventName
-                    binding.tvEventHost.text = state.hostEvent
-                    binding.tvEventDescription.text = state.eventDescription
-                    binding.tvEventDate.text = getString(
-                        R.string.event_detail_date_and_time,
-                        state.eventDate,
-                        state.eventTime,
-                    )
-                    binding.tvEventAddress.text = state.eventAddress
-                    if (!state.errorMessage.isNullOrEmpty()) {
-                        showErrorText(state.errorMessage)
-                    }
-                    if (state.acceptButtonBackColor == R.color.gray) {
-                        binding.btnYes.setBackgroundColor(android.graphics.Color.GRAY)
-                        binding.btnNo.setBackgroundResource(R.drawable.custom_button)
-                        binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
-                    }
+            setUpUi(event)
+        }
+    }
 
-                    if (state.declineButtonBackColor == R.color.gray) {
-                        binding.btnNo.setBackgroundColor(android.graphics.Color.GRAY)
-                        binding.btnYes.setBackgroundResource(R.drawable.custom_button)
-                        binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
-                    }
+    private fun setUpUi(event: Event?) {
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                imageLoader.loadImage(state.imageUri, binding.imgEvent)
+                binding.tvEventTitle.text = state.eventName
+                binding.tvEventHost.text = state.hostEvent
+                binding.tvEventDescription.text = state.eventDescription
+                binding.tvEventDate.text = getString(
+                    R.string.event_detail_date_and_time,
+                    state.eventDate,
+                    state.eventTime,
+                )
+                binding.tvEventAddress.text = state.eventAddress
+                if (!state.errorMessage.isNullOrEmpty()) {
+                    showErrorText(state.errorMessage)
+                }
+                if (state.acceptButtonBackColor == R.color.gray) {
+                    binding.btnYes.setBackgroundColor(Color.GRAY)
+                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                }
 
-                    if (state.maybeButtonBackColor == R.color.gray) {
-                        binding.btnMaybe.setBackgroundColor(android.graphics.Color.GRAY)
-                        binding.btnYes.setBackgroundResource(R.drawable.custom_button)
-                        binding.btnNo.setBackgroundResource(R.drawable.custom_button)
-                    }
+                if (state.declineButtonBackColor == R.color.gray) {
+                    binding.btnNo.setBackgroundColor(Color.GRAY)
+                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnMaybe.setBackgroundResource(R.drawable.custom_button)
+                }
+
+                if (state.maybeButtonBackColor == R.color.gray) {
+                    binding.btnMaybe.setBackgroundColor(Color.GRAY)
+                    binding.btnYes.setBackgroundResource(R.drawable.custom_button)
+                    binding.btnNo.setBackgroundResource(R.drawable.custom_button)
                 }
             }
+        }
 
-            binding.btnYes.setOnClickListener {
-                viewModel.onYesButtonClicked()
-            }
+        binding.btnYes.setOnClickListener {
+            viewModel.onYesButtonClicked()
+        }
 
-            binding.btnNo.setOnClickListener {
-                viewModel.onNoButtonClicked()
-            }
+        binding.btnNo.setOnClickListener {
+            viewModel.onNoButtonClicked()
+        }
 
-            binding.btnMaybe.setOnClickListener {
-                viewModel.onMaybeButtonClicked()
-            }
+        binding.btnMaybe.setOnClickListener {
+            viewModel.onMaybeButtonClicked()
+        }
 
-            binding.tvAttendeesCount.setOnClickListener {
-                viewModel.onTvAttendeesDetailsClicked()
-            }
+        binding.tvAttendeesCount.setOnClickListener {
+            viewModel.onTvAttendeesDetailsClicked()
+        }
 
-            event?.let {
-                viewModel.onViewCreated(it, this)
-            }
+        event?.let {
+            viewModel.onViewCreated(it, this)
         }
     }
 
