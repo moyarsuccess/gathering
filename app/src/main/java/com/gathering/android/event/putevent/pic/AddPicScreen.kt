@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -40,14 +41,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.common.CustomActionButton
 import com.gathering.android.common.ErrorText
-import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.ImageView
+import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenAddPicBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.ui.theme.GatheringTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -222,49 +224,13 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
         Column(
             modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box {
-                IconButton(
-                    onClick = {
-                        if (imageUri != null) {
-                            onRotateClick()
-                        }
-                    }, modifier = Modifier.size(80.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.RotateRight,
-                        contentDescription = null,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
-                ImageView(bmp = imageUri, size = 200.dp)
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(onClick = {
-                    if (cameraPermissionState.status.isGranted) {
-                        onCameraClick()
-                    } else {
-                        cameraPermissionState.launchPermissionRequest()
-                    }
-                }) {
-                    Text(text = "OPEN CAMERA")
-                }
-                Spacer(modifier = Modifier.padding(10.dp))
-
-                Button(onClick = {
-                    if (galleryPermissionState.status.isGranted) {
-                        onGalleryClick()
-                    } else {
-                        galleryPermissionState.launchPermissionRequest()
-                    }
-                }) {
-                    Text(text = "OPEN GALLERY")
-                }
-            }
+            RotatableImageView(imageUri, onRotateClick)
+            ImagePickerButtons(
+                cameraPermissionState,
+                onCameraClick,
+                onGalleryClick,
+                galleryPermissionState
+            )
             CustomActionButton(
                 isLoading = false,
                 text = "OK",
@@ -272,6 +238,63 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                 colors = ButtonDefaults.buttonColors()
             )
             ErrorText(error = errorMessage)
+        }
+    }
+
+    @Composable
+    @OptIn(ExperimentalPermissionsApi::class)
+    private fun ImagePickerButtons(
+        cameraPermissionState: PermissionState,
+        onCameraClick: () -> Unit,
+        onGalleryClick: () -> Unit,
+        galleryPermissionState: PermissionState
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(onClick = {
+                if (cameraPermissionState.status.isGranted) {
+                    onCameraClick()
+                } else {
+                    cameraPermissionState.launchPermissionRequest()
+                }
+            }) {
+                Text(text = "OPEN CAMERA")
+            }
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            Button(onClick = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    onGalleryClick()
+                } else {
+                    galleryPermissionState.launchPermissionRequest()
+                }
+            }) {
+                Text(text = "OPEN GALLERY")
+            }
+        }
+    }
+
+    @Composable
+    private fun RotatableImageView(imageUri: Bitmap?, onRotateClick: () -> Unit) {
+        Box {
+            IconButton(
+                onClick = {
+                    if (imageUri != null) {
+                        onRotateClick()
+                    }
+                }, modifier = Modifier.size(80.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.RotateRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+            ImageView(bmp = imageUri, size = 200.dp)
         }
     }
 }
