@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.verification.repo.VerificationRepository
 import com.gathering.android.common.ResponseState
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventRepository
@@ -11,6 +12,7 @@ import com.gathering.android.event.toEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -24,7 +26,13 @@ class HomeViewModel @Inject constructor(
     private var page = 1
 
     private val viewModelState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState> = viewModelState.stateIn(
+    val uiState: StateFlow<UiState> = viewModelState.map {
+        it.copy(
+            events = it.events.map { event ->
+                event.copy(photoUrl = event.photoUrl.toImageUrl())
+            }
+        )
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = UiState()

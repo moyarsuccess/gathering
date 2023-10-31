@@ -45,7 +45,6 @@ class EventDetailViewModel @Inject constructor(
         val acceptButtonBackColor = viewModelState.getYesBackColor()
         val declineButtonBackColor = viewModelState.getNoBackColor()
         val maybeButtonBackColor = viewModelState.getMaybeBackColor()
-
         EventDetailUiState(
             eventId = viewModelState.eventId,
             imageUri = viewModelState.imageUri,
@@ -75,7 +74,7 @@ class EventDetailViewModel @Inject constructor(
             val acceptType = userRepo.getUser().obtainAttendeeAcceptType(event)
             currentState.copy(
                 eventId = event?.eventId,
-                imageUri = event?.photoUrl?.toImageUrl(),
+                imageUri = event?.photoUrl,
                 eventName = event?.eventName,
                 eventHostEmail = event?.eventHostEmail,
                 eventDescription = event?.description,
