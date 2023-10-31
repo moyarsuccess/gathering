@@ -57,12 +57,12 @@ class FavoriteEventScreenViewModel @Inject constructor(
                             }
                         }
                     } else {
-                        val likedEvents = currentPageEvents.filter { event ->
-                            event.liked
-                        }
+                        val likedEvents = currentPageEvents.filter { it.liked }
                         viewModelState.update { currentViewState ->
-                            currentViewState.copy(favoriteEvents = currentViewState.favoriteEvents.plus(
-                                likedEvents.map { it.toEvent() }))
+                            currentViewState.copy(favoriteEvents = currentViewState.favoriteEvents
+                                .plus(likedEvents.map { it.toEvent() }
+                                )
+                            )
                         }
 
                     }
@@ -70,7 +70,6 @@ class FavoriteEventScreenViewModel @Inject constructor(
             }
         }
     }
-
     fun onEventItemClicked(event: Event) {
         favoriteEventNavigator?.navigateToEventDetail(event)
     }

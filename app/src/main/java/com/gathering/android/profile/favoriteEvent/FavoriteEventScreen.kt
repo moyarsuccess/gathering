@@ -63,7 +63,6 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
                 }
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -159,7 +158,7 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
         event: Event
     ) {
         EventItem(
-            showFavoriteIcon = true,
+            showFavoriteIcon = false,
             onItemClick = onItemClick,
             onEditClick = {},
             onFavClick = {},

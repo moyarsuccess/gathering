@@ -201,7 +201,7 @@
         tools:layout="@layout/screen_attendees_detail" />
 
     <fragment
-        android:id="@+id/navigation_favoriteEvent"
+        android:id="@+id/navigation_favoriteEventScreen"
         android:name="com.gathering.android.profile.favoriteEvent.FavoriteEventScreen"
         android:label="FavoriteEventScreen"
         tools:layout="@layout/screen_favorite_event">

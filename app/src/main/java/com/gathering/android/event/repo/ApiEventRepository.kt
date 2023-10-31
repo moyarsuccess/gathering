@@ -51,6 +51,15 @@ class ApiEventRepository @Inject constructor(
             }
         })
     }
+
+    override fun likedMyEvents(
+        page: Int,
+        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
+    ) {
+        eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
+            .enqueue(handleGetEventResponse(onResponseReady))
+    }
+
     private fun handleGetEventResponse(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) =
         object : Callback<List<EventModel>> {
             override fun onResponse(
@@ -77,37 +86,6 @@ class ApiEventRepository @Inject constructor(
                 onResponseReady(ResponseState.Failure(t))
             }
         }
-
-    override fun likedMyEvents(
-        page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    ) {
-        eventRemoteService.likedMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
-            .enqueue(object : Callback<List<EventModel>> {
-                override fun onResponse(
-                    call: Call<List<EventModel>>,
-                    response: Response<List<EventModel>>
-                ) {
-                    if (response.isSuccessful) {
-                        val allEvents = response.body()
-                        if (allEvents != null) {
-                            val likedEvents = allEvents.filter { it.liked }
-                            onResponseReady(ResponseState.Success(likedEvents))
-                        } else {
-                            onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
-                        }
-                    } else {
-                        onResponseReady(ResponseState.Failure(Exception("Failed to fetch liked events")))
-                    }
-                }
-
-                override fun onFailure(call: Call<List<EventModel>>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-
-
-            })
-    }
 
     override fun deleteEvent(
         eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
