@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.DialogFragment
 import com.gathering.android.R
-import com.gathering.android.common.CustomTextView
+import com.gathering.android.auth.CustomTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.BottomSheetForgetPassInfoBinding
 import com.gathering.android.ui.theme.GatheringTheme
@@ -79,46 +78,28 @@ class ResetPasswordInfo : BottomSheetDialogFragment() {
                 .wrapContentSize()
                 .padding(25.dp)
         ) {
-            CustomTitleText(textResId = R.string.forgot_password)
+            CustomTextView(
+                textResId = R.string.forgot_password,
+                textStyle = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = Color.Black
+                )
+            )
             CustomTextView(textResId = R.string.reset_pass_info1)
-            CustomTitleText(textResId = R.string.reset_pass_info2)
+            CustomTextView(
+                textResId = R.string.reset_pass_info2,
+                textStyle = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = Color.Black
+                )
+            )
             CustomTextView(textResId = R.string.reset_pass_info3)
-            CustomItalicTextView(textResId = R.string.reset_pass_info4)
+            CustomTextView(
+                textResId = R.string.reset_pass_info4,
+                textStyle = TextStyle(fontStyle = FontStyle.Italic)
+            )
         }
-    }
-
-    @Composable
-    fun CustomTitleText(@StringRes textResId: Int) {
-        CustomTextView(
-            textResId = textResId,
-            textStyle = TextStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = 17.sp,
-                color = Color.Black
-            )
-        )
-    }
-
-    @Composable
-    fun CustomTextView(@StringRes textResId: Int) {
-        CustomTextView(
-            textResId = textResId,
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-        )
-    }
-
-    @Composable
-    fun CustomItalicTextView(@StringRes textResId: Int) {
-        CustomTextView(
-            textResId = textResId,
-            textStyle = TextStyle(
-                fontStyle = FontStyle.Italic,
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-        )
     }
 }

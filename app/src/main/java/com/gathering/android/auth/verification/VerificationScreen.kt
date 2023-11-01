@@ -33,8 +33,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.auth.CustomTextView
 import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.CustomTextView
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.isComposeEnabled
