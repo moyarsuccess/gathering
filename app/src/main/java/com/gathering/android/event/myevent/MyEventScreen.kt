@@ -76,7 +76,7 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                                 isNoData = state.value.showNoData,
                                 onFabClick = viewModel::onFabButtonClicked,
                                 onDeleteClick = { viewModel.onSwipedToDelete(it) },
-                                onUndoDeleteEvent = {viewModel.onUndoDeleteEvent(it)},
+                                onUndoDeleteEvent = { viewModel.onUndoDeleteEvent(it) },
                                 swipeEnabled = true
                             )
                         }
@@ -88,6 +88,13 @@ class MyEventScreen : Fragment(), MyEventNavigator {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(
+            viewLifecycleOwner
+        ) {
+            viewModel.onEventAdded()
+        }
+
         if (isComposeEnabled) {
             viewModel.onViewCreated(this)
             return
@@ -153,11 +160,6 @@ class MyEventScreen : Fragment(), MyEventNavigator {
             viewModel.onEditEventClicked(event)
         }
 
-        getNavigationResultLiveData<Boolean>(KEY_ARGUMENT_UPDATE_MY_EVENT_LIST)?.observe(
-            viewLifecycleOwner
-        ) {
-            viewModel.onEventAdded()
-        }
         viewModel.onViewCreated(this)
     }
 

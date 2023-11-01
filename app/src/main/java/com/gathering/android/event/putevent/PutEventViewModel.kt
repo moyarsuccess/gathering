@@ -2,6 +2,8 @@ package com.gathering.android.event.putevent
 
 import android.icu.text.SimpleDateFormat
 import android.location.Geocoder
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
@@ -11,6 +13,7 @@ import com.gathering.android.common.getHour
 import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.Attendee
 import com.gathering.android.event.model.EventLocation
@@ -89,7 +92,7 @@ class PutEventViewModel @Inject constructor(
     }
 
     private val viewModelState = MutableStateFlow(EventViewModelState())
-    val uiState: Flow<PutEventUiState> = viewModelState.map { viewModelState ->
+    val uiState: StateFlow<PutEventUiState> = viewModelState.map { viewModelState ->
         PutEventUiState(
             imageUri = viewModelState.imageUri,
             eventName = viewModelState.eventName,

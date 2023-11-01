@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -126,8 +127,7 @@ fun EventList(
                 .padding(7.dp)
                 .weight(1f)
         ) {
-            items(events.distinctBy { it.eventId })
-            { event ->
+            items(events.distinctBy { it.eventId }) { event ->
                 val state = rememberDismissState(confirmStateChange = {
                     if (it == DismissValue.DismissedToStart) {
                         deletedEvent = event
@@ -173,6 +173,7 @@ fun EventList(
         }
     }
 }
+
 @Composable
 fun EventItem(
     showFavoriteIcon: Boolean,
@@ -197,7 +198,8 @@ fun EventItem(
                 .background(Color.Transparent)
         ) {
             EventImage(
-                event = event
+                photoUrl = event.photoUrl,
+                size = 170.dp, modifier = Modifier
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -262,15 +264,16 @@ private fun SwipeableEventItem(
 
 @Composable
 fun EventImage(
-    event: Event
+    photoUrl: String,
+    size: Dp,
+    modifier: Modifier
 ) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
-            .data(data = "https://moyar.dev:8080/photo/${event.photoUrl}")
+            .data(data = photoUrl)
             .apply(block = fun ImageRequest.Builder.() {
-                crossfade(true)
-                placeholder(R.drawable.ic_launcher_foreground)
-                error(com.google.android.material.R.drawable.mtrl_ic_error)
+                placeholder(R.drawable.img_event)
+                error(R.drawable.img_event)
             }).build()
     )
     Card(colors = CardDefaults.cardColors(customBackgroundColor)) {
@@ -278,9 +281,9 @@ fun EventImage(
             painter = painter,
             contentScale = ContentScale.Crop,
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .size(170.dp)
+            modifier = modifier
+                .fillMaxWidth()
+                .size(size)
         )
     }
 }
