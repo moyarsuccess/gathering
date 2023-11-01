@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,20 +17,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
@@ -43,6 +33,7 @@ import com.gathering.android.R
 import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.CustomActionButton
+import com.gathering.android.common.CustomTextField
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.getNavigationResultLiveData
@@ -276,6 +267,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(10.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             EventImage(photoUrl ?: "", 200.dp, Modifier.clickable {
@@ -354,44 +346,6 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             onEventLocationClicked = {},
             onEventAttendeeClicked = {},
             onEventActionButtonClicked = {},
-        )
-    }
-
-    @Composable
-    fun CustomTextField(
-        value: String,
-        onValueChange: (String) -> Unit = {},
-        onClicked: () -> Unit = {},
-        maxLine: Int = 1,
-        label: String,
-    ) {
-        val textFieldValueFun = { textValue: TextFieldValue ->
-            onValueChange(textValue.text)
-        }
-        OutlinedTextField(
-            value = TextFieldValue(
-                value,
-                selection = TextRange(value.length),
-            ),
-            onValueChange = textFieldValueFun,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            maxLines = maxLine,
-            label = { Text(label) },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.DarkGray,
-                unfocusedBorderColor = Color.Gray
-            ),
-            interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
-                LaunchedEffect(interactionSource) {
-                    interactionSource.interactions.collect {
-                        if (it is PressInteraction.Release) {
-                            onClicked()
-                        }
-                    }
-                }
-            }
         )
     }
 }

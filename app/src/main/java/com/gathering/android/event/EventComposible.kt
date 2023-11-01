@@ -35,6 +35,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +55,6 @@ import coil.request.ImageRequest
 import com.gathering.android.R
 import com.gathering.android.common.NavigationBarPaddingSpacer
 import com.gathering.android.common.ProgressBar
-import com.gathering.android.common.ShowText
 import com.gathering.android.ui.theme.customBackgroundColor
 
 @Preview(showBackground = true, device = "id:pixel_2")
@@ -206,7 +206,7 @@ fun EventItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ShowText(
+                Text(
                     text = event.eventName,
                     modifier = Modifier.padding(10.dp),
                 )
@@ -218,7 +218,7 @@ fun EventItem(
                     FavoriteIcon(event = event, onFavClick)
                 }
             }
-            ShowText(
+            Text(
                 text = event.eventHostEmail,
                 modifier = Modifier.padding(10.dp),
             )
@@ -361,14 +361,14 @@ private fun CustomSnackbar(
                         onUndoDeleteEvent(event)
                     }
                 ) {
-                    ShowText(
+                    Text(
                         "Undo",
                         modifier = Modifier,
                     )
                 }
             }
         ) {
-            ShowText(
+            Text(
                 "${event.eventName} deleted",
                 modifier = Modifier,
             )

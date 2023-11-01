@@ -27,10 +27,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.AuthButton
+import com.gathering.android.auth.GatheringEmailTextField
+import com.gathering.android.auth.GatheringPasswordTextField
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
-import com.gathering.android.common.GatheringEmailTextField
-import com.gathering.android.common.GatheringPasswordTextField
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenSignUpBinding
