@@ -22,4 +22,8 @@ interface EventRepository {
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     )
+    fun getMyLikedEvents(
+        page: Int,
+        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
+    )
 }
