@@ -142,7 +142,7 @@ fun CustomActionButtonPreview() {
 
 @Composable
 fun CustomActionButton(
-    isLoading: Boolean,
+    isLoading: Boolean?,
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -165,10 +165,14 @@ fun CustomActionButton(
             colors = colors,
             contentPadding = PaddingValues(8.dp),
             content = {
-                Text(
-                    text = text,
-                    modifier = Modifier.padding(4.dp),
-                )
+                if (isLoading == true) {
+                    CircularProgressIndicator(color = Color.White)
+                } else {
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(4.dp),
+                    )
+                }
             }
         )
     }

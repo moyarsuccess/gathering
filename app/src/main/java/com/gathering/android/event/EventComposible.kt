@@ -126,8 +126,7 @@ fun EventList(
                 .padding(7.dp)
                 .weight(1f)
         ) {
-            items(events.distinctBy { it.eventId })
-            { event ->
+            items(events.distinctBy { it.eventId }) { event ->
                 val state = rememberDismissState(confirmStateChange = {
                     if (it == DismissValue.DismissedToStart) {
                         deletedEvent = event

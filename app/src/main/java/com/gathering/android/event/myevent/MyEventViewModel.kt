@@ -3,6 +3,7 @@ package com.gathering.android.event.myevent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventRepository
@@ -10,6 +11,7 @@ import com.gathering.android.event.toEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -23,7 +25,13 @@ class MyEventViewModel @Inject constructor(
     private var myEventNavigator: MyEventNavigator? = null
 
     private val viewModelState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState> = viewModelState.stateIn(
+    val uiState: StateFlow<UiState> = viewModelState.map {
+        it.copy(
+            myEvents = it.myEvents.map { event ->
+                event.copy(photoUrl = event.photoUrl.toImageUrl())
+            }
+        )
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = UiState()
@@ -41,6 +49,7 @@ class MyEventViewModel @Inject constructor(
         page = 1
         getMyEvents(page)
     }
+
     fun onEventAdded() {
         viewModelState.update { currentViewState ->
             currentViewState.copy(myEvents = emptyList())
@@ -105,6 +114,7 @@ class MyEventViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is ResponseState.Success -> {
                     deletedEvent = event
                     deletedEventIndex =
@@ -118,6 +128,7 @@ class MyEventViewModel @Inject constructor(
             }
         }
     }
+
     fun onUndoDeleteEvent(event: Event) {
         val deletedEventIndex = viewModelState.value.myEvents.indexOf(event)
         if (deletedEventIndex != -1) {
@@ -149,6 +160,7 @@ class MyEventViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is ResponseState.Success -> {
                     viewModelState.update { currentViewState ->
                         currentViewState.copy(
