@@ -32,4 +32,10 @@ interface EventRemoteService {
     fun deleteEvent(
         @Query("event_id") eventId: Long,
     ): Call<GeneralApiResponse>
+
+    @GET("my_event")
+    fun getMyLikedEvents(
+        @Query("page_size") pageSize: Int,
+        @Query("page_number") pageNumber: Int,
+    ): Call<List<EventModel>>
 }

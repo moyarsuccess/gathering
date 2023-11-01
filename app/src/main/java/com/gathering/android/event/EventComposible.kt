@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -177,16 +176,16 @@ fun EventList(
 @Composable
 fun EventItem(
     showFavoriteIcon: Boolean,
-    event: Event,
+    event: Event?,
     onItemClick: (Event) -> Unit,
-    onEditClick: (Event) -> Unit,
-    onFavClick: (Event) -> Unit,
+    onEditClick: (Event?) -> Unit,
+    onFavClick: (Event?) -> Unit,
     showEditIcon: Boolean
 ) {
     Card(
         modifier = Modifier
             .clickable {
-                onItemClick(event)
+                event?.let { onItemClick(it) }
             },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
@@ -197,31 +196,30 @@ fun EventItem(
             Modifier
                 .background(Color.Transparent)
         ) {
-            EventImage(
-                photoUrl = event.photoUrl,
-                size = 170.dp, modifier = Modifier
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            event?.let { validEvent ->
+                EventImage(event = validEvent)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = validEvent.eventName,
+                        modifier = Modifier.padding(10.dp),
+                    )
+
+                    if (showEditIcon) {
+                        EditIcon(event = validEvent) { onEditClick(validEvent) }
+                    }
+                    if (showFavoriteIcon) {
+                        FavoriteIcon(event = validEvent) { onFavClick(validEvent) }
+                    }
+                }
                 Text(
-                    text = event.eventName,
+                    text = validEvent.eventHostEmail,
                     modifier = Modifier.padding(10.dp),
                 )
-
-                if (showEditIcon) {
-                    EditIcon(event = event, onEditClick)
-                }
-                if (showFavoriteIcon) {
-                    FavoriteIcon(event = event, onFavClick)
-                }
             }
-            Text(
-                text = event.eventHostEmail,
-                modifier = Modifier.padding(10.dp),
-            )
         }
     }
 }
@@ -264,16 +262,15 @@ private fun SwipeableEventItem(
 
 @Composable
 fun EventImage(
-    photoUrl: String,
-    size: Dp,
-    modifier: Modifier
+    event: Event
 ) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
-            .data(data = photoUrl)
+            .data(data = "https://moyar.dev:8080/photo/${event.photoUrl}")
             .apply(block = fun ImageRequest.Builder.() {
-                placeholder(R.drawable.img_event)
-                error(R.drawable.img_event)
+                crossfade(true)
+                placeholder(R.drawable.ic_launcher_foreground)
+                error(com.google.android.material.R.drawable.mtrl_ic_error)
             }).build()
     )
     Card(colors = CardDefaults.cardColors(customBackgroundColor)) {
@@ -281,9 +278,9 @@ fun EventImage(
             painter = painter,
             contentScale = ContentScale.Crop,
             contentDescription = null,
-            modifier = modifier
-                .fillMaxWidth()
-                .size(size)
+            modifier = Modifier
+                .fillMaxSize()
+                .size(170.dp)
         )
     }
 }

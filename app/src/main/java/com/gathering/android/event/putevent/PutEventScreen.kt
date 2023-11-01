@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,21 +15,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.gathering.android.R
 import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.ATTENDEE_LIST
@@ -42,13 +51,13 @@ import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenPutEventBinding
 import com.gathering.android.event.Event
-import com.gathering.android.event.EventImage
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.ui.theme.GatheringTheme
+import com.gathering.android.ui.theme.customBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -347,5 +356,31 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             onEventAttendeeClicked = {},
             onEventActionButtonClicked = {},
         )
+    }
+
+    @Composable
+    fun EventImage(
+        photoUrl: String,
+        size: Dp,
+        modifier: Modifier
+    ) {
+        val painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current)
+                .data(data = photoUrl)
+                .apply(block = fun ImageRequest.Builder.() {
+                    placeholder(R.drawable.img_event)
+                    error(R.drawable.img_event)
+                }).build()
+        )
+        Card(colors = CardDefaults.cardColors(customBackgroundColor)) {
+            Image(
+                painter = painter,
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .size(size)
+            )
+        }
     }
 }

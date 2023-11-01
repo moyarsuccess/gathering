@@ -88,46 +88,50 @@ class HomeScreen : Fragment(), HomeNavigator {
             viewModel.onViewCreated(this)
             return
         } else {
-            val linearLayoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            binding.rvEvent.layoutManager = linearLayoutManager
-            binding.rvEvent.adapter = adapter
-
-            binding.rvEvent.addOnScrollListener(EndlessScrollListener {
-                viewModel.onNextPageRequested()
-            })
-
-            lifecycleScope.launch {
-                viewModel.uiState.collectLatest { state ->
-                    binding.prg.isVisible = state.showProgress
-
-                    state.errorMessage?.let {
-                        showErrorText(it)
-                    }
-                    binding.tvNoData.isVisible = state.showNoData
-                    adapter.updateEvents(state.events)
-                }
-            }
-            adapter.setOnEventClickListener {
-                viewModel.onEventItemClicked(it)
-            }
-
-            adapter.setOnFavoriteImageClick { event ->
-                viewModel.onEventLikeClicked(event)
-            }
-
-            binding.sortButton.setOnClickListener {
-                val dialog = SortDialogFragment(viewModel)
-                dialog.show(parentFragmentManager, TAG)
-            }
-
-            binding.filterButton.setOnClickListener {
-                val dialog = FilterDialogFragment(viewModel)
-                dialog.show(parentFragmentManager, TAG)
-            }
-
-            viewModel.onViewCreated(this)
+            setRecyclerViewAndInteractions()
         }
+    }
+
+    private fun setRecyclerViewAndInteractions() {
+        val linearLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvEvent.layoutManager = linearLayoutManager
+        binding.rvEvent.adapter = adapter
+
+        binding.rvEvent.addOnScrollListener(EndlessScrollListener {
+            viewModel.onNextPageRequested()
+        })
+
+        lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                binding.prg.isVisible = state.showProgress
+
+                state.errorMessage?.let {
+                    showErrorText(it)
+                }
+                binding.tvNoData.isVisible = state.showNoData
+                adapter.updateEvents(state.events)
+            }
+        }
+        adapter.setOnEventClickListener {
+            viewModel.onEventItemClicked(it)
+        }
+
+        adapter.setOnFavoriteImageClick { event ->
+            viewModel.onEventLikeClicked(event)
+        }
+
+        binding.sortButton.setOnClickListener {
+            val dialog = SortDialogFragment(viewModel)
+            dialog.show(parentFragmentManager, TAG)
+        }
+
+        binding.filterButton.setOnClickListener {
+            val dialog = FilterDialogFragment(viewModel)
+            dialog.show(parentFragmentManager, TAG)
+        }
+
+        viewModel.onViewCreated(this)
     }
 
     override fun navigateToEventDetail(event: Event) {
