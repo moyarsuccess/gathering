@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,6 +28,7 @@ import com.gathering.android.R
 import com.gathering.android.auth.AuthButton
 import com.gathering.android.auth.GatheringEmailTextField
 import com.gathering.android.auth.GatheringPasswordTextField
+import com.gathering.android.auth.LogoImage
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.isComposeEnabled
@@ -142,26 +142,27 @@ class SignUpScreen : FullScreenBottomSheet(), SignUpNavigator {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(10.dp),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            LogoImage()
 
             GatheringEmailTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = "email"
+                label = "Email"
             )
 
             GatheringPasswordTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = "password"
+                label = "Password"
             )
 
             GatheringPasswordTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = "confirm Password"
+                label = "Confirm Password"
             )
 
             AuthButton(

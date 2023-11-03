@@ -32,6 +32,7 @@ import com.gathering.android.auth.AuthButton
 import com.gathering.android.auth.CustomUnderlinedButton
 import com.gathering.android.auth.GatheringEmailTextField
 import com.gathering.android.auth.GatheringPasswordTextField
+import com.gathering.android.auth.LogoImage
 import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.isComposeEnabled
@@ -162,9 +163,11 @@ class SignInScreen : FullScreenBottomSheet(), SignInNavigator {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(10.dp),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            LogoImage()
+
             GatheringEmailTextField(
                 value = email,
                 onValueChange = { email = it },
