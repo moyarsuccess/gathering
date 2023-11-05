@@ -42,10 +42,10 @@ import coil.request.ImageRequest
 import com.gathering.android.R
 import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.composables.CustomActionButton
-import com.gathering.android.common.composables.CustomTextField
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.CustomTextField
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
@@ -289,17 +289,20 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                     onEventNameChanged(it)
                 },
                 label = "Event Name",
+                modifier = Modifier.fillMaxWidth(),
             )
             CustomTextField(
                 value = eventDate ?: "",
                 onClicked = { onEventDateClicked() },
-                label = "Event Date"
+                label = "Event Date",
+                modifier = Modifier.fillMaxWidth(),
             )
 
             CustomTextField(
                 value = eventTime ?: "",
                 onClicked = { onEventTimeClicked() },
-                label = "Event Time"
+                label = "Event Time",
+                modifier = Modifier.fillMaxWidth(),
             )
 
             CustomTextField(
@@ -307,14 +310,16 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                 onClicked = {
                     onEventLocationClicked(eventAddress ?: "")
                 },
-                label = "Event Address"
+                label = "Event Address",
+                modifier = Modifier.fillMaxWidth(),
             )
 
             CustomTextField(
                 value = eventAttendee ?: "",
                 onValueChange = {},
                 onClicked = { onEventAttendeeClicked() },
-                label = "Event Attendee"
+                label = "Event Attendee",
+                modifier = Modifier.fillMaxWidth(),
             )
 
             CustomTextField(
@@ -323,7 +328,8 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                     onDescriptionChanged(it)
                 },
                 maxLine = 2,
-                label = "Event Detail"
+                label = "Event Detail",
+                modifier = Modifier.fillMaxWidth(),
             )
 
             CustomActionButton(

@@ -22,7 +22,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.gathering.android.R
 
 @Composable
-fun ImageView(bmp: Bitmap?, size: Dp) {
+fun CircularImageView(bmp: Bitmap?, size: Dp) {
     Card(
         modifier = Modifier
             .padding(25.dp)
@@ -49,7 +49,7 @@ fun ImageView(bmp: Bitmap?, size: Dp) {
 }
 
 @Composable
-fun ImageView(imageUri: String?, size: Dp, onClick: () -> Unit) {
+fun CircularImageView(imageUri: String?, size: Dp, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(25.dp)

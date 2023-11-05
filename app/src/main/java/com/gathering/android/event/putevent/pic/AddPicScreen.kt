@@ -43,7 +43,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.ErrorTextView
-import com.gathering.android.common.composables.ImageView
+import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
@@ -299,7 +299,7 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                     modifier = Modifier.size(36.dp)
                 )
             }
-            ImageView(bmp = imageUri, size = 200.dp)
+            CircularImageView(bmp = imageUri, size = 200.dp)
         }
     }
 }

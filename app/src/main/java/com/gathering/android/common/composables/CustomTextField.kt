@@ -2,7 +2,6 @@ package com.gathering.android.common.composables
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
@@ -23,6 +22,7 @@ fun CustomTextField(
     onClicked: () -> Unit = {},
     maxLine: Int = 1,
     label: String,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
     val textFieldValueFun = { textValue: TextFieldValue ->
@@ -34,9 +34,7 @@ fun CustomTextField(
             selection = TextRange(value.length),
         ),
         onValueChange = textFieldValueFun,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
+        modifier = modifier.padding(10.dp),
         maxLines = maxLine,
         label = { Text(label) },
         colors = TextFieldDefaults.outlinedTextFieldColors(

@@ -15,16 +15,33 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.CustomTextField
+import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenAddLocationBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.model.EventLocation
+import com.gathering.android.ui.theme.GatheringTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -35,12 +52,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class AddLocationScreen : FullScreenBottomSheet(), OnMapReadyCallback, AddLocationNavigator {
@@ -62,40 +82,64 @@ class AddLocationScreen : FullScreenBottomSheet(), OnMapReadyCallback, AddLocati
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = ScreenAddLocationBinding.inflate(LayoutInflater.from(requireContext()))
+        return if (!isComposeEnabled) {
+            binding = ScreenAddLocationBinding.inflate(LayoutInflater.from(requireContext()))
 
-        val fm = childFragmentManager
-        var mapFragment = fm.findFragmentByTag("mapFragment") as? SupportMapFragment
-        if (mapFragment == null) {
-            mapFragment = SupportMapFragment()
-            val ft = fm.beginTransaction()
-            ft.add(com.gathering.android.R.id.mapFragmentContainer, mapFragment, "mapFragment")
-            ft.commit()
-            fm.executePendingTransactions()
-        }
-        mapFragment.getMapAsync(this)
-
-        if (savedInstanceState != null) {
-            lastKnownLocation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                savedInstanceState.getParcelable(KEY_LOCATION, Location::class.java)
-            } else {
-                savedInstanceState.getParcelable(KEY_LOCATION)
+            val fm = childFragmentManager
+            var mapFragment = fm.findFragmentByTag("mapFragment") as? SupportMapFragment
+            if (mapFragment == null) {
+                mapFragment = SupportMapFragment()
+                val ft = fm.beginTransaction()
+                ft.add(com.gathering.android.R.id.mapFragmentContainer, mapFragment, "mapFragment")
+                ft.commit()
+                fm.executePendingTransactions()
             }
-            cameraPosition = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                savedInstanceState.getParcelable(KEY_CAMERA_POSITION, CameraPosition::class.java)
-            } else {
-                savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
+            mapFragment.getMapAsync(this)
+
+            if (savedInstanceState != null) {
+                lastKnownLocation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    savedInstanceState.getParcelable(KEY_LOCATION, Location::class.java)
+                } else {
+                    savedInstanceState.getParcelable(KEY_LOCATION)
+                }
+                cameraPosition = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    savedInstanceState.getParcelable(
+                        KEY_CAMERA_POSITION,
+                        CameraPosition::class.java
+                    )
+                } else {
+                    savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
+                }
+            }
+
+            fusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(requireActivity())
+
+            return binding.root
+        } else {
+            ComposeView(requireContext()).apply {
+                setContent {
+                    GatheringTheme {
+                        Surface(
+                            modifier = Modifier.wrapContentSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            val state = viewModel.uiState.collectAsState()
+                            AddLocation(
+                                address = state.value.selectedAddress ?: "",
+                                onValueChange = viewModel::onAddressChanged
+                            )
+                        }
+                    }
+                }
             }
         }
 
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (isComposeEnabled) return
 
         binding.etAddress.initAutoSuggestion()
 
@@ -219,6 +263,57 @@ class AddLocationScreen : FullScreenBottomSheet(), OnMapReadyCallback, AddLocati
     override fun navigateToAddEvent(address: String) {
         setNavigationResult(KEY_ARGUMENT_SELECTED_ADDRESS, address)
         findNavController().popBackStack()
+    }
+
+    @Composable
+    fun AddLocation(
+        address: String,
+        onValueChange: (String) -> Unit,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row {
+                Box(
+                    modifier = Modifier.weight(7f),
+                ) {
+                    CustomTextField(
+                        value = address,
+                        onValueChange = onValueChange,
+                        label = "address",
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(3f)
+                        .align(CenterVertically)
+                ) {
+                    CustomActionButton(
+                        isLoading = false,
+                        text = "OK",
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            GMap()
+        }
+    }
+
+    @Composable
+    fun GMap() {
+        val singapore = LatLng(1.35, 103.87)
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        }
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState
+        ) {
+            Marker(
+                state = MarkerState(position = singapore),
+                title = "Singapore",
+                snippet = "Marker in Singapore"
+            )
+        }
     }
 
     companion object {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -32,11 +33,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.composables.CustomActionButton
-import com.gathering.android.common.composables.CustomTextField
-import com.gathering.android.common.composables.ImageView
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.composables.CircularImageView
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.CustomTextField
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
@@ -176,7 +177,7 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ImageView(imageUri = imageUri, size = 200.dp) {
+            CircularImageView(imageUri = imageUri, size = 200.dp) {
                 onImageClicked()
             }
             CustomTextField(
@@ -184,11 +185,14 @@ class EditProfileScreen : FullScreenBottomSheet(), EditProfileNavigator {
                 label = "Display Name",
                 onValueChange = {
                     displayNameState = it
-                })
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
             CustomTextField(
                 value = email ?: "",
                 label = "Email Address",
-                enabled = false
+                enabled = false,
+                modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(40.dp))
             CustomActionButton(

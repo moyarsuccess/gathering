@@ -20,7 +20,7 @@ import com.gathering.android.ui.theme.customBackgroundColor
 fun EventImage(event: Event) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
-            .data(data = "https://moyar.dev:8080/photo/${event.photoUrl}")
+            .data(data = event.photoUrl)
             .apply(block = fun ImageRequest.Builder.() {
                 crossfade(true)
                 placeholder(R.drawable.ic_launcher_foreground)

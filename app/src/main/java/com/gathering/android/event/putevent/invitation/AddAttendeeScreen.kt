@@ -45,9 +45,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.common.ATTENDEE_LIST
+import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextField
-import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.ScreenAddAttendeesBinding
@@ -222,7 +222,8 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                 CustomTextField(
                     value = email,
                     label = "Add attendee email",
-                    onValueChange = { onEmailChange(it) }
+                    onValueChange = { onEmailChange(it) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             IconButtonAdd { onAddClick(email) }
