@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.gathering.android.R
-import com.gathering.android.common.NavigationBarPaddingSpacer
+import com.gathering.android.common.composables.NavigationBarPaddingSpacer
 import com.gathering.android.ui.theme.customBackgroundColor
 
 

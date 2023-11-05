@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -29,15 +31,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.HorizontalDivider
 import com.gathering.android.common.ImageLoader
-import com.gathering.android.common.NavigationBarPaddingSpacer
-import com.gathering.android.common.ImageView
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.HorizontalDivider
+import com.gathering.android.common.composables.ImageView
+import com.gathering.android.common.composables.NavigationBarPaddingSpacer
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenProfileBinding
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_USER
+import com.gathering.android.profile.composables.ProfileIconButtonWithText
+import com.gathering.android.profile.composables.ShowUserDetails
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -182,7 +186,10 @@ class ProfileScreen : Fragment(), ProfileNavigator {
             CustomActionButton(
                 onClick = { onSignOutButtonClicked() },
                 isLoading = false,
-                text = "SIGN OUT"
+                text = "SIGN OUT",
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
             )
             NavigationBarPaddingSpacer()
         }

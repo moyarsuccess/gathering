@@ -34,7 +34,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.ImageView
+import com.gathering.android.common.composables.ImageView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
 import com.gathering.android.event.eventdetail.AcceptType
