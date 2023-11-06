@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,8 +42,8 @@ import coil.request.ImageRequest
 import com.gathering.android.R
 import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.CustomTextField
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.CustomTextField
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.getNavigationResultLiveData
@@ -328,7 +329,10 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             CustomActionButton(
                 isLoading = isInProgress,
                 text = "Save Changes",
-                onClick = { onEventActionButtonClicked() }
+                onClick = { onEventActionButtonClicked() },
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
             )
 
             Spacer(modifier = Modifier.height(40.dp))

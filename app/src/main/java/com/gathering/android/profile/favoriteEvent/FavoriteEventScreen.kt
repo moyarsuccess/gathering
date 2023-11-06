@@ -27,11 +27,11 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.FullScreenBottomSheet
-import com.gathering.android.common.ProgressBar
+import com.gathering.android.common.composables.ProgressBar
 import com.gathering.android.databinding.ScreenFavoriteEventBinding
 import com.gathering.android.event.Event
-import com.gathering.android.event.EventItem
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.composables.EventItem
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -71,7 +71,7 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       return viewModel.onViewCreated(this)
+        return viewModel.onViewCreated(this)
 
     }
 

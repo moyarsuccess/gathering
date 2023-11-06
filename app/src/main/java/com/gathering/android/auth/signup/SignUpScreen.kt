@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.auth.AuthButton
-import com.gathering.android.auth.GatheringEmailTextField
-import com.gathering.android.auth.GatheringPasswordTextField
-import com.gathering.android.auth.LogoImage
-import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.AuthButton
+import com.gathering.android.common.composables.EmailTextField
+import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.LogoImage
+import com.gathering.android.common.composables.PasswordTextField
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenSignUpBinding
@@ -52,7 +52,7 @@ class SignUpScreen : FullScreenBottomSheet(), SignUpNavigator {
         super.onCreate(savedInstanceState)
         setStyle(
             STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen
-            )
+        )
     }
 
     override fun onCreateView(
@@ -144,22 +144,21 @@ class SignUpScreen : FullScreenBottomSheet(), SignUpNavigator {
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             LogoImage()
 
-            GatheringEmailTextField(
+            EmailTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = "Email"
             )
 
-            GatheringPasswordTextField(
+            PasswordTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = "Password"
             )
 
-            GatheringPasswordTextField(
+            PasswordTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
                 label = "Confirm Password"
@@ -173,8 +172,8 @@ class SignUpScreen : FullScreenBottomSheet(), SignUpNavigator {
             )
 
             if (error != null) {
-                ErrorText(error)
+                ErrorTextView(error)
             }
-            }
+        }
     }
 }

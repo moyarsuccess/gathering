@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -34,12 +36,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.auth.CustomTextView
-import com.gathering.android.auth.GatheringPasswordTextField
 import com.gathering.android.auth.verification.VerificationScreen
-import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.ErrorText
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.CustomTextView
+import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.PasswordTextField
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenNewPasswordInputBinding
@@ -162,13 +164,13 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
                 )
             )
 
-            GatheringPasswordTextField(
+            PasswordTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = "password"
             )
 
-            GatheringPasswordTextField(
+            PasswordTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
                 label = "confirm Password"
@@ -180,11 +182,14 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
                     val token = extractToken()
                     onSubmitBtnClicked(token, password, confirmPassword)
                 },
-                isLoading = isInProgress
+                isLoading = isInProgress,
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
             )
 
             if (error != null) {
-                ErrorText(error)
+                ErrorTextView(error)
             }
         }
     }

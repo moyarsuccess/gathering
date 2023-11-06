@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -37,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
-import com.gathering.android.common.CustomActionButton
+import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.FrgIntroBinding
@@ -82,6 +84,7 @@ class IntroFragment : FullScreenBottomSheet() {
             return composeView
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (!isComposeEnabled) {
@@ -208,13 +211,19 @@ class IntroFragment : FullScreenBottomSheet() {
             CustomActionButton(
                 text = "SIGN IN",
                 onClick = { findNavController().navigate(R.id.action_introFragment_to_signInFragment) },
-                isLoading = false
+                isLoading = false,
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
             )
 
             CustomActionButton(
                 text = "SIGN UP",
                 onClick = { findNavController().navigate(R.id.action_introFragment_to_signUpScreen) },
-                isLoading = false
+                isLoading = false,
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
             )
         }
     }

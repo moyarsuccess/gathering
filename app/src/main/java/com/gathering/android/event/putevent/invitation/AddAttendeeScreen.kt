@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -43,8 +45,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.CustomTextField
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.CustomTextField
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
@@ -275,9 +277,14 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
         Column(
             modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom
         ) {
-            CustomActionButton(isLoading = false,
+            CustomActionButton(
+                isLoading = false,
                 text = "CLICK TO SAVE",
-                onClick = { onSaveClick() })
+                onClick = { onSaveClick() },
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
+            )
         }
     }
 

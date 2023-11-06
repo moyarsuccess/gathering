@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.DialogFragment
 import com.gathering.android.R
-import com.gathering.android.auth.CustomTextView
+import com.gathering.android.common.composables.CustomTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.BottomSheetForgetPassInfoBinding
 import com.gathering.android.ui.theme.GatheringTheme

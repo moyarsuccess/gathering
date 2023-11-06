@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RotateRight
@@ -39,9 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.gathering.android.common.CustomActionButton
-import com.gathering.android.common.ErrorText
-import com.gathering.android.common.ImageView
+import com.gathering.android.common.composables.CustomActionButton
+import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.ImageView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.common.showErrorText
@@ -235,9 +237,12 @@ class AddPicScreen : BottomSheetDialogFragment(), AddPicNavigator {
                 isLoading = false,
                 text = "OK",
                 onClick = { onSaveClick() },
-                colors = ButtonDefaults.buttonColors()
+                colors = ButtonDefaults.buttonColors(),
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(170.dp),
             )
-            ErrorText(error = errorMessage)
+            ErrorTextView(error = errorMessage)
         }
     }
 
