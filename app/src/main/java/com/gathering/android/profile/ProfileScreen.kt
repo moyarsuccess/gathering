@@ -34,7 +34,7 @@ import com.gathering.android.auth.model.User
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.HorizontalDivider
-import com.gathering.android.common.composables.ImageView
+import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.composables.NavigationBarPaddingSpacer
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
@@ -175,7 +175,7 @@ class ProfileScreen : Fragment(), ProfileNavigator {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            ImageView(imageUri, size = 200.dp) {}
+            CircularImageView(imageUri, size = 200.dp) {}
 
             ShowUserDetails(displayName, email)
 

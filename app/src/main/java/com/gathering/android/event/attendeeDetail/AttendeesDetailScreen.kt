@@ -34,7 +34,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.composables.ImageView
+import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
 import com.gathering.android.event.eventdetail.AcceptType
@@ -204,7 +204,7 @@ class AttendeesDetailScreen : DialogFragment() {
             verticalAlignment = Alignment.CenterVertically
         )
         {
-            ImageView(imageUri = attendee.email, size = 50.dp) {}
+            CircularImageView(imageUri = attendee.email, size = 50.dp) {}
             Text(
                 style = TextStyle(textAlign = TextAlign.Left, fontSize = 14.sp),
                 text = attendee.email ?: "",
