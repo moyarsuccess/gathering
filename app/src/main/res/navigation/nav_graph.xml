@@ -112,7 +112,7 @@
     </dialog>
     <dialog
         android:id="@+id/addLocationScreen"
-        android:name="com.gathering.android.event.putevent.location.AddLocationScreen"
+        android:name="com.gathering.android.event.putevent.address.AddressScreen"
         android:label="addLocationScreen"
         tools:layout="@layout/screen_add_location" />
     <dialog

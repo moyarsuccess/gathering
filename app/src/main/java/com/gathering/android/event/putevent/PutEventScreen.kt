@@ -40,10 +40,10 @@ import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gathering.android.R
-import com.gathering.android.common.ADDRESS
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.KEY_EVENT_LOCATION
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextField
 import com.gathering.android.common.getNavigationResultLiveData
@@ -57,6 +57,7 @@ import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ADDRESS
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
+import com.gathering.android.event.model.EventLocation
 import com.gathering.android.ui.theme.GatheringTheme
 import com.gathering.android.ui.theme.customBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
@@ -175,7 +176,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         }
 
         binding.tvLocation.setOnClickListener {
-            viewModel.onLocationButtonClicked(binding.tvLocation.text.toString())
+            viewModel.onLocationButtonClicked()
         }
 
         binding.tvAttendees.setOnClickListener {
@@ -228,8 +229,8 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         timePickerDialog.show()
     }
 
-    override fun navigateToLocationPicker(address: String?) {
-        val bundle = bundleOf(ADDRESS to address)
+    override fun navigateToLocationPicker(eventLocation: EventLocation) {
+        val bundle = bundleOf(KEY_EVENT_LOCATION to eventLocation)
         findNavController().navigate(
             R.id.action_putEventScreen_to_addLocationScreen,
             bundle
@@ -269,7 +270,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         onDescriptionChanged: (String) -> Unit,
         onEventDateClicked: () -> Unit,
         onEventTimeClicked: () -> Unit,
-        onEventLocationClicked: (String) -> Unit,
+        onEventLocationClicked: () -> Unit,
         onEventAttendeeClicked: () -> Unit,
         onEventActionButtonClicked: () -> Unit,
     ) {
@@ -308,7 +309,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             CustomTextField(
                 value = eventAddress ?: "",
                 onClicked = {
-                    onEventLocationClicked(eventAddress ?: "")
+                    onEventLocationClicked()
                 },
                 label = "Event Address",
                 modifier = Modifier.fillMaxWidth(),
