@@ -233,7 +233,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
     override fun navigateToLocationPicker(eventLocation: EventLocation) {
         val bundle = bundleOf(KEY_EVENT_LOCATION to eventLocation)
         findNavController().navigate(
-            R.id.action_putEventScreen_to_addLocationScreen,
+            R.id.action_putEventScreen_to_addressScreen,
             bundle
         )
     }
@@ -364,7 +364,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             eventAddress = "101 Erskine",
             eventAttendee = "",
             eventDescription = "My party",
-            actionButtonText ="Save",
+            actionButtonText = "Save",
             isInProgress = false,
             onEventNameChanged = {},
             onDescriptionChanged = {},

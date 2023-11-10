@@ -95,11 +95,11 @@
     <dialog
         android:id="@+id/putEventScreen"
         android:name="com.gathering.android.event.putevent.PutEventScreen"
-        android:label="putEventScreent"
+        android:label="putEventScreen"
         tools:layout="@layout/screen_put_event">
         <action
-            android:id="@+id/action_putEventScreen_to_addLocationScreen"
-            app:destination="@id/addLocationScreen" />
+            android:id="@+id/action_putEventScreen_to_addressScreen"
+            app:destination="@id/addressScreen" />
         <action
             android:id="@+id/action_putEventBottomSheetFragment_to_addPicScreen"
             app:destination="@id/addPicScreen" />
@@ -111,10 +111,10 @@
             app:destination="@id/inviteFriendBottomSheet" />
     </dialog>
     <dialog
-        android:id="@+id/addLocationScreen"
+        android:id="@+id/addressScreen"
         android:name="com.gathering.android.event.putevent.address.AddressScreen"
-        android:label="addLocationScreen"
-        tools:layout="@layout/screen_add_location" />
+        android:label="addressScreen"
+        tools:layout="@layout/screen_address" />
     <dialog
         android:id="@+id/addPicScreen"
         android:name="com.gathering.android.event.putevent.pic.AddPicScreen"
