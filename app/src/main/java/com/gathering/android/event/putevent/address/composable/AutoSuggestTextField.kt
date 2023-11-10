@@ -3,6 +3,8 @@ package com.gathering.android.event.putevent.address.composable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
@@ -15,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
@@ -32,6 +36,8 @@ fun AutoSuggestTextField(
     list: List<String>,
     label: String = ""
 ) {
+
+    val focusManager = LocalFocusManager.current
     Box(modifier) {
         OutlinedTextField(
             modifier = modifier
@@ -44,6 +50,10 @@ fun AutoSuggestTextField(
             value = TextFieldValue(value, TextRange(value.length)),
             onValueChange = { onValueChanged(it.text) },
             label = { Text(label) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            }),
             colors = TextFieldDefaults.outlinedTextFieldColors(),
             trailingIcon = {
                 IconButton(onClick = { onClearClick() }) {
@@ -64,6 +74,7 @@ fun AutoSuggestTextField(
             list.forEach { text ->
                 DropdownMenuItem(onClick = {
                     onItemClicked(text)
+                    focusManager.clearFocus()
                 }) {
                     Text(text = text)
                 }
