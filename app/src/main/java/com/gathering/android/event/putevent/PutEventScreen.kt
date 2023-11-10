@@ -99,6 +99,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                                 eventAddress = state.value.eventAddress,
                                 eventAttendee = state.value.eventAttendees,
                                 eventDescription = state.value.eventDescription,
+                                actionButtonText = state.value.actionButtonText ?: "",
                                 isInProgress = state.value.showProgress,
                                 onEventNameChanged = viewModel::onEventNameChanged,
                                 onDescriptionChanged = viewModel::onDescriptionChanged,
@@ -264,6 +265,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         eventAddress: String?,
         eventAttendee: String?,
         eventDescription: String?,
+        actionButtonText: String,
         isInProgress: Boolean?,
         onImageButtonClicked: () -> Unit,
         onEventNameChanged: (String) -> Unit,
@@ -340,7 +342,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
 
             CustomActionButton(
                 isLoading = isInProgress,
-                text = "Save Changes",
+                text = actionButtonText,
                 onClick = { onEventActionButtonClicked() },
                 modifier = Modifier
                     .height(60.dp)
@@ -360,8 +362,9 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             eventDate = "2023 - 11 - 2",
             eventTime = "10:30AM",
             eventAddress = "101 Erskine",
-            eventDescription = "My party",
             eventAttendee = "",
+            eventDescription = "My party",
+            actionButtonText ="Save",
             isInProgress = false,
             onEventNameChanged = {},
             onDescriptionChanged = {},
