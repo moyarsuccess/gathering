@@ -67,6 +67,10 @@
         <action
             android:id="@+id/action_navigation_eventFragment_to_putEventBottomSheetFragment"
             app:destination="@id/putEventScreen" />
+        <action
+            android:id="@+id/action_navigation_eventFragment_to_confirmedAttendeesScreen"
+            app:destination="@id/confirmedAttendeesScreen" />
+
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -204,4 +208,12 @@
         android:name="com.gathering.android.event.attendeeDetail.AttendeesDetailScreen"
         android:label="attendeesDetailScreen"
         tools:layout="@layout/screen_attendees_detail" />
+
+    <fragment
+        android:id="@+id/confirmedAttendeesScreen"
+        android:name="com.gathering.android.event.ConfirmedAttendeesScreen"
+        android:label="confirmedAttendeesScreen"
+        tools:layout="@layout/screen_confirmed_attendees"
+    />
+
 </navigation>
