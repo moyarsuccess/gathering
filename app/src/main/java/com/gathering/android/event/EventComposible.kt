@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -104,6 +105,7 @@ fun EventList(
             contentPadding = PaddingValues(10.dp),
             modifier = Modifier
                 .fillMaxSize()
+                .padding(7.dp)
                 .weight(1f)
         ) {
             itemsIndexed(items = events.distinctBy { it.eventId }, key = { _, listItem ->
@@ -157,6 +159,7 @@ fun EventList(
                         showEditIcon = showEditIcon
                     )
                 }
+                Spacer(modifier = Modifier.padding(15.dp))
             }
         }
 
