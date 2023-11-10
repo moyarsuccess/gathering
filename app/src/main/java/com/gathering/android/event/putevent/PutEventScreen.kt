@@ -274,7 +274,6 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
         onEventAttendeeClicked: () -> Unit,
         onEventActionButtonClicked: () -> Unit,
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -296,6 +295,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                 value = eventDate ?: "",
                 onClicked = { onEventDateClicked() },
                 label = "Event Date",
+                readOnly = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -303,6 +303,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                 value = eventTime ?: "",
                 onClicked = { onEventTimeClicked() },
                 label = "Event Time",
+                readOnly = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -312,6 +313,8 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                     onEventLocationClicked()
                 },
                 label = "Event Address",
+                readOnly = true,
+                maxLine = 2,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -320,6 +323,8 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                 onValueChange = {},
                 onClicked = { onEventAttendeeClicked() },
                 label = "Event Attendee",
+                readOnly = true,
+                maxLine = 3,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -328,7 +333,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                 onValueChange = {
                     onDescriptionChanged(it)
                 },
-                maxLine = 2,
+                maxLine = 3,
                 label = "Event Detail",
                 modifier = Modifier.fillMaxWidth(),
             )

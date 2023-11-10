@@ -24,6 +24,7 @@ fun CustomTextField(
     label: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    readOnly: Boolean = false
 ) {
     val textFieldValueFun = { textValue: TextFieldValue ->
         onValueChange(textValue.text)
@@ -37,6 +38,7 @@ fun CustomTextField(
         modifier = modifier.padding(10.dp),
         maxLines = maxLine,
         label = { Text(label) },
+        readOnly = readOnly,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.LightGray,
