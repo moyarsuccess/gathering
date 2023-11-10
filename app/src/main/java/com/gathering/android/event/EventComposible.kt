@@ -2,20 +2,28 @@ package com.gathering.android.event
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +33,6 @@ import com.gathering.android.common.composables.ProgressBar
 import com.gathering.android.event.composables.CustomSnackbar
 import com.gathering.android.event.composables.EventItem
 import com.gathering.android.event.composables.FabButton
-import com.gathering.android.event.composables.SwipeableEventItem
 
 @Preview(showBackground = true, device = "id:pixel_2")
 @Composable
@@ -93,30 +100,53 @@ fun EventList(
         verticalArrangement = Arrangement.Center
     ) {
         LazyColumn(
+            state = rememberLazyListState(),
+            contentPadding = PaddingValues(10.dp),
             modifier = Modifier
-                .padding(7.dp)
+                .fillMaxSize()
                 .weight(1f)
         ) {
-            items(events.distinctBy { it.eventId }) { event ->
+            itemsIndexed(items = events.distinctBy { it.eventId }, key = { _, listItem ->
+                listItem.hashCode()
+            }) { _, event ->
                 val state = rememberDismissState(confirmStateChange = {
                     if (it == DismissValue.DismissedToStart) {
-                        deletedEvent = event
                         onDeleteClick(event)
-                        true
-                    } else {
-                        false
+                        deletedEvent = event
                     }
+                    true
                 })
                 if (swipeEnabled) {
-                    SwipeableEventItem(
-                        state,
-                        event,
-                        onItemClick,
-                        onEditClick,
-                        onFavClick,
-                        showFavoriteIcon,
-                        showEditIcon
-                    )
+                    SwipeToDismiss(state = state,
+                        background = {
+                            val color = when (state.dismissDirection) {
+                                DismissDirection.EndToStart -> Color.Red
+                                DismissDirection.StartToEnd -> Color.Transparent
+                                null -> Color.Transparent
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.align(
+                                        Alignment.CenterEnd
+                                    )
+                                )
+                            }
+                        }, dismissContent = {
+                            EventItem(
+                                event = event,
+                                onItemClick = { onItemClick(event) },
+                                onEditClick = { onEditClick(event) },
+                                onFavClick = { onFavClick(event) },
+                                showFavoriteIcon = showFavoriteIcon,
+                                showEditIcon = showEditIcon
+                            )
+                        })
                 } else {
                     EventItem(
                         event = event,
@@ -127,15 +157,12 @@ fun EventList(
                         showEditIcon = showEditIcon
                     )
                 }
-
-                Spacer(modifier = Modifier.padding(15.dp))
             }
         }
 
         if (deletedEvent != null) {
             CustomSnackbar(deletedEvent, onUndoDeleteEvent)
         }
-
         if (!showFavoriteIcon) {
             FabButton(onFabClick = onFabClick)
         } else {
@@ -143,4 +170,3 @@ fun EventList(
         }
     }
 }
-
