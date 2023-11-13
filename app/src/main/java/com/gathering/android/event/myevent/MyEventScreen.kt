@@ -94,7 +94,6 @@ class MyEventScreen : Fragment(), MyEventNavigator {
         ) {
             viewModel.onEventAdded()
         }
-
         if (isComposeEnabled) {
             viewModel.onViewCreated(this)
             return

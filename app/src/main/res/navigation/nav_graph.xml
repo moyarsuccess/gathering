@@ -211,7 +211,7 @@
 
     <fragment
         android:id="@+id/confirmedAttendeesScreen"
-        android:name="com.gathering.android.event.ConfirmedAttendeesScreen"
+        android:name="com.gathering.android.event.myevent.rsvpDetails.ConfirmedAttendeesScreen"
         android:label="confirmedAttendeesScreen"
         tools:layout="@layout/screen_confirmed_attendees"
     />

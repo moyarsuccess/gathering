@@ -105,4 +105,5 @@
     <string name="event_content_description">"event_content_description"</string>
     <string name="topAppbar">"swipe left to delete"</string>
     <string name="who_is_coming_to_my_event">Who is Coming to My Event?</string>
+    <string name="Guests">Guests</string>
 </resources>
