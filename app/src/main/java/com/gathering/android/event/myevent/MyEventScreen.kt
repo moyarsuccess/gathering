@@ -178,7 +178,7 @@ class MyEventScreen : Fragment(), MyEventNavigator {
     override fun navigateToConfirmedAttendeesScreen(event: Event) {
         val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
         findNavController().navigate(
-            R.id.action_navigation_eventFragment_to_confirmedAttendeesScreen, bundle
+            R.id.action_navigation_eventFragment_to_rsvpListScreen, bundle
         )
     }
 

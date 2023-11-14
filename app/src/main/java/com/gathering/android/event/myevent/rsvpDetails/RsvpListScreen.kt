@@ -1,12 +1,12 @@
 package com.gathering.android.event.myevent.rsvpDetails
 
+
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,13 +51,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ConfirmedAttendeesScreen : FullScreenBottomSheet() {
+class RsvpListScreen : FullScreenBottomSheet() {
 
     private lateinit var binding: ScreenConfirmedAttendeesBinding
 
 
     @Inject
-    lateinit var viewModel: ConfirmedAttendeeViewModel
+    lateinit var viewModel: RsvpListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -78,12 +78,11 @@ class ConfirmedAttendeesScreen : FullScreenBottomSheet() {
                             state.value.imageUri?.let { imageUrl ->
                                 state.value.eventName?.let { eventName ->
                                     ConfirmedAttendeesComposeView(
+                                        showNoData = state.value.showNoData,
                                         imageUrl = imageUrl,
-                                        goingAttendees = viewModel.getGoingAttendees(),
-                                        notGoingAttendees = viewModel.getNotGoingAttendees(),
-                                        maybeGoingAttendees = viewModel.getMaybeAttendees(),
                                         eventName = eventName,
-                                        showNoData = state.value.showNoData
+                                        onTabSelected = {},
+                                        attendees = state.value.attendees
                                     )
                                 }
                             }
@@ -108,47 +107,43 @@ class ConfirmedAttendeesScreen : FullScreenBottomSheet() {
 
     @Composable
     fun ConfirmedAttendeesComposeView(
-        goingAttendees: List<Attendee>,
-        notGoingAttendees: List<Attendee>,
-        maybeGoingAttendees: List<Attendee>,
         imageUrl: String,
         eventName: String,
-        showNoData: Boolean
+        showNoData: Boolean,
+        attendees: List<Attendee>,
+        onTabSelected: () -> Unit
     ) {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
+        val tabs = listOf("GOING", "NOT GOING", "MAYBE")
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
+        ) {
             Spacer(modifier = Modifier.padding(5.dp))
-
             CustomTextView("\"$eventName\"")
-
             Spacer(modifier = Modifier.padding(10.dp))
-
             EventImageView(imageUrl)
-
-            AcceptTypeTabRow(selectedTabIndex = selectedTabIndex) { index ->
-                selectedTabIndex = index
-            }
-            TabContent(
-                notGoingAttendees = notGoingAttendees,
-                maybeGoingAttendees = maybeGoingAttendees,
-                goingAttendees = goingAttendees,
+            AcceptTypeTabRow(
+                tabs = tabs,
                 selectedTabIndex = selectedTabIndex,
-                showNoData = showNoData
+                onTabSelected = { index ->
+                    selectedTabIndex = index
+                    onTabSelected()
+                }
             )
+            AttendeeList(attendees = attendees.filterByTab(tabs[selectedTabIndex]), showNoData)
         }
     }
 
     @Composable
-    private fun AcceptTypeTabRow(selectedTabIndex: Int, onTabSelected: (Int) -> Unit) {
-        val tabs = listOf("GOING", "NOT GOING", "MAYBE")
-
+    private fun AcceptTypeTabRow(
+        tabs: List<String>,
+        selectedTabIndex: Int,
+        onTabSelected: (Int) -> Unit
+    ) {
         TabRow(
             selectedTabIndex = selectedTabIndex,
             indicator = { tabPositions ->
@@ -161,51 +156,26 @@ class ConfirmedAttendeesScreen : FullScreenBottomSheet() {
                 Tab(
                     text = { CustomTextView(title) },
                     selected = selectedTabIndex == index,
-                    onClick = {
-                        onTabSelected(index)
-                    }
+                    onClick = { onTabSelected(index) }
                 )
             }
         }
     }
 
     @Composable
-    fun TabContent(
-        showNoData: Boolean,
-        goingAttendees: List<Attendee>,
-        notGoingAttendees: List<Attendee>,
-        maybeGoingAttendees: List<Attendee>,
-        selectedTabIndex: Int
-    ) {
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
+    fun AttendeeList(attendees: List<Attendee>, showNoData: Boolean) {
+        LazyColumn {
             item {
                 if (showNoData) {
-                    ShowNoDataText()
-                } else {
-                    when (selectedTabIndex) {
-                        0 -> ShowAttendees(goingAttendees)
-                        1 -> ShowAttendees(notGoingAttendees)
-                        2 -> ShowAttendees(maybeGoingAttendees)
-                        else -> ShowNoDataText()
-                    }
+                    NoDataText()
                 }
             }
+            items(attendees) { attendee -> AttendeeItem(attendee = attendee) }
         }
     }
 
     @Composable
-    private fun ShowAttendees(attendees: List<Attendee>) {
-        LazyColumn {
-            items(attendees) { attendee ->
-                AttendeeItem(attendee = attendee)
-            }
-        }
-    }
-
-    @Composable
-    private fun ShowNoDataText() {
+    private fun NoDataText() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -216,6 +186,12 @@ class ConfirmedAttendeesScreen : FullScreenBottomSheet() {
         }
     }
 
+    private fun List<Attendee>.filterByTab(tab: String): List<Attendee> = when (tab) {
+        "GOING" -> filter { it.accepted == "COMING" }
+        "NOT GOING" -> filter { it.accepted == "NOT_COMING" }
+        "MAYBE" -> filter { it.accepted == "MAYBE" }
+        else -> this
+    }
 
     @Composable
     private fun CustomTextView(title: String) {
@@ -247,10 +223,9 @@ class ConfirmedAttendeesScreen : FullScreenBottomSheet() {
         ConfirmedAttendeesComposeView(
             imageUrl = "",
             eventName = "hello",
-            goingAttendees = listOf(Attendee(email = "idaoskooei@yahoo.com")),
-            maybeGoingAttendees = emptyList(),
-            notGoingAttendees = emptyList(),
-            showNoData = false
+            showNoData = true,
+            onTabSelected = {},
+            attendees = emptyList()
         )
     }
 }
