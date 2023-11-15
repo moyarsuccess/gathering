@@ -106,4 +106,5 @@
     <string name="topAppbar">"swipe left to delete"</string>
     <string name="who_is_coming_to_my_event">Who is Coming to My Event?</string>
     <string name="Guests">Guests</string>
+    <string name="notifications">Notifications</string>
 </resources>
