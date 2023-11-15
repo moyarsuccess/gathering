@@ -72,7 +72,6 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
                                 onNoButtonClick = viewModel::onNoButtonClicked,
                                 onMaybeButtonClick = viewModel::onMaybeButtonClicked,
                                 onAttachListClicked = viewModel::onTvAttendeesDetailsClicked
-
                             )
                         }
                     }

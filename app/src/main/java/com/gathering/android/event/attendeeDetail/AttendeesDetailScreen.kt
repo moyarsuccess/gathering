@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,24 +18,19 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
-import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
+import com.gathering.android.event.composables.AttendeeItem
 import com.gathering.android.event.eventdetail.AcceptType
 import com.gathering.android.event.model.Attendee
 import com.gathering.android.ui.theme.GatheringTheme
@@ -159,7 +153,7 @@ class AttendeesDetailScreen : DialogFragment() {
     fun AttendeeDetailScreenWithCompose(
         attendees: List<Attendee>,
         showNoData: Boolean,
-        ) {
+    ) {
         Column(modifier = Modifier)
         {
             Tab(
@@ -188,29 +182,11 @@ class AttendeesDetailScreen : DialogFragment() {
     @Composable
     fun NoDataMessage() {
         Text(
-            text = "No data to show",
+            text = "oh,oh! No RSVP Yet.",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         )
-    }
-
-    @Composable
-    fun AttendeeItem(attendee: Attendee) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            CircularImageView(imageUri = attendee.email, size = 50.dp) {}
-            Text(
-                style = TextStyle(textAlign = TextAlign.Left, fontSize = 14.sp),
-                text = attendee.email ?: "",
-                modifier = Modifier,
-                fontWeight = FontWeight.Bold,
-            )
-        }
     }
 }

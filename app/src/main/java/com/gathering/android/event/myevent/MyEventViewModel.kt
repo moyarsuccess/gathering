@@ -145,6 +145,10 @@ class MyEventViewModel @Inject constructor(
         myEventNavigator?.navigateToEditEvent(event)
     }
 
+    fun onEventItemClicked(event: Event) {
+        myEventNavigator?.navigateToConfirmedAttendeesScreen(event)
+    }
+
     fun onEventLikeClicked(event: Event) {
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)

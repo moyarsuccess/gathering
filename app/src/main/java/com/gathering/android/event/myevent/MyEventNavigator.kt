@@ -7,4 +7,7 @@ interface MyEventNavigator {
     fun navigateToAddEvent()
 
     fun navigateToEditEvent(event: Event)
+
+    fun navigateToConfirmedAttendeesScreen(event: Event)
+
 }
