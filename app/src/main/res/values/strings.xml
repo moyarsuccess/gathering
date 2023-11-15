@@ -104,4 +104,5 @@
     <string name="Congratulations">\nCongratulations</string>
     <string name="event_content_description">"event_content_description"</string>
     <string name="topAppbar">"swipe left to delete"</string>
+    <string name="notifications">Notifications</string>
 </resources>

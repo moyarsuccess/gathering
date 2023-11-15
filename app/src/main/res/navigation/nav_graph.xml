@@ -204,4 +204,11 @@
         android:name="com.gathering.android.event.attendeeDetail.AttendeesDetailScreen"
         android:label="attendeesDetailScreen"
         tools:layout="@layout/screen_attendees_detail" />
+
+    <dialog
+        android:id="@+id/notificationScreen"
+        android:label="notificationScreen"
+        tools:layout="@layout/screen_notification">
+
+    </dialog>
 </navigation>
