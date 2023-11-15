@@ -69,7 +69,7 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                                 showEditIcon = true,
                                 showFavoriteIcon = false,
                                 events = state.value.myEvents,
-                                onItemClick = {},
+                                onItemClick = { viewModel.onEventItemClicked(it) },
                                 onEditClick = { viewModel.onEditEventClicked(it) },
                                 onFavClick = {},
                                 isLoading = state.value.showProgress,
@@ -94,7 +94,6 @@ class MyEventScreen : Fragment(), MyEventNavigator {
         ) {
             viewModel.onEventAdded()
         }
-
         if (isComposeEnabled) {
             viewModel.onViewCreated(this)
             return
@@ -173,6 +172,13 @@ class MyEventScreen : Fragment(), MyEventNavigator {
         val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
         findNavController().navigate(
             R.id.action_navigation_eventFragment_to_putEventBottomSheetFragment, bundle
+        )
+    }
+
+    override fun navigateToConfirmedAttendeesScreen(event: Event) {
+        val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
+        findNavController().navigate(
+            R.id.action_navigation_eventFragment_to_rsvpListScreen, bundle
         )
     }
 

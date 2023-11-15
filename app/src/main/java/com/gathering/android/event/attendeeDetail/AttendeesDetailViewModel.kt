@@ -3,6 +3,7 @@ package com.gathering.android.event.attendeeDetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.eventdetail.AcceptType
 import com.gathering.android.event.model.Attendee
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +28,6 @@ class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
         started = SharingStarted.Eagerly,
         initialValue = UiState()
     )
-
     data class ViewModelState(
         val selectedAcceptType: AcceptType = AcceptType.Yes,
         val attendees: List<Attendee> = emptyList()

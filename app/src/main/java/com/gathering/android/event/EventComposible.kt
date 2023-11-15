@@ -88,11 +88,20 @@ fun EventList(
 ) {
     var deletedEvent by remember { mutableStateOf<Event?>(null) }
 
-    ProgressBar(
-        text = "No event yet",
-        isLoading = isLoading,
-        isNoData = isNoData
-    )
+    if (showFavoriteIcon) {
+        ProgressBar(
+            text = "oooops! No events yet.",
+            isLoading = isLoading,
+            isNoData = isNoData
+        )
+    } else {
+        ProgressBar(
+            text = "You don't have any events yet! click on + button to add your event!",
+            isLoading = isLoading,
+            isNoData = isNoData
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

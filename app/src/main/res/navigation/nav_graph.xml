@@ -67,6 +67,10 @@
         <action
             android:id="@+id/action_navigation_eventFragment_to_putEventBottomSheetFragment"
             app:destination="@id/putEventScreen" />
+        <action
+            android:id="@+id/action_navigation_eventFragment_to_rsvpListScreen"
+            app:destination="@id/rsvpListScreen" />
+
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -205,10 +209,11 @@
         android:label="attendeesDetailScreen"
         tools:layout="@layout/screen_attendees_detail" />
 
-    <dialog
-        android:id="@+id/notificationScreen"
-        android:label="notificationScreen"
-        tools:layout="@layout/screen_notification">
+    <fragment
+        android:id="@+id/rsvpListScreen"
+        android:name="com.gathering.android.event.myevent.rsvpDetails.RsvpListScreen"
+        android:label="rsvpListScreen"
+        tools:layout="@layout/screen_confirmed_attendees"
+    />
 
-    </dialog>
 </navigation>
