@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.gathering.android.event.Event
-import com.gathering.android.ui.theme.customBackgroundColor
+import com.gathering.android.ui.theme.CustomBackgroundColor
 
 @Composable
 fun CustomSnackbar(
@@ -24,7 +24,7 @@ fun CustomSnackbar(
     deletedEvent1?.let { event ->
         Snackbar(
             modifier = Modifier.padding(16.dp),
-            backgroundColor = customBackgroundColor,
+            backgroundColor = CustomBackgroundColor,
             action = {
                 TextButton(
                     onClick = {

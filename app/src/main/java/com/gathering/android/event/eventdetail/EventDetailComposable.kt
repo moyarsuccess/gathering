@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gathering.android.common.composables.NavigationBarPaddingSpacer
 import com.gathering.android.event.composables.EventImage
-import com.gathering.android.ui.theme.customBackgroundColor
+import com.gathering.android.ui.theme.CustomBackgroundColor
 
 
 @Preview(showBackground = true)
@@ -154,7 +154,7 @@ fun TextInfo(text: String, imageVector: ImageVector) {
 private fun CustomIcon(imageVector: ImageVector) {
     Card(
         modifier = Modifier.padding(10.dp),
-        colors = CardDefaults.cardColors(containerColor = customBackgroundColor)
+        colors = CardDefaults.cardColors(containerColor = CustomBackgroundColor)
     ) {
         Icon(
             imageVector = imageVector,

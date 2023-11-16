@@ -36,7 +36,7 @@ import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.databinding.ScreenNotificationBinding
 import com.gathering.android.ui.theme.GatheringTheme
-import com.gathering.android.ui.theme.customBackgroundColor
+import com.gathering.android.ui.theme.CustomBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -125,7 +125,7 @@ class NotificationScreen : FullScreenBottomSheet() {
                 .padding(8.dp)
                 .clickable {},
             colors = CardDefaults.cardColors(
-                containerColor = customBackgroundColor, contentColor = Color.Black
+                containerColor = CustomBackgroundColor, contentColor = Color.Black
             )
         ) {
             Column(

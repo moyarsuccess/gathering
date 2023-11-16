@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.rsvpDetails
+package com.gathering.android.event.rsvpDetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,7 +41,8 @@ class RsvpListViewModel @Inject constructor() : ViewModel() {
             _uiState.update { currentViewState ->
                 currentViewState.copy(
                     imageUri = event.photoUrl,
-                    eventName = event.eventName
+                    eventName = event.eventName,
+                    attendees = event.attendees
                 )
             }
             updateShowNoData()
