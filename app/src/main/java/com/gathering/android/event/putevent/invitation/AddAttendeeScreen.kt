@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.RemoveCircle
@@ -30,13 +31,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +46,7 @@ import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextField
+import com.gathering.android.common.composables.ErrorTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.ScreenAddAttendeesBinding
@@ -87,7 +86,10 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                         ) {
                             val state = viewModel.uiState.collectAsState()
                             AddAttendeeScreenWithCompose(
+                                email = state.value.attendeeEmail,
+                                errorMessage = state.value.errorMessage,
                                 attendees = state.value.attendeesEmailList,
+                                onAttendeeEmailChanged = viewModel::onAttendeeEmailChanged,
                                 onAddClick = { viewModel.onAddAttendeeButtonClicked(it) },
                                 onRemoveClick = { viewModel.onAttendeeRemoveItemClicked(it) },
                                 onSaveClick = { viewModel.onOKButtonClicked() }
@@ -164,10 +166,13 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
     @Preview(showBackground = true, device = "id:Nexus One")
     fun AddAttendeeScreenWithComposePreview() {
         AddAttendeeScreenWithCompose(
+            email = "animansoubi@gamil.com",
+            errorMessage = "",
             attendees = listOf(
                 "idaoskooei@gmail.com",
                 "esii_pisces@yahoo.com"
             ),
+            onAttendeeEmailChanged = {},
             onAddClick = {},
             onSaveClick = {},
             onRemoveClick = {},
@@ -176,32 +181,38 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
 
     @Composable
     fun AddAttendeeScreenWithCompose(
+        email: String?,
+        errorMessage: String? = null,
         attendees: List<String>,
+        onAttendeeEmailChanged: (String) -> Unit,
         onAddClick: (attendeeEmail: String) -> Unit,
         onRemoveClick: (attendeeEmail: String) -> Unit,
         onSaveClick: () -> Unit,
     ) {
 
-        var email by rememberSaveable { mutableStateOf("") }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             AttendeeInputSection(
-                email = email,
+                email = email ?: "",
                 onAddClick = { attendeeEmail ->
                     onAddClick(attendeeEmail)
-                    email = ""
                 },
-                onEmailChange = { email = it }
+                onEmailChange = { onAttendeeEmailChanged(it) }
             )
-            AttendeeList(attendees, onRemoveClick, email)
-        }
-        ButtonSave(onSaveClick = { onSaveClick() })
-    }
+            AttendeeList(attendees, onRemoveClick, email ?: "")
 
+            if (errorMessage != null) {
+                ErrorTextView(errorMessage)
+            }
+        }
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            ButtonSave(onSaveClick = { onSaveClick() })
+        }
+    }
 
     @Composable
     fun AttendeeInputSection(
@@ -224,6 +235,7 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                     label = "Add attendee email",
                     onValueChange = { onEmailChange(it) },
                     modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
             }
             IconButtonAdd { onAddClick(email) }

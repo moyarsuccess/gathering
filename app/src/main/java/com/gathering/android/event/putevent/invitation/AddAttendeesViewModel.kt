@@ -18,6 +18,8 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     private val viewModelState = MutableStateFlow(AddAttendeesViewModelState())
     val uiState: StateFlow<AddAttendeeUiState> = viewModelState.map { viewModelState ->
         AddAttendeeUiState(
+            errorMessage = viewModelState.errorMessage,
+            attendeeEmail = viewModelState.attendeeEmail,
             attendeesEmailList = viewModelState.attendeesEmailList.toList(),
             addAttendeeButtonEnable = viewModelState.addAttendeeButtonEnable,
         )
@@ -46,19 +48,29 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
         val isAttendeeEmailValid = isAttendeeEmailValid(attendeeEmail)
         viewModelState.update { currentState ->
             currentState.copy(
-                addAttendeeButtonEnable = isAttendeeEmailValid
+                attendeeEmail = attendeeEmail,
+                addAttendeeButtonEnable = isAttendeeEmailValid,
+                errorMessage = ""
             )
         }
     }
 
     fun onAddAttendeeButtonClicked(attendeeEmail: String) {
+        if (attendeeEmail.isEmpty() || !isAttendeeEmailValid(attendeeEmail)) {
+            viewModelState.update { currentState ->
+                currentState.copy(
+                    errorMessage = EMAIL_IS_NOT_VALID,
+                )
+            }
+            return
+        }
         val emails = mutableSetOf<String>()
         emails.addAll(viewModelState.value.attendeesEmailList)
         emails.add(attendeeEmail)
-
         viewModelState.update { currentState ->
             currentState.copy(
                 attendeesEmailList = emails,
+                errorMessage = ""
             )
         }
     }
@@ -80,7 +92,13 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     }
 
     data class AddAttendeesViewModelState(
+        val attendeeEmail: String? = "",
         val attendeesEmailList: Set<String> = setOf(),
         val addAttendeeButtonEnable: Boolean = false,
+        val errorMessage: String = "",
     )
+
+    companion object {
+        const val EMAIL_IS_NOT_VALID = "Email type is empty or valid"
+    }
 }

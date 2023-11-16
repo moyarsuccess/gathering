@@ -3,6 +3,7 @@ package com.gathering.android.common.composables
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Text
@@ -24,7 +25,8 @@ fun CustomTextField(
     label: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    readOnly: Boolean = false
+    readOnly: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions()
 ) {
     val textFieldValueFun = { textValue: TextFieldValue ->
         onValueChange(textValue.text)
@@ -39,6 +41,7 @@ fun CustomTextField(
         maxLines = maxLine,
         label = { Text(label) },
         readOnly = readOnly,
+        keyboardOptions = keyboardOptions,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.LightGray,
