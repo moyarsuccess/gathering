@@ -15,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person2
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,9 +31,9 @@ import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
 import com.gathering.android.common.ImageLoader
+import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.HorizontalDivider
-import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.composables.NavigationBarPaddingSpacer
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
@@ -216,13 +215,6 @@ class ProfileScreen : Fragment(), ProfileNavigator {
                 text = "EDIT MY PROFILE"
             ) {
                 onPersonalDataLayoutClicked()
-            }
-
-            // TODO() TICKET NUMBER 74
-            ProfileIconButtonWithText(
-                icon = Icons.Filled.NotificationsActive,
-                text = "NOTIFICATIONS"
-            ) {
             }
         }
     }
