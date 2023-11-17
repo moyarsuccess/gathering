@@ -1,4 +1,4 @@
-package com.gathering.android.event.myevent.rsvpDetails
+package com.gathering.android.event.rsvpDetails
 
 
 import android.os.Build
@@ -12,22 +12,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.HorizontalDivider
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenConfirmedAttendeesBinding
 import com.gathering.android.event.Event
@@ -74,18 +66,12 @@ class RsvpListScreen : FullScreenBottomSheet() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-
-                            state.value.imageUri?.let { imageUrl ->
-                                state.value.eventName?.let { eventName ->
-                                    ConfirmedAttendeesComposeView(
-                                        showNoData = state.value.showNoData,
-                                        imageUrl = imageUrl,
-                                        eventName = eventName,
-                                        onTabSelected = {},
-                                        attendees = state.value.attendees
-                                    )
-                                }
-                            }
+                            AttendeesScreenWithRsvpDetail(
+                                showNoData = state.value.showNoData,
+                                imageUrl = state.value.imageUri ?: "",
+                                eventName = state.value.eventName ?: "",
+                                attendees = state.value.attendees,
+                            )
                         }
                     }
                 }
@@ -104,64 +90,32 @@ class RsvpListScreen : FullScreenBottomSheet() {
         viewModel.onViewCreated(event = event)
     }
 
-
     @Composable
-    fun ConfirmedAttendeesComposeView(
+    fun AttendeesScreenWithRsvpDetail(
         imageUrl: String,
         eventName: String,
         showNoData: Boolean,
-        attendees: List<Attendee>,
-        onTabSelected: () -> Unit
+        attendees: List<Attendee>
     ) {
-        var selectedTabIndex by remember { mutableIntStateOf(0) }
-        val tabs = listOf("GOING", "NOT GOING", "MAYBE")
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp),
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.padding(5.dp))
-            CustomTextView("\"$eventName\"")
+            CustomTextView(title = "\"$eventName\"")
             Spacer(modifier = Modifier.padding(10.dp))
             EventImageView(imageUrl)
-            AcceptTypeTabRow(
-                tabs = tabs,
-                selectedTabIndex = selectedTabIndex,
-                onTabSelected = { index ->
-                    selectedTabIndex = index
-                    onTabSelected()
-                }
+            Spacer(modifier = Modifier.padding(20.dp))
+            CustomTextView(title = "GUEST LIST")
+            Spacer(modifier = Modifier.padding(10.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.padding(10.dp))
+            AttendeeList(
+                attendees = attendees, showNoData = showNoData
             )
-            AttendeeList(attendees = attendees.filterByTab(tabs[selectedTabIndex]), showNoData)
         }
     }
-
-    @Composable
-    private fun AcceptTypeTabRow(
-        tabs: List<String>,
-        selectedTabIndex: Int,
-        onTabSelected: (Int) -> Unit
-    ) {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
-                )
-            }
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    text = { CustomTextView(title) },
-                    selected = selectedTabIndex == index,
-                    onClick = { onTabSelected(index) }
-                )
-            }
-        }
-    }
-
     @Composable
     fun AttendeeList(attendees: List<Attendee>, showNoData: Boolean) {
         LazyColumn {
@@ -178,19 +132,11 @@ class RsvpListScreen : FullScreenBottomSheet() {
     private fun NoDataText() {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(40.dp),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomTextView("hmmm ... No RSVPs yet!")
         }
-    }
-
-    private fun List<Attendee>.filterByTab(tab: String): List<Attendee> = when (tab) {
-        "GOING" -> filter { it.accepted == "COMING" }
-        "NOT GOING" -> filter { it.accepted == "NOT_COMING" }
-        "MAYBE" -> filter { it.accepted == "MAYBE" }
-        else -> this
     }
 
     @Composable
@@ -210,22 +156,21 @@ class RsvpListScreen : FullScreenBottomSheet() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .size(250.dp)
-                .padding(10.dp)
         ) {
             EventImage(imageUrl = imageUrl)
         }
     }
 
-    @Preview(showBackground = true, device = "id:pixel_4")
+    @Preview(showBackground = true, device = "id:pixel_2")
     @Composable
-    fun ConfirmedAttendeesPreview() {
-        ConfirmedAttendeesComposeView(
+    fun RsvpScreenPreview() {
+        AttendeesScreenWithRsvpDetail(
             imageUrl = "",
             eventName = "hello",
             showNoData = true,
-            onTabSelected = {},
-            attendees = emptyList()
+            attendees = listOf(
+                Attendee(email = "idaoskooei@gmail.com", accepted = "not coming")
+            )
         )
     }
 }

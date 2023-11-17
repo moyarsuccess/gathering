@@ -15,13 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gathering.android.R
 import com.gathering.android.event.Event
-import com.gathering.android.ui.theme.customBackgroundColor
+import com.gathering.android.ui.theme.CustomBackgroundColor
 
 @Composable
 fun EventImage(event: Event) {
@@ -34,7 +33,7 @@ fun EventImage(event: Event) {
                 error(com.google.android.material.R.drawable.mtrl_ic_error)
             }).build()
     )
-    Card(colors = CardDefaults.cardColors(customBackgroundColor)) {
+    Card(colors = CardDefaults.cardColors(CustomBackgroundColor)) {
         Image(
             painter = painter,
             contentScale = ContentScale.Crop,

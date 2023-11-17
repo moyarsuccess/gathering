@@ -59,7 +59,7 @@ import com.gathering.android.event.KEY_ARGUMENT_SELECTED_IMAGE
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.ui.theme.GatheringTheme
-import com.gathering.android.ui.theme.customBackgroundColor
+import com.gathering.android.ui.theme.CustomBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -391,7 +391,7 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
                     error(R.drawable.img_event)
                 }).build()
         )
-        Card(colors = CardDefaults.cardColors(customBackgroundColor)) {
+        Card(colors = CardDefaults.cardColors(CustomBackgroundColor)) {
             Image(
                 painter = painter,
                 contentScale = ContentScale.Crop,

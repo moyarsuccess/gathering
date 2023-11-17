@@ -53,7 +53,7 @@ import com.gathering.android.databinding.ScreenAddAttendeesBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
 import com.gathering.android.ui.theme.GatheringTheme
 import com.gathering.android.ui.theme.Pink80
-import com.gathering.android.ui.theme.customBackgroundColor
+import com.gathering.android.ui.theme.CustomBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -267,7 +267,7 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
     ) {
         Card(
             modifier = Modifier.padding(7.dp),
-            colors = CardDefaults.cardColors(containerColor = customBackgroundColor)
+            colors = CardDefaults.cardColors(containerColor = CustomBackgroundColor)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
