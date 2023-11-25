@@ -1,5 +1,6 @@
 package com.gathering.android.di
 
+import com.gathering.android.auth.FirebaseRepository
 import com.gathering.android.auth.password.repo.ApiPasswordRepository
 import com.gathering.android.auth.password.repo.PasswordRemoteService
 import com.gathering.android.auth.password.repo.PasswordRepository
@@ -38,10 +39,16 @@ class AuthModule {
     @Singleton
     fun providePasswordRepository(
         passwordRemoteService: PasswordRemoteService,
+        firebaseMessagingRepository: FirebaseRepository,
         tokenRepo: TokenRepo,
         userRepo: UserRepo
     ): PasswordRepository {
-        return ApiPasswordRepository(passwordRemoteService, tokenRepo, userRepo)
+        return ApiPasswordRepository(
+            passwordRemoteService = passwordRemoteService,
+            firebaseMessagingRepository = firebaseMessagingRepository,
+            tokenRepo = tokenRepo,
+            userRepo = userRepo,
+        )
     }
 
     @Provides
@@ -55,11 +62,15 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignInRepository(
-        passwordRemoteService: SignInRemoteService,
+        signInRemoteService: SignInRemoteService,
         tokenRepo: TokenRepo,
         userRepo: UserRepo
     ): SignInRepository {
-        return ApiSignInRepository(passwordRemoteService, tokenRepo, userRepo)
+        return ApiSignInRepository(
+            signInRemoteService = signInRemoteService,
+            tokenRepo = tokenRepo,
+            userRepo = userRepo,
+        )
     }
 
     @Provides
@@ -73,9 +84,17 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignUpRepository(
-        passwordRemoteService: SignUpRemoteService
+        signUpRemoteService: SignUpRemoteService,
     ): SignUpRepository {
-        return ApiSignUpRepository(passwordRemoteService)
+        return ApiSignUpRepository(
+            signUpRemoteService = signUpRemoteService
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseMessagingRepository(): FirebaseRepository {
+        return FirebaseRepository()
     }
 
     @Provides
