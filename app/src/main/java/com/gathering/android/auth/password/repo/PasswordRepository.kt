@@ -13,6 +13,7 @@ interface PasswordRepository {
     fun resetPassword(
         token: String,
         password: String,
+        deviceToken: String,
         onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
     )
 }

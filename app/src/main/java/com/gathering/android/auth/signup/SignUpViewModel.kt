@@ -3,16 +3,23 @@ package com.gathering.android.auth.signup
 import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.auth.FirebaseRepository
 import com.gathering.android.auth.signup.repo.SignUpRepository
 import com.gathering.android.common.EmailAlreadyInUse
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.WrongCredentialsException
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 class SignUpViewModel @Inject constructor(
-    private val signUpRepository: SignUpRepository
+    private val signUpRepository: SignUpRepository,
+    private val firebaseMessagingRepository: FirebaseRepository,
 ) : ViewModel() {
 
     private var signUpNavigator: SignUpNavigator? = null
@@ -63,46 +70,61 @@ class SignUpViewModel @Inject constructor(
             }
             return
         }
-        signUpRepository.signUpUser(email, pass) { state ->
-            when (state) {
-                is ResponseState.Failure -> {
-                    when (state.throwable) {
-                        is WrongCredentialsException -> {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(
-                                    errorMessage = SIGN_UP_FAILED,
-                                    isInProgress = false,
-                                )
-                            }
-                        }
-                        is EmailAlreadyInUse -> {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(
-                                    errorMessage = EMAIL_ALREADY_IN_USE,
-                                    isInProgress = false,
-                                )
-                            }
-                        }
-                        else -> {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(
-                                    errorMessage = CAN_NOT_REACH_THE_SERVER,
-                                    isInProgress = false,
-                                )
-                            }
-                        }
-                    }
+        viewModelScope.launch {
+            val deviceToken = firebaseMessagingRepository.getDeviceToken()
+            if (deviceToken.isNullOrEmpty()) {
+                viewModelState.update { currentState ->
+                    currentState.copy(
+                        errorMessage = INVALID_DEVICE_TOKEN
+                    )
                 }
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = true
-                        )
+                return@launch
+            }
+            signUpRepository.signUpUser(email, pass, deviceToken ?: "") { state ->
+                when (state) {
+                    is ResponseState.Failure -> {
+                        when (state.throwable) {
+                            is WrongCredentialsException -> {
+                                viewModelState.update { currentViewState ->
+                                    currentViewState.copy(
+                                        errorMessage = SIGN_UP_FAILED,
+                                        isInProgress = false,
+                                    )
+                                }
+                            }
+
+                            is EmailAlreadyInUse -> {
+                                viewModelState.update { currentViewState ->
+                                    currentViewState.copy(
+                                        errorMessage = EMAIL_ALREADY_IN_USE,
+                                        isInProgress = false,
+                                    )
+                                }
+                            }
+
+                            else -> {
+                                viewModelState.update { currentViewState ->
+                                    currentViewState.copy(
+                                        errorMessage = CAN_NOT_REACH_THE_SERVER,
+                                        isInProgress = false,
+                                    )
+                                }
+                            }
+                        }
                     }
-                    signUpNavigator?.navigateToVerification()
+
+                    is ResponseState.Success -> {
+                        viewModelState.update { currentViewState ->
+                            currentViewState.copy(
+                                isInProgress = true
+                            )
+                        }
+                        signUpNavigator?.navigateToVerification()
+                    }
                 }
             }
         }
+
     }
 
     private fun isEmailValid(email: String): Boolean {
@@ -119,6 +141,7 @@ class SignUpViewModel @Inject constructor(
         val matcher = Pattern.compile(PASSWORD_REGEX).matcher(confirmedPass)
         return (pass == confirmedPass && matcher.matches())
     }
+
     companion object {
         private const val INVALID_EMAIL_ADDRESS_FORMAT = "PLEASE ENTER A VALID EMAIL ADDRESS"
         private const val INVALID_PASS_FORMAT = "PLEASE ENTER A VALID PASSWORD"
@@ -128,5 +151,6 @@ class SignUpViewModel @Inject constructor(
         private const val SIGN_UP_FAILED = "SIGN UP FAILED"
         private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
         private const val EMAIL_ALREADY_IN_USE = "EMAIL ALREADY IS USE"
+        private const val INVALID_DEVICE_TOKEN = "INVALID_DEVICE_TOKEN"
     }
 }
