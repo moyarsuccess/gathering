@@ -97,6 +97,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
         showNoData: Boolean,
         attendees: List<Attendee>
     ) {
+        val sortedAttendees = attendees.sortedBy { it.accepted }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -112,7 +114,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
             HorizontalDivider()
             Spacer(modifier = Modifier.padding(10.dp))
             AttendeeList(
-                attendees = attendees, showNoData = showNoData
+                attendees = sortedAttendees, showNoData = showNoData
             )
         }
     }
@@ -127,6 +129,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
             items(attendees) { attendee -> AttendeeItem(attendee = attendee) }
         }
     }
+
 
     @Composable
     private fun NoDataText() {
