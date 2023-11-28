@@ -2,7 +2,7 @@ package com.gathering.android.auth.password.newPassword
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.auth.FirebaseRepository
+import com.gathering.android.notif.FirebaseRepository
 import com.gathering.android.auth.password.repo.PasswordRepository
 import com.gathering.android.common.ResponseState
 import kotlinx.coroutines.flow.MutableStateFlow

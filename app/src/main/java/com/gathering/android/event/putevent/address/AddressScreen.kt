@@ -37,11 +37,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.model.LatLng
+import com.permissionx.guolindev.PermissionX
+import com.permissionx.guolindev.callback.RequestCallback
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddressScreen : FullScreenBottomSheet(), AddressNavigator {
+class AddressScreen : FullScreenBottomSheet(), AddressNavigator, RequestCallback {
 
     @Inject
     lateinit var viewModel: AddressViewModel
@@ -86,10 +88,9 @@ class AddressScreen : FullScreenBottomSheet(), AddressNavigator {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.onViewCreated(
-            eventLocation = extractEventLocation(),
-            addressNavigator = this
-        )
+        PermissionX.init(this)
+            .permissions(Manifest.permission.ACCESS_FINE_LOCATION)
+            .request(this)
     }
 
     private fun extractEventLocation(): EventLocation? {
@@ -159,6 +160,19 @@ class AddressScreen : FullScreenBottomSheet(), AddressNavigator {
                 }
             }
             GMap(latLng, onLongClicked)
+        }
+    }
+
+    override fun onResult(
+        allGranted: Boolean,
+        grantedList: MutableList<String>,
+        deniedList: MutableList<String>
+    ) {
+        if (allGranted) {
+            viewModel.onViewCreated(
+                eventLocation = extractEventLocation(),
+                addressNavigator = this
+            )
         }
     }
 }

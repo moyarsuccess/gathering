@@ -4,7 +4,7 @@ interface SignInNavigator {
 
     fun navigateToHome()
 
-    fun navigateToVerification()
+    fun navigateToVerification(email: String)
 
     fun navigateToPasswordReset()
 }
