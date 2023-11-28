@@ -28,6 +28,21 @@ class RsvpListViewModel @Inject constructor() : ViewModel() {
         val attendees: List<Attendee> = emptyList()
     )
 
+    fun onViewCreated(event: Event?) {
+        if (event != null) {
+            val sortedAttendees = sortAttendeesByAccepted(event.attendees)
+
+            _uiState.update { currentViewState ->
+                currentViewState.copy(
+                    imageUri = event.photoUrl,
+                    eventName = event.eventName,
+                    attendees = sortedAttendees
+                )
+            }
+            updateShowNoData()
+        }
+    }
+
     private fun updateShowNoData() {
         _uiState.update { currentViewState ->
             currentViewState.copy(
@@ -36,16 +51,7 @@ class RsvpListViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onViewCreated(event: Event?) {
-        if (event != null) {
-            _uiState.update { currentViewState ->
-                currentViewState.copy(
-                    imageUri = event.photoUrl,
-                    eventName = event.eventName,
-                    attendees = event.attendees
-                )
-            }
-            updateShowNoData()
-        }
+    private fun sortAttendeesByAccepted(attendees: List<Attendee>): List<Attendee> {
+        return attendees.sortedBy { it.accepted }
     }
 }
