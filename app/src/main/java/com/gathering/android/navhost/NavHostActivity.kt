@@ -6,11 +6,13 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.gathering.android.R
 import com.gathering.android.databinding.ActNavHostBinding
+import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.notif.FCMNotificationService.Companion.KEY_EVENT_ID
 import com.permissionx.guolindev.PermissionX
 import com.permissionx.guolindev.callback.RequestCallback
@@ -30,18 +32,20 @@ class NavHostActivity : AppCompatActivity(), RequestCallback {
                 .permissions(Manifest.permission.POST_NOTIFICATIONS)
                 .request(this)
         }
-        intent?.printEventId("onCreate")
+        intent?.getEventId()?.let { eventId ->
+            val bundle = bundleOf(KEY_ARGUMENT_EVENT_ID to eventId)
+            findNavController().navigate(
+                R.id.action_navigation_home_to_EventDetailScreen,
+                bundle
+            )
+        }
         binding.navView.setupWithNavController(findNavController())
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        intent?.printEventId("onNewIntent")
-    }
-
-    private fun Intent.printEventId(extra: String) {
-        val eventId = getLongExtra(KEY_EVENT_ID, 0)
-        Log.d(TAG, "$extra $eventId")
+    private fun Intent.getEventId(): Long? {
+        val eventId = getLongExtra(KEY_EVENT_ID, -1)
+        if (eventId == -1L) return null
+        return eventId
     }
 
     private fun findNavController(): NavController {

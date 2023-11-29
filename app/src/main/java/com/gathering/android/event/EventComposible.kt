@@ -79,7 +79,7 @@ fun EventList(
     showEditIcon: Boolean,
     swipeEnabled: Boolean,
     events: List<Event>,
-    onItemClick: (Event) -> Unit,
+    onItemClick: (eventId: Long) -> Unit,
     onEditClick: (Event) -> Unit,
     onFavClick: (Event) -> Unit,
     onFabClick: () -> Unit,
@@ -151,7 +151,7 @@ fun EventList(
                         }, dismissContent = {
                             EventItem(
                                 event = event,
-                                onItemClick = { onItemClick(event) },
+                                onItemClick = { onItemClick(event.eventId) },
                                 onEditClick = { onEditClick(event) },
                                 onFavClick = { onFavClick(event) },
                                 showFavoriteIcon = showFavoriteIcon,
@@ -161,7 +161,7 @@ fun EventList(
                 } else {
                     EventItem(
                         event = event,
-                        onItemClick = { onItemClick(event) },
+                        onItemClick = { onItemClick(event.eventId) },
                         onEditClick = { onEditClick(event) },
                         onFavClick = { onFavClick(event) },
                         showFavoriteIcon = showFavoriteIcon,

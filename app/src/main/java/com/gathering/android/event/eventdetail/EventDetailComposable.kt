@@ -34,7 +34,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gathering.android.common.composables.ErrorTextView
 import com.gathering.android.common.composables.NavigationBarPaddingSpacer
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.composables.EventImage
 import com.gathering.android.ui.theme.customBackgroundColor
 
@@ -50,11 +52,12 @@ fun EventDetailPreview() {
         address = "101 Erskine Ave",
         date = "15 Nov 2023",
         time = "15:30",
+        errorMessage = "",
         acceptType = AcceptType.No,
         onAttachListClicked = {},
         onYesButtonClick = {},
         onNoButtonClick = {},
-        onMaybeButtonClick = {}
+        onMaybeButtonClick = {},
     )
 }
 
@@ -68,6 +71,7 @@ fun EventDetail(
     date: String,
     time: String,
     acceptType: AcceptType,
+    errorMessage: String,
     onAttachListClicked: () -> Unit,
     onYesButtonClick: () -> Unit,
     onNoButtonClick: () -> Unit,
@@ -81,7 +85,10 @@ fun EventDetail(
         verticalArrangement = Arrangement.SpaceBetween
     )
     {
-        EventImage(photoUrl)
+        if (errorMessage.isNotEmpty()) {
+            ErrorTextView(error = errorMessage)
+        }
+        EventImage(photoUrl.toImageUrl())
         EventInfo(
             eventName = eventName,
             eventHostEmail = eventHostEmail,

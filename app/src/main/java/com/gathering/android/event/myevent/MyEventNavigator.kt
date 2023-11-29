@@ -8,6 +8,6 @@ interface MyEventNavigator {
 
     fun navigateToEditEvent(event: Event)
 
-    fun navigateToConfirmedAttendeesScreen(event: Event)
+    fun navigateToConfirmedAttendeesScreen(eventId: Long)
 
 }

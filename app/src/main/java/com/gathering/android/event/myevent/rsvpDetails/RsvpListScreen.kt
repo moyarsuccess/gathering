@@ -39,10 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.ErrorTextView
 import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.databinding.ScreenConfirmedAttendeesBinding
-import com.gathering.android.event.Event
-import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.event.composables.AttendeeItem
 import com.gathering.android.event.composables.EventImage
 import com.gathering.android.event.model.Attendee
@@ -74,7 +75,6 @@ class RsvpListScreen : FullScreenBottomSheet() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-
                             state.value.imageUri?.let { imageUrl ->
                                 state.value.eventName?.let { eventName ->
                                     ConfirmedAttendeesComposeView(
@@ -82,7 +82,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
                                         imageUrl = imageUrl,
                                         eventName = eventName,
                                         onTabSelected = {},
-                                        attendees = state.value.attendees
+                                        attendees = state.value.attendees,
+                                        errorMessage = state.value.errorMessage
                                     )
                                 }
                             }
@@ -96,12 +97,12 @@ class RsvpListScreen : FullScreenBottomSheet() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable(KEY_ARGUMENT_EVENT, Event::class.java)
+        val eventId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getLong(KEY_ARGUMENT_EVENT_ID)
         } else {
-            arguments?.getSerializable(KEY_ARGUMENT_EVENT) as Event
+            arguments?.getLong(KEY_ARGUMENT_EVENT_ID)
         }
-        viewModel.onViewCreated(event = event)
+        viewModel.onViewCreated(eventId = eventId ?: 0)
     }
 
 
@@ -111,7 +112,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
         eventName: String,
         showNoData: Boolean,
         attendees: List<Attendee>,
-        onTabSelected: () -> Unit
+        onTabSelected: () -> Unit,
+        errorMessage: String?
     ) {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
         val tabs = listOf("GOING", "NOT GOING", "MAYBE")
@@ -125,7 +127,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
             Spacer(modifier = Modifier.padding(5.dp))
             CustomTextView("\"$eventName\"")
             Spacer(modifier = Modifier.padding(10.dp))
-            EventImageView(imageUrl)
+            EventImageView(imageUrl.toImageUrl())
             AcceptTypeTabRow(
                 tabs = tabs,
                 selectedTabIndex = selectedTabIndex,
@@ -135,6 +137,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
                 }
             )
             AttendeeList(attendees = attendees.filterByTab(tabs[selectedTabIndex]), showNoData)
+            ErrorTextView(errorMessage ?: "")
         }
     }
 
@@ -225,7 +228,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
             eventName = "hello",
             showNoData = true,
             onTabSelected = {},
-            attendees = emptyList()
+            attendees = emptyList(),
+            errorMessage = ""
         )
     }
 }
