@@ -9,6 +9,7 @@ interface SignUpRemoteService {
     @GET("auth/register")
     fun signUp(
         @Query("email") email: String,
-        @Query("password") password: String
+        @Query("password") password: String,
+        @Query("device_token") deviceToken: String,
     ): Call<GeneralApiResponse>
 }

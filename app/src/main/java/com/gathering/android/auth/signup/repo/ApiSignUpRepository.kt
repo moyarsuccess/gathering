@@ -10,14 +10,19 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class ApiSignUpRepository @Inject constructor(
-    private val signUpRemoteService: SignUpRemoteService
+    private val signUpRemoteService: SignUpRemoteService,
 ) : SignUpRepository {
     override fun signUpUser(
         email: String,
         pass: String,
+        deviceToken: String,
         onResponseReady: (ResponseState<String>) -> Unit
     ) {
-        signUpRemoteService.signUp(email = email, password = pass)
+        signUpRemoteService.signUp(
+            email = email,
+            password = pass,
+            deviceToken = deviceToken
+        )
             .enqueue(object : Callback<GeneralApiResponse> {
                 override fun onResponse(
                     call: Call<GeneralApiResponse>,

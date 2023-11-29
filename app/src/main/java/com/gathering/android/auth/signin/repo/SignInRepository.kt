@@ -7,6 +7,7 @@ interface SignInRepository {
     fun signInUser(
         email: String,
         pass: String,
+        deviceToken: String,
         onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
     )
 }

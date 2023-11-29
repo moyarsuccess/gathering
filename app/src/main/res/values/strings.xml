@@ -107,4 +107,6 @@
     <string name="who_is_coming_to_my_event">Who is Coming to My Event?</string>
     <string name="Guests">Guests</string>
     <string name="notifications">Notifications</string>
+    <string name="channel_name">gatherz_notification_channel_name</string>
+    <string name="channel_description">gatherz_notification_channel_description</string>
 </resources>

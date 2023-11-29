@@ -1,7 +1,11 @@
 package com.gathering.android.event.putevent.repo
 
 import android.content.Context
-import com.gathering.android.common.*
+import com.gathering.android.common.FAIL_TO_CREATE_FILE_PART
+import com.gathering.android.common.GeneralApiResponse
+import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
+import com.gathering.android.common.ResponseState
+import com.gathering.android.common.createRequestPartFromUri
 import com.gathering.android.common.requestBody
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.RequestBody
@@ -65,6 +69,7 @@ class ApiPutEventRepository @Inject constructor(
         event: PutEventModel,
         onResponseReady: (eventRequest: ResponseState<String>) -> Unit
     ) {
+        val eventId: RequestBody = event.eventId.requestBody()
         val eventName: RequestBody = event.eventName.requestBody()
         val eventDescription: RequestBody = event.description.requestBody()
         val latitude = event.lat.requestBody()
@@ -72,12 +77,9 @@ class ApiPutEventRepository @Inject constructor(
         val dateTime = event.dateAndTime.requestBody()
         val attendees = event.getAttendeesJson().requestBody()
         val filePart = context.createRequestPartFromUri(event.photoUri)
-        if (filePart == null) {
-            onResponseReady(ResponseState.Failure(Exception(FAIL_TO_CREATE_FILE_PART)))
-            return
-        }
 
         putEventRemoteService.editEvent(
+            eventId = eventId,
             eventName = eventName,
             eventDescription = eventDescription,
             latitude = latitude,

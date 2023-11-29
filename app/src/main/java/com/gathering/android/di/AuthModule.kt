@@ -14,6 +14,8 @@ import com.gathering.android.auth.verification.repo.VerificationRemoteService
 import com.gathering.android.auth.verification.repo.VerificationRepository
 import com.gathering.android.common.TokenRepo
 import com.gathering.android.common.UserRepo
+import com.gathering.android.notif.FirebaseDeviceTokenChangeService
+import com.gathering.android.notif.FirebaseRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +43,11 @@ class AuthModule {
         tokenRepo: TokenRepo,
         userRepo: UserRepo
     ): PasswordRepository {
-        return ApiPasswordRepository(passwordRemoteService, tokenRepo, userRepo)
+        return ApiPasswordRepository(
+            passwordRemoteService = passwordRemoteService,
+            tokenRepo = tokenRepo,
+            userRepo = userRepo,
+        )
     }
 
     @Provides
@@ -55,11 +61,15 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignInRepository(
-        passwordRemoteService: SignInRemoteService,
+        signInRemoteService: SignInRemoteService,
         tokenRepo: TokenRepo,
         userRepo: UserRepo
     ): SignInRepository {
-        return ApiSignInRepository(passwordRemoteService, tokenRepo, userRepo)
+        return ApiSignInRepository(
+            signInRemoteService = signInRemoteService,
+            tokenRepo = tokenRepo,
+            userRepo = userRepo,
+        )
     }
 
     @Provides
@@ -73,10 +83,26 @@ class AuthModule {
     @Provides
     @Singleton
     fun provideSignUpRepository(
-        passwordRemoteService: SignUpRemoteService
+        signUpRemoteService: SignUpRemoteService,
     ): SignUpRepository {
-        return ApiSignUpRepository(passwordRemoteService)
+        return ApiSignUpRepository(
+            signUpRemoteService = signUpRemoteService
+        )
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseMessagingRepository(firebaseDeviceTokenChangeService: FirebaseDeviceTokenChangeService): FirebaseRepository {
+        return FirebaseRepository(firebaseDeviceTokenChangeService)
+    }
+
+    @Provides
+    fun firebaseDeviceTokenChangeService(
+        @AuthorizedRetrofitQualifier retrofit: Retrofit
+    ): FirebaseDeviceTokenChangeService {
+        return retrofit.create(FirebaseDeviceTokenChangeService::class.java)
+    }
+
 
     @Provides
     @Singleton
