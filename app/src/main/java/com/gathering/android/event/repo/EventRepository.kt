@@ -2,6 +2,7 @@ package com.gathering.android.event.repo
 
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.EventModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 interface EventRepository {
 
@@ -18,10 +19,7 @@ interface EventRepository {
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     )
 
-    fun getEvents(
-        page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    )
+    suspend fun getEvents(page: Int, exceptionHandler: CoroutineExceptionHandler): List<EventModel>
 
     fun getMyLikedEvents(
         page: Int,

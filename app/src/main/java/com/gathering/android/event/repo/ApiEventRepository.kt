@@ -5,6 +5,10 @@ import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.EventModel
+import com.gathering.android.common.exception.ResponseWasNull
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,13 +26,15 @@ class ApiEventRepository @Inject constructor(
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
-    override fun getEvents(
+    override suspend fun getEvents(
         page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    ) {
-        eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
-            .enqueue(handleGetEventResponse(onResponseReady))
-    }
+        exceptionHandler: CoroutineExceptionHandler
+    ): List<EventModel> =
+        withContext(Dispatchers.IO + exceptionHandler) {
+            val events = eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
+            if (events.isEmpty()) throw ResponseWasNull()
+            return@withContext events
+        }
 
     override fun likeEvent(
         eventId: Long,
@@ -57,7 +63,7 @@ class ApiEventRepository @Inject constructor(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     ) {
-        eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
+        eventRemoteService.getMyLikedEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 

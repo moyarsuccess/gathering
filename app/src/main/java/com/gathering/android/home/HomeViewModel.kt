@@ -8,14 +8,21 @@ import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventRepository
+import com.gathering.android.common.exception.ResponseWasNull
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class HomeViewModel @Inject constructor(
     private val verificationRepository: VerificationRepository,
@@ -24,6 +31,25 @@ class HomeViewModel @Inject constructor(
 
     private var homeNavigator: HomeNavigator? = null
     private var page = 1
+
+    private val exceptionHandler = object : CoroutineExceptionHandler {
+        override val key: CoroutineContext.Key<*>
+            get() = TODO("Not yet implemented")
+
+        override fun handleException(context: CoroutineContext, exception: Throwable) {
+            when (exception) {
+                is ResponseWasNull -> viewModelState.update { currentState ->
+                    currentState.copy(errorMessage = exception.message)
+                }
+                else -> {
+                    viewModelState.update { currentState ->
+                        currentState.copy(errorMessage = exception.message)
+                    }
+                }
+            }
+        }
+
+    }
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.map {
@@ -59,37 +85,23 @@ class HomeViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-        eventRepository.getEvents(page) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
+        viewModelScope.launch {
+            val events = eventRepository.getEvents(page, exceptionHandler)
+            if (events.isEmpty()) {
+                if (page == 1) {
                     viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false,
-                            showNoData = true,
-                            errorMessage = EVENTS_REQUEST_FAILED
-                        )
+                        currentViewState.copy(showNoData = true)
                     }
                 }
-
-                is ResponseState.Success<List<EventModel>> -> {
-                    val currentPageEvents = request.data as? List<EventModel>
-                    if (currentPageEvents.isNullOrEmpty()) {
-                        if (page == 1) {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(showNoData = true)
-                            }
-                        }
-                    } else {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                events = currentViewState.events + currentPageEvents.map { it.toEvent() }
-                            )
-                        }
-                    }
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(showProgress = false)
-                    }
+            } else {
+                viewModelState.update { currentViewState ->
+                    currentViewState.copy(
+                        events = currentViewState.events + events.map { it.toEvent() }
+                    )
                 }
+            }
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(showProgress = false)
             }
         }
     }
