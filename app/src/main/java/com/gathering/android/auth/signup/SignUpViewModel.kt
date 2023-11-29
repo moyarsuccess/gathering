@@ -3,7 +3,7 @@ package com.gathering.android.auth.signup
 import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.auth.FirebaseRepository
+import com.gathering.android.notif.FirebaseRepository
 import com.gathering.android.auth.signup.repo.SignUpRepository
 import com.gathering.android.common.EmailAlreadyInUse
 import com.gathering.android.common.ResponseState
@@ -119,7 +119,7 @@ class SignUpViewModel @Inject constructor(
                                 isInProgress = true
                             )
                         }
-                        signUpNavigator?.navigateToVerification()
+                        signUpNavigator?.navigateToVerification(email)
                     }
                 }
             }

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
+import com.gathering.android.auth.verification.VerificationScreen.Companion.EMAIL_PARAM
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.AuthButton
 import com.gathering.android.common.composables.EmailTextField
@@ -131,9 +132,12 @@ class SignInScreen : FullScreenBottomSheet(), SignInNavigator {
         )
     }
 
-    override fun navigateToVerification() {
+    override fun navigateToVerification(email: String) {
+        val bundle = Bundle().apply {
+            putString(EMAIL_PARAM, email)
+        }
         findNavController().navigate(
-            R.id.action_signInScreen_to_verificationScreen
+            R.id.action_signInScreen_to_verificationScreen, bundle
         )
     }
 

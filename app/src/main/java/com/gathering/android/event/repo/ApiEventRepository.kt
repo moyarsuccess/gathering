@@ -29,6 +29,7 @@ class ApiEventRepository @Inject constructor(
         eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
+
     override fun likeEvent(
         eventId: Long,
         like: Boolean,
@@ -58,6 +59,10 @@ class ApiEventRepository @Inject constructor(
     ) {
         eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
+    }
+
+    override suspend fun getEventById(eventId: Long): EventModel {
+        return eventRemoteService.getEventById(eventId = eventId)
     }
 
     private fun handleGetEventResponse(onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit) =
@@ -106,6 +111,7 @@ class ApiEventRepository @Inject constructor(
             }
         })
     }
+
     companion object {
         const val PAGE_SIZE = 15
         const val EVENT_DELETED_SUCCESSFULLY = "event deleted successfully."

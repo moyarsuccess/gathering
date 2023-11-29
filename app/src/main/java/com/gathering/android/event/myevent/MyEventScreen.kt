@@ -26,6 +26,7 @@ import com.gathering.android.databinding.ScreenMyEventBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.EventList
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.event.KEY_ARGUMENT_UPDATE_MY_EVENT_LIST
 import com.gathering.android.home.EndlessScrollListener
 import com.gathering.android.ui.theme.GatheringTheme
@@ -175,8 +176,8 @@ class MyEventScreen : Fragment(), MyEventNavigator {
         )
     }
 
-    override fun navigateToConfirmedAttendeesScreen(event: Event) {
-        val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
+    override fun navigateToConfirmedAttendeesScreen(eventId: Long) {
+        val bundle = bundleOf(KEY_ARGUMENT_EVENT_ID to eventId)
         findNavController().navigate(
             R.id.action_navigation_eventFragment_to_rsvpListScreen, bundle
         )

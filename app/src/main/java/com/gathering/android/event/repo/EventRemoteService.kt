@@ -38,4 +38,9 @@ interface EventRemoteService {
         @Query("page_size") pageSize: Int,
         @Query("page_number") pageNumber: Int,
     ): Call<List<EventModel>>
+
+    @GET("event/id")
+    suspend fun getEventById(
+        @Query("event_id") eventId: Long,
+    ): EventModel
 }

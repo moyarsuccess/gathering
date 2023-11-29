@@ -99,8 +99,8 @@ class HomeViewModel @Inject constructor(
         getEvents(page)
     }
 
-    fun onEventItemClicked(event: Event) {
-        homeNavigator?.navigateToEventDetail(event)
+    fun onEventItemClicked(eventId: Long) {
+        homeNavigator?.navigateToEventDetail(eventId)
     }
 
     fun onEventLikeClicked(event: Event) {

@@ -21,9 +21,8 @@ import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenHomeBinding
-import com.gathering.android.event.Event
 import com.gathering.android.event.EventList
-import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.home.FilterDialogFragment.Companion.TAG
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -114,7 +113,7 @@ class HomeScreen : Fragment(), HomeNavigator {
             }
         }
         adapter.setOnEventClickListener {
-            viewModel.onEventItemClicked(it)
+            viewModel.onEventItemClicked(it.eventId)
         }
 
         adapter.setOnFavoriteImageClick { event ->
@@ -134,8 +133,8 @@ class HomeScreen : Fragment(), HomeNavigator {
         viewModel.onViewCreated(this)
     }
 
-    override fun navigateToEventDetail(event: Event) {
-        val bundle = bundleOf(KEY_ARGUMENT_EVENT to event)
+    override fun navigateToEventDetail(eventId: Long) {
+        val bundle = bundleOf(KEY_ARGUMENT_EVENT_ID to eventId)
         findNavController().navigate(
             R.id.action_navigation_home_to_EventDetailScreen, bundle
         )

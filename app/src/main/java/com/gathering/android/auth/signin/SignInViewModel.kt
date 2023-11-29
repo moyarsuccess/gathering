@@ -3,7 +3,7 @@ package com.gathering.android.auth.signin
 import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.auth.FirebaseRepository
+import com.gathering.android.notif.FirebaseRepository
 import com.gathering.android.auth.signin.repo.SignInRepository
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserNotVerifiedException
@@ -91,7 +91,7 @@ class SignInViewModel @Inject constructor(
                                             errorMessage = EMAIL_NOT_VERIFIED, isInProgress = false
                                         )
                                     }
-                                    signInNavigator?.navigateToVerification()
+                                    signInNavigator?.navigateToVerification(email)
                                 }
 
                                 else -> {

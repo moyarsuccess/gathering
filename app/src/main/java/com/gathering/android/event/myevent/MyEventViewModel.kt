@@ -145,8 +145,8 @@ class MyEventViewModel @Inject constructor(
         myEventNavigator?.navigateToEditEvent(event)
     }
 
-    fun onEventItemClicked(event: Event) {
-        myEventNavigator?.navigateToConfirmedAttendeesScreen(event)
+    fun onEventItemClicked(eventId: Long) {
+        myEventNavigator?.navigateToConfirmedAttendeesScreen(eventId)
     }
 
     fun onEventLikeClicked(event: Event) {
