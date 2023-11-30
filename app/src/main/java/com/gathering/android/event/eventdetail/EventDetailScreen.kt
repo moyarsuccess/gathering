@@ -23,7 +23,7 @@ import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenEventDetailBinding
 import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -156,8 +156,8 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
         viewModel.onViewCreated(eventId, this)
     }
 
-    override fun navigateToAttendeesDetail(attendees: List<Attendee>) {
-        val bundle = bundleOf(ATTENDEE_LIST to attendees)
+    override fun navigateToAttendeesDetail(attendeeModels: List<AttendeeModel>) {
+        val bundle = bundleOf(ATTENDEE_LIST to attendeeModels)
         findNavController().navigate(
             R.id.action_EventDetailScreen_to_attendeesDetailScreen,
             bundle

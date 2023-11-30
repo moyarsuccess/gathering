@@ -3,7 +3,7 @@ package com.gathering.android.event.rsvpDetails
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,13 +30,13 @@ class RsvpListViewModel @Inject constructor(private val eventRepository: EventRe
         val imageUri: String? = null,
         val showNoData: Boolean = false,
         val errorMessage: String? = null,
-        val attendees: List<Attendee> = emptyList()
+        val attendeeModels: List<AttendeeModel> = emptyList()
     )
 
     private fun updateShowNoData() {
         _uiState.update { currentViewState ->
             currentViewState.copy(
-                showNoData = currentViewState.attendees.isEmpty()
+                showNoData = currentViewState.attendeeModels.isEmpty()
             )
         }
     }
@@ -53,21 +53,21 @@ class RsvpListViewModel @Inject constructor(private val eventRepository: EventRe
                 return@launch
             }
 
-            val sortedAttendees = sortAttendeesByAccepted(event.attendees)
+            val sortedAttendees = sortAttendeesByAccepted(event.attendeeModels)
 
             _uiState.update { currentViewState ->
                 currentViewState.copy(
                     imageUri = event.photoUrl,
                     eventName = event.eventName,
-                    attendees = sortedAttendees
+                    attendeeModels = sortedAttendees
                 )
             }
             updateShowNoData()
         }
     }
 
-    private fun sortAttendeesByAccepted(attendees: List<Attendee>): List<Attendee> {
-        return attendees.sortedBy { it.accepted }
+    private fun sortAttendeesByAccepted(attendeeModels: List<AttendeeModel>): List<AttendeeModel> {
+        return attendeeModels.sortedBy { it.accepted }
     }
 
     companion object {

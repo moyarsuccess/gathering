@@ -32,7 +32,7 @@ import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
 import com.gathering.android.event.composables.AttendeeItem
 import com.gathering.android.event.eventdetail.AcceptType
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -69,7 +69,7 @@ class AttendeesDetailScreen : DialogFragment() {
                                 viewModel.uiState.collectAsState(AttendeesDetailViewModel.UiState())
 
                             AttendeeDetailScreenWithCompose(
-                                attendees = state.value.selectedAttendeesList,
+                                attendeeModels = state.value.selectedAttendeesList,
                                 showNoData = state.value.showNoData,
                             )
                         }
@@ -83,8 +83,8 @@ class AttendeesDetailScreen : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (isComposeEnabled) {
-            val attendees = arguments?.getSerializable(ATTENDEE_LIST) as List<Attendee>
-            viewModel.onViewCreated(attendees)
+            val attendeeModels = arguments?.getSerializable(ATTENDEE_LIST) as List<AttendeeModel>
+            viewModel.onViewCreated(attendeeModels)
             return
         } else {
             recyclerviewAndInteractions()
@@ -127,8 +127,8 @@ class AttendeesDetailScreen : DialogFragment() {
             }
         }
 
-        val attendees = arguments?.getSerializable(ATTENDEE_LIST) as List<Attendee>
-        viewModel.onViewCreated(attendees)
+        val attendeeModels = arguments?.getSerializable(ATTENDEE_LIST) as List<AttendeeModel>
+        viewModel.onViewCreated(attendeeModels)
 
         binding.btnYes.setOnClickListener {
             viewModel.onAcceptTypeSelectionChanged(AcceptType.Yes)
@@ -146,12 +146,12 @@ class AttendeesDetailScreen : DialogFragment() {
     @Composable
     @Preview(showBackground = true, device = "id:Nexus S")
     fun AttendeeDetailScreenPreview() {
-        AttendeeDetailScreenWithCompose(attendees = listOf(), showNoData = false)
+        AttendeeDetailScreenWithCompose(attendeeModels = listOf(), showNoData = false)
     }
 
     @Composable
     fun AttendeeDetailScreenWithCompose(
-        attendees: List<Attendee>,
+        attendeeModels: List<AttendeeModel>,
         showNoData: Boolean,
     ) {
         Column(modifier = Modifier)
@@ -172,8 +172,8 @@ class AttendeesDetailScreen : DialogFragment() {
                     }
                 }
 
-                items(attendees) { attendee ->
-                    AttendeeItem(attendee = attendee)
+                items(attendeeModels) { attendee ->
+                    AttendeeItem(attendeeModel = attendee)
                 }
             }
         }

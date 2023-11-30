@@ -38,7 +38,7 @@ import com.gathering.android.databinding.ScreenConfirmedAttendeesBinding
 import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.event.composables.AttendeeItem
 import com.gathering.android.event.composables.EventImage
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -71,7 +71,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
                                 showNoData = state.value.showNoData,
                                 imageUrl = state.value.imageUri ?: "",
                                 eventName = state.value.eventName ?: "",
-                                attendees = state.value.attendees,
+                                attendeeModels = state.value.attendeeModels,
                                 errorMessage = state.value.errorMessage,
                             )
                         }
@@ -97,7 +97,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
         imageUrl: String,
         eventName: String,
         showNoData: Boolean,
-        attendees: List<Attendee>,
+        attendeeModels: List<AttendeeModel>,
         errorMessage: String?
     ) {
         Column(
@@ -115,21 +115,21 @@ class RsvpListScreen : FullScreenBottomSheet() {
             HorizontalDivider()
             Spacer(modifier = Modifier.padding(10.dp))
             AttendeeList(
-                attendees = attendees, showNoData = showNoData
+                attendeeModels = attendeeModels, showNoData = showNoData
             )
             ErrorTextView(errorMessage ?: "")
         }
     }
 
     @Composable
-    fun AttendeeList(attendees: List<Attendee>, showNoData: Boolean) {
+    fun AttendeeList(attendeeModels: List<AttendeeModel>, showNoData: Boolean) {
         LazyColumn {
             item {
                 if (showNoData) {
                     NoDataText()
                 }
             }
-            items(attendees) { attendee -> AttendeeItem(attendee = attendee) }
+            items(attendeeModels) { attendee -> AttendeeItem(attendeeModel = attendee) }
         }
     }
 
@@ -174,8 +174,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
             imageUrl = "",
             eventName = "hello",
             showNoData = true,
-            attendees = listOf(
-                Attendee(email = "idaoskooei@gmail.com", accepted = "not coming")
+            attendeeModels = listOf(
+                AttendeeModel(email = "idaoskooei@gmail.com", accepted = "not coming")
             ),
             errorMessage = ""
         )

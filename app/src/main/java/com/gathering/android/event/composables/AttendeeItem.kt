@@ -18,13 +18,13 @@ import androidx.compose.ui.unit.sp
 import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.eventdetail.AcceptType
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.ui.theme.CustomGreen
 import com.gathering.android.ui.theme.CustomOrange
 
 @Composable
-fun AttendeeItem(attendee: Attendee) {
-    val textColor = when (attendee.accepted) {
+fun AttendeeItem(attendeeModel: AttendeeModel) {
+    val textColor = when (attendeeModel.accepted) {
         AcceptType.Yes.type -> CustomGreen
         AcceptType.No.type -> Color.Red
         AcceptType.Maybe.type -> CustomOrange
@@ -37,9 +37,9 @@ fun AttendeeItem(attendee: Attendee) {
         horizontalArrangement = Arrangement.SpaceBetween
     )
     {
-        CircularImageView(imageUri = attendee.imageName?.toImageUrl(), size = 50.dp) {}
-        EmailTextView(attendee)
-        RsvpTextView(textColor, attendee)
+        CircularImageView(imageUri = attendeeModel.imageName?.toImageUrl(), size = 50.dp) {}
+        EmailTextView(attendeeModel)
+        RsvpTextView(textColor, attendeeModel)
         Spacer(modifier = Modifier.padding(7.dp))
     }
 }
@@ -47,14 +47,14 @@ fun AttendeeItem(attendee: Attendee) {
 @Composable
 private fun RsvpTextView(
     textColor: Color,
-    attendee: Attendee
+    attendeeModel: AttendeeModel
 ) {
     Text(
         style = TextStyle(
             fontSize = 14.sp,
             color = textColor
         ),
-        text = attendee.accepted,
+        text = attendeeModel.accepted,
         modifier = Modifier
             .wrapContentWidth(),
         fontWeight = FontWeight.Bold
@@ -62,12 +62,12 @@ private fun RsvpTextView(
 }
 
 @Composable
-private fun EmailTextView(attendee: Attendee) {
+private fun EmailTextView(attendeeModel: AttendeeModel) {
     Text(
         style = TextStyle(
             fontSize = 14.sp
         ),
-        text = attendee.email ?: "",
+        text = attendeeModel.email ?: "",
         modifier = Modifier.wrapContentWidth(),
         fontWeight = FontWeight.Bold,
     )
