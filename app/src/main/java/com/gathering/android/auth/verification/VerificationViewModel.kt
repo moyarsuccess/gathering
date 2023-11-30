@@ -2,13 +2,17 @@ package com.gathering.android.auth.verification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.auth.verification.repo.VerificationRepository
+import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class VerificationViewModel @Inject constructor(
-    private val verificationRepository: VerificationRepository
+    private val repository: AuthRepository
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(UiState())
@@ -44,7 +48,7 @@ class VerificationViewModel @Inject constructor(
                 isInProgress = true,
             )
         }
-        verificationRepository.sendEmailVerification(email ?: "") { state ->
+        repository.sendEmailVerification(email ?: "") { state ->
             when (state) {
                 is ResponseState.Failure -> {
                     viewModelState.update { currentViewState ->
@@ -71,13 +75,14 @@ class VerificationViewModel @Inject constructor(
                 isInProgress = true,
             )
         }
-        verificationRepository.emailVerify(token ?: "") { state ->
+        repository.emailVerify(token ?: "") { state ->
             when (state) {
                 is ResponseState.Failure -> {
                     viewModelState.update { currentViewState ->
                         currentViewState.copy(isInProgress = false, message = FAILED_TO_VERIFY_USER)
                     }
                 }
+
                 is ResponseState.Success -> {
                     viewModelState.update { currentViewState ->
                         currentViewState.copy(

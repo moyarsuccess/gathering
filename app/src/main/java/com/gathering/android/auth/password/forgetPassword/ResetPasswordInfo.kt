@@ -1,4 +1,4 @@
-package com.gathering.android.auth.password
+package com.gathering.android.auth.password.forgetPassword
 
 import android.os.Bundle
 import android.view.LayoutInflater

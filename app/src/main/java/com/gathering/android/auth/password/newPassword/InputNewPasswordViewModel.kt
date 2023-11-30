@@ -3,7 +3,7 @@ package com.gathering.android.auth.password.newPassword
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.notif.FirebaseRepository
-import com.gathering.android.auth.password.repo.PasswordRepository
+import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class InputNewPasswordViewModel @Inject constructor(
-    private val passwordRepository: PasswordRepository,
+    private val repository: AuthRepository,
     private val firebaseMessagingRepository: FirebaseRepository
 ) : ViewModel() {
 
@@ -62,7 +62,7 @@ class InputNewPasswordViewModel @Inject constructor(
                 }
                 return@launch
             }
-            passwordRepository.resetPassword(
+            repository.resetPassword(
                 token = token,
                 password = newPassword,
                 deviceToken = deviceToken ?: ""

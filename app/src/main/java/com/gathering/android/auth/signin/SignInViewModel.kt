@@ -3,11 +3,11 @@ package com.gathering.android.auth.signin
 import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.notif.FirebaseRepository
-import com.gathering.android.auth.signin.repo.SignInRepository
+import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.WrongCredentialsException
+import com.gathering.android.notif.FirebaseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SignInViewModel @Inject constructor(
-    private val signInRepository: SignInRepository,
+    private val repository: AuthRepository,
     private val firebaseMessagingRepository: FirebaseRepository,
 ) : ViewModel() {
 
@@ -68,7 +68,7 @@ class SignInViewModel @Inject constructor(
                 }
                 return@launch
             }
-            signInRepository.signInUser(
+            repository.signInUser(
                 email = email,
                 pass = pass,
                 deviceToken = deviceToken ?: "",
