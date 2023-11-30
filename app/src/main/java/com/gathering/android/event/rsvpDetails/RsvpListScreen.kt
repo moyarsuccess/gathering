@@ -33,6 +33,7 @@ import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.ErrorTextView
 import com.gathering.android.common.composables.HorizontalDivider
 import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.databinding.ScreenConfirmedAttendeesBinding
 import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.event.composables.AttendeeItem
@@ -107,7 +108,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
         ) {
             CustomTextView(title = "\"$eventName\"")
             Spacer(modifier = Modifier.padding(10.dp))
-            EventImageView(imageUrl)
+            EventImageView(imageUrl.toImageUrl())
             Spacer(modifier = Modifier.padding(20.dp))
             CustomTextView(title = "GUEST LIST")
             Spacer(modifier = Modifier.padding(10.dp))
