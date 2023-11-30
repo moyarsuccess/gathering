@@ -1,6 +1,6 @@
 package com.gathering.android.event
 
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import java.io.Serializable
 
 data class Event(
@@ -14,6 +14,6 @@ data class Event(
     val dateAndTime: Long = 0,
     val isContactEvent: Boolean = false,
     val isMyEvent: Boolean = false,
-    val attendees: List<Attendee> = listOf(),
+    val attendeeModels: List<AttendeeModel> = listOf(),
     val liked: Boolean = false,
 ) : Serializable

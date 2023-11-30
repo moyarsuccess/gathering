@@ -1,6 +1,7 @@
 package com.gathering.android.event.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Attendee(
     @SerializedName("id") var id: String? = "",
@@ -10,4 +11,4 @@ data class Attendee(
     @SerializedName("imageName") var imageName: String? = "",
     @SerializedName("activated") var activated: Boolean? = false,
     @SerializedName("accepted") var accepted: String = ""
-)
+) : Serializable

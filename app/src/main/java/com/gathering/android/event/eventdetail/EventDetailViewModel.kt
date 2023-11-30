@@ -17,7 +17,7 @@ import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
 import com.gathering.android.event.Event
 import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
@@ -97,7 +97,7 @@ class EventDetailViewModel @Inject constructor(
                     eventDescription = event.description,
                     lat = event.latitude,
                     lon = event.longitude,
-                    eventAttendees = event.attendees,
+                    eventAttendeeModels = event.attendeeModels,
                     acceptType = acceptType,
                     year = cal.getYear(),
                     month = cal.getMonth(),
@@ -124,7 +124,7 @@ class EventDetailViewModel @Inject constructor(
 
     fun onTvAttendeesDetailsClicked() {
         eventDetailNavigator?.navigateToAttendeesDetail(
-            viewModelState.value.eventAttendees ?: emptyList()
+            viewModelState.value.eventAttendeeModels ?: emptyList()
         )
     }
 
@@ -150,7 +150,7 @@ class EventDetailViewModel @Inject constructor(
     }
 
     private fun User?.obtainAttendeeAcceptType(event: Event?): AcceptType {
-        val attendee = event?.attendees?.firstOrNull { attendee ->
+        val attendee = event?.attendeeModels?.firstOrNull { attendee ->
             attendee.email == this?.email
         }
         return when (attendee?.accepted) {
@@ -175,7 +175,7 @@ class EventDetailViewModel @Inject constructor(
         val year: Int = 0,
         val hour: Int = 0,
         val minute: Int = 0,
-        val eventAttendees: List<Attendee>? = null,
+        val eventAttendeeModels: List<AttendeeModel>? = null,
         val acceptType: AcceptType = AcceptType.No,
         val errorMessage: String? = null,
     ) {
