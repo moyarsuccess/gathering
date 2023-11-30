@@ -16,7 +16,7 @@ import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
 import com.gathering.android.event.Event
-import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepo
+import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
 import com.gathering.android.event.model.Attendee
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.repo.EventRepository
@@ -36,7 +36,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class EventDetailViewModel @Inject constructor(
-    private val attendanceStateRepo: AttendanceStateRepo,
+    private val attendanceStateRepo: AttendanceStateRepository,
     private val eventRepository: EventRepository,
     private val userRepo: UserRepo,
     private var geocoder: Geocoder,

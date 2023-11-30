@@ -52,15 +52,22 @@ class RsvpListViewModel @Inject constructor(private val eventRepository: EventRe
                 Log.d("XXX:", e.toString())
                 return@launch
             }
+
+            val sortedAttendees = sortAttendeesByAccepted(event.attendees)
+
             _uiState.update { currentViewState ->
                 currentViewState.copy(
                     imageUri = event.photoUrl,
                     eventName = event.eventName,
-                    attendees = event.attendees
+                    attendees = sortedAttendees
                 )
             }
             updateShowNoData()
         }
+    }
+
+    private fun sortAttendeesByAccepted(attendees: List<Attendee>): List<Attendee> {
+        return attendees.sortedBy { it.accepted }
     }
 
     companion object {

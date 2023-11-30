@@ -132,6 +132,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
         }
     }
 
+
     @Composable
     private fun NoDataText() {
         Column(
