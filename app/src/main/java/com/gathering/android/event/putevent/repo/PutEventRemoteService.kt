@@ -27,12 +27,13 @@ interface PutEventRemoteService {
     @Multipart
     @PUT("event")
     fun editEvent(
+        @Part("event_id") eventId: RequestBody?,
         @Part("event_name") eventName: RequestBody?,
         @Part("event_description") eventDescription: RequestBody?,
         @Part("latitude") latitude: RequestBody?,
         @Part("longitude") longitude: RequestBody?,
         @Part("date_time") dateTime: RequestBody?,
         @Part("attendees") attendees: RequestBody?,
-        @Part photo: MultipartBody.Part,
+        @Part photo: MultipartBody.Part?,
     ): Call<GeneralApiResponse>
 }

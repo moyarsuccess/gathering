@@ -9,6 +9,7 @@ interface SignInRemoteService {
     @GET("auth/login")
     fun signIn(
         @Query("email") email: String,
-        @Query("password") password: String
+        @Query("password") password: String,
+        @Query("device_token") deviceToken: String,
     ): Call<AuthorizedResponse>
 }

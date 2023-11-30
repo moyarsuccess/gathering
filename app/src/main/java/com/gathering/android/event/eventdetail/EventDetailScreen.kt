@@ -22,8 +22,7 @@ import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenEventDetailBinding
-import com.gathering.android.event.Event
-import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.event.model.Attendee
 import com.gathering.android.ui.theme.GatheringTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,21 +57,27 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
                             modifier = Modifier.fillMaxSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            val state = viewModel.uiState.collectAsState()
-                            EventDetail(
-                                eventName = state.value.eventName ?: "",
-                                eventHostEmail = state.value.hostEvent ?: "",
-                                description = state.value.eventDescription ?: "",
-                                photoUrl = state.value.imageUri ?: "",
-                                address = state.value.eventAddress ?: "",
-                                date = state.value.eventDate ?: "",
-                                time = state.value.eventTime ?: "",
-                                acceptType = state.value.acceptType,
-                                onYesButtonClick = viewModel::onYesButtonClicked,
-                                onNoButtonClick = viewModel::onNoButtonClicked,
-                                onMaybeButtonClick = viewModel::onMaybeButtonClicked,
-                                onAttachListClicked = viewModel::onTvAttendeesDetailsClicked
-                            )
+                            viewModel
+                                .uiState
+                                .collectAsState()
+                                .value
+                                .apply {
+                                    EventDetail(
+                                        eventName = eventName ?: "",
+                                        eventHostEmail = hostEvent ?: "",
+                                        description = eventDescription ?: "",
+                                        photoUrl = imageUri ?: "",
+                                        address = eventAddress ?: "",
+                                        date = eventDate ?: "",
+                                        time = eventTime ?: "",
+                                        acceptType = acceptType,
+                                        errorMessage = errorMessage ?: "",
+                                        onYesButtonClick = viewModel::onYesButtonClicked,
+                                        onNoButtonClick = viewModel::onNoButtonClicked,
+                                        onMaybeButtonClick = viewModel::onMaybeButtonClicked,
+                                        onAttachListClicked = viewModel::onTvAttendeesDetailsClicked,
+                                    )
+                                }
                         }
                     }
                 }
@@ -82,21 +87,20 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable(KEY_ARGUMENT_EVENT, Event::class.java)
+        val eventId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getLong(KEY_ARGUMENT_EVENT_ID)
         } else {
-            arguments?.getSerializable(KEY_ARGUMENT_EVENT) as Event
+            arguments?.getLong(KEY_ARGUMENT_EVENT_ID)
         }
         if (isComposeEnabled) {
-            viewModel.onViewCreated(event, this)
+            viewModel.onViewCreated(eventId, this)
             return
         } else {
-            setUpUi(event)
+            setUpUi(eventId)
         }
     }
 
-    private fun setUpUi(event: Event?) {
+    private fun setUpUi(eventId: Long?) {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
                 imageLoader.loadImage(state.imageUri, binding.imgEvent)
@@ -148,9 +152,8 @@ class EventDetailScreen : Fragment(), EventDetailNavigator {
             viewModel.onTvAttendeesDetailsClicked()
         }
 
-        event?.let {
-            viewModel.onViewCreated(it, this)
-        }
+
+        viewModel.onViewCreated(eventId, this)
     }
 
     override fun navigateToAttendeesDetail(attendees: List<Attendee>) {

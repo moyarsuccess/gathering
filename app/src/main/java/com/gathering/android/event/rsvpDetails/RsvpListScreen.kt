@@ -30,11 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.ErrorTextView
 import com.gathering.android.common.composables.HorizontalDivider
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.databinding.ScreenConfirmedAttendeesBinding
-import com.gathering.android.event.Event
-import com.gathering.android.event.KEY_ARGUMENT_EVENT
+import com.gathering.android.event.KEY_ARGUMENT_EVENT_ID
 import com.gathering.android.event.composables.AttendeeItem
 import com.gathering.android.event.composables.EventImage
 import com.gathering.android.event.model.Attendee
@@ -71,6 +71,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
                                 imageUrl = state.value.imageUri ?: "",
                                 eventName = state.value.eventName ?: "",
                                 attendees = state.value.attendees,
+                                errorMessage = state.value.errorMessage,
                             )
                         }
                     }
@@ -82,12 +83,12 @@ class RsvpListScreen : FullScreenBottomSheet() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable(KEY_ARGUMENT_EVENT, Event::class.java)
+        val eventId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getLong(KEY_ARGUMENT_EVENT_ID)
         } else {
-            arguments?.getSerializable(KEY_ARGUMENT_EVENT) as Event
+            arguments?.getLong(KEY_ARGUMENT_EVENT_ID)
         }
-        viewModel.onViewCreated(event = event)
+        viewModel.onViewCreated(eventId = eventId ?: 0)
     }
 
     @Composable
@@ -95,7 +96,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
         imageUrl: String,
         eventName: String,
         showNoData: Boolean,
-        attendees: List<Attendee>
+        attendees: List<Attendee>,
+        errorMessage: String?
     ) {
         Column(
             modifier = Modifier
@@ -114,8 +116,10 @@ class RsvpListScreen : FullScreenBottomSheet() {
             AttendeeList(
                 attendees = attendees, showNoData = showNoData
             )
+            ErrorTextView(errorMessage ?: "")
         }
     }
+
     @Composable
     fun AttendeeList(attendees: List<Attendee>, showNoData: Boolean) {
         LazyColumn {
@@ -171,7 +175,8 @@ class RsvpListScreen : FullScreenBottomSheet() {
             showNoData = true,
             attendees = listOf(
                 Attendee(email = "idaoskooei@gmail.com", accepted = "not coming")
-            )
+            ),
+            errorMessage = ""
         )
     }
 }

@@ -2,6 +2,7 @@ package com.gathering.android.event.eventdetail
 
 import android.icu.text.SimpleDateFormat
 import android.location.Geocoder
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.R
@@ -14,11 +15,12 @@ import com.gathering.android.common.getHour
 import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
-import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
-import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepo
+import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
 import com.gathering.android.event.model.Attendee
 import com.gathering.android.event.model.EventLocation
+import com.gathering.android.event.repo.EventRepository
+import com.gathering.android.event.toEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.Date
@@ -33,7 +36,8 @@ import java.util.Locale
 import javax.inject.Inject
 
 class EventDetailViewModel @Inject constructor(
-    private val attendanceStateRepo: AttendanceStateRepo,
+    private val attendanceStateRepo: AttendanceStateRepository,
+    private val eventRepository: EventRepository,
     private val userRepo: UserRepo,
     private var geocoder: Geocoder,
 ) : ViewModel() {
@@ -57,7 +61,8 @@ class EventDetailViewModel @Inject constructor(
             acceptButtonBackColor = acceptButtonBackColor,
             declineButtonBackColor = declineButtonBackColor,
             maybeButtonBackColor = maybeButtonBackColor,
-            acceptType = viewModelState.acceptType
+            acceptType = viewModelState.acceptType,
+            errorMessage = viewModelState.errorMessage
         )
     }.stateIn(
         scope = viewModelScope,
@@ -65,30 +70,44 @@ class EventDetailViewModel @Inject constructor(
         initialValue = EventDetailUiState()
     )
 
-    fun onViewCreated(event: Event?, eventDetailNavigator: EventDetailNavigator) {
+    fun onViewCreated(eventId: Long?, eventDetailNavigator: EventDetailNavigator) {
         this.eventDetailNavigator = eventDetailNavigator
-        viewModelState.update { currentState ->
-            val cal = Calendar.getInstance().apply {
-                event?.dateAndTime?.also { time = Date(it) }
+
+        viewModelScope.launch {
+            val event = try {
+                eventRepository.getEventById(eventId ?: 0).toEvent()
+            } catch (e: Exception) {
+                viewModelState.update { currentState ->
+                    currentState.copy(errorMessage = SERVER_ERROR)
+                }
+                Log.d("XXX:", e.toString())
+                return@launch
             }
-            val acceptType = userRepo.getUser().obtainAttendeeAcceptType(event)
-            currentState.copy(
-                eventId = event?.eventId,
-                imageUri = event?.photoUrl,
-                eventName = event?.eventName,
-                eventHostEmail = event?.eventHostEmail,
-                eventDescription = event?.description,
-                lat = event?.latitude,
-                lon = event?.longitude,
-                eventAttendees = event?.attendees,
-                acceptType = acceptType,
-                year = cal.getYear(),
-                month = cal.getMonth(),
-                day = cal.getDay(),
-                hour = cal.getHour(),
-                minute = cal.getMinute(),
-            )
+
+            viewModelState.update { currentState ->
+                val cal = Calendar.getInstance().apply {
+                    event.dateAndTime.also { time = Date(it) }
+                }
+                val acceptType = userRepo.getUser().obtainAttendeeAcceptType(event)
+                currentState.copy(
+                    eventId = event.eventId,
+                    imageUri = event.photoUrl,
+                    eventName = event.eventName,
+                    eventHostEmail = event.eventHostEmail,
+                    eventDescription = event.description,
+                    lat = event.latitude,
+                    lon = event.longitude,
+                    eventAttendees = event.attendees,
+                    acceptType = acceptType,
+                    year = cal.getYear(),
+                    month = cal.getMonth(),
+                    day = cal.getDay(),
+                    hour = cal.getHour(),
+                    minute = cal.getMinute(),
+                )
+            }
         }
+
     }
 
     fun onYesButtonClicked() {
@@ -211,5 +230,6 @@ class EventDetailViewModel @Inject constructor(
         private const val COMING = "COMING"
         private const val NOT_COMING = "NOT_COMING"
         private const val MAYBE = "MAYBE"
+        private const val SERVER_ERROR = "The event is not available now :("
     }
 }
