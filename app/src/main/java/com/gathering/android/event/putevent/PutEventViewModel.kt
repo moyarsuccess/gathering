@@ -15,7 +15,7 @@ import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.putevent.repo.PutEventModel
 import com.gathering.android.event.putevent.repo.PutEventRepository
@@ -52,7 +52,7 @@ class PutEventViewModel @Inject constructor(
         val minute: Int = 0,
         val lat: Double? = null,
         val lon: Double? = null,
-        val eventAttendees: List<Attendee>? = null,
+        val eventAttendeeModels: List<AttendeeModel>? = null,
         val actionButtonText: String? = null,
         val actionButtonEnable: Boolean? = false,
         val stateMode: StateMode = StateMode.ADD,
@@ -103,7 +103,7 @@ class PutEventViewModel @Inject constructor(
                 viewModelState.lat ?: 0.0,
                 viewModelState.lon ?: 0.0
             ).addressFromLocation(),
-            eventAttendees = viewModelState.eventAttendees.toCommaSeparatedString(),
+            eventAttendees = viewModelState.eventAttendeeModels.toCommaSeparatedString(),
             actionButtonText = viewModelState.actionButtonText,
             actionButtonEnable = viewModelState.actionButtonEnable
         )
@@ -132,7 +132,7 @@ class PutEventViewModel @Inject constructor(
                 minute = cal.getMinute(),
                 lat = event?.latitude,
                 lon = event?.longitude,
-                eventAttendees = event?.attendees,
+                eventAttendeeModels = event?.attendeeModels,
                 actionButtonText = if (event == null) "Add" else "Save",
                 stateMode = stateMode,
             )
@@ -209,14 +209,14 @@ class PutEventViewModel @Inject constructor(
 
     fun onAttendeeButtonClicked() {
         putEventNavigator?.navigateToAttendeesPicker(
-            viewModelState.value.eventAttendees.toCommaSeparatedString()
+            viewModelState.value.eventAttendeeModels.toCommaSeparatedString()
         )
     }
 
     fun onNewAttendeeListSelected(attendeesEmails: List<String>) {
         update { currentState ->
             currentState.copy(
-                eventAttendees = attendeesEmails.map { attendeeEmail -> Attendee(email = attendeeEmail) },
+                eventAttendeeModels = attendeesEmails.map { attendeeEmail -> AttendeeModel(email = attendeeEmail) },
             )
         }
     }
@@ -285,14 +285,14 @@ class PutEventViewModel @Inject constructor(
             lat = eventLocation.lat ?: 0.0,
             lon = eventLocation.lon ?: 0.0,
             dateAndTime = viewModelState.value.getDate(),
-            attendees = viewModelState.value.eventAttendees?.map { it.email ?: "" } ?: emptyList()
+            attendees = viewModelState.value.eventAttendeeModels?.map { it.email ?: "" } ?: emptyList()
         )
     }
 
     private fun EventViewModelState.isStateReadyToAction(): Boolean {
         if (eventName.isNullOrEmpty()) return false
         if (eventDescription.isNullOrEmpty()) return false
-        if (eventAttendees.isNullOrEmpty()) return false
+        if (eventAttendeeModels.isNullOrEmpty()) return false
         if (year == 0) return false
         if (lat == 0.0) return false
         if (lon == 0.0) return false
@@ -323,7 +323,7 @@ class PutEventViewModel @Inject constructor(
     companion object {
         private const val EVENT_REQUEST_FAILED = "EVENT_REQUEST_FAILED"
 
-        private fun List<Attendee>?.toCommaSeparatedString(): String {
+        private fun List<AttendeeModel>?.toCommaSeparatedString(): String {
             return this?.joinToString(SEPARATOR) { it.email ?: "" } ?: ""
         }
     }

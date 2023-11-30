@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.eventdetail.AcceptType
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,8 +20,8 @@ class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
     val uiState: Flow<UiState> = viewModelState.map { viewModelState ->
         UiState(
             viewModelState.selectedAcceptType,
-            viewModelState.attendees,
-            viewModelState.attendees.isEmpty()
+            viewModelState.attendeeModels,
+            viewModelState.attendeeModels.isEmpty()
         )
     }.stateIn(
         scope = viewModelScope,
@@ -30,18 +30,18 @@ class AttendeesDetailViewModel @Inject constructor() : ViewModel() {
     )
     data class ViewModelState(
         val selectedAcceptType: AcceptType = AcceptType.Yes,
-        val attendees: List<Attendee> = emptyList()
+        val attendeeModels: List<AttendeeModel> = emptyList()
     )
 
     data class UiState(
         val selectedAcceptType: AcceptType = AcceptType.Yes,
-        val selectedAttendeesList: List<Attendee> = emptyList(),
+        val selectedAttendeesList: List<AttendeeModel> = emptyList(),
         val showNoData: Boolean = false
     )
 
-    fun onViewCreated(attendees: List<Attendee>) {
+    fun onViewCreated(attendeeModels: List<AttendeeModel>) {
         viewModelState.update { currentViewState ->
-            currentViewState.copy(attendees = attendees.filter {
+            currentViewState.copy(attendeeModels = attendeeModels.filter {
                 if (isComposeEnabled) {
                     it.accepted == AcceptType.Yes.type
                 } else {

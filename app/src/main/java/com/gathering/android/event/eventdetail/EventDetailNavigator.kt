@@ -1,9 +1,9 @@
 package com.gathering.android.event.eventdetail
 
 
-import com.gathering.android.event.model.Attendee
+import com.gathering.android.event.model.AttendeeModel
 
 interface EventDetailNavigator {
 
-    fun navigateToAttendeesDetail(attendees: List<Attendee>)
+    fun navigateToAttendeesDetail(attendeeModels: List<AttendeeModel>)
 }

@@ -3,7 +3,7 @@ package com.gathering.android.event.model
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class Attendee(
+data class AttendeeModel(
     @SerializedName("id") var id: String? = "",
     @SerializedName("email") var email: String? = "",
     @SerializedName("displayName") var displayName: String? = "",
