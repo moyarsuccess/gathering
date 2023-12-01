@@ -72,6 +72,7 @@ class HomeScreen : Fragment(), HomeNavigator {
                                 onFabClick = {},
                                 onDeleteClick = {},
                                 onUndoDeleteEvent = {},
+                                onNextPageRequested = viewModel::onNextPageRequested,
                                 swipeEnabled = false
                             )
                         }

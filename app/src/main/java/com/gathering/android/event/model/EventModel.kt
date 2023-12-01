@@ -13,6 +13,4 @@ data class EventModel(
     @SerializedName("dateTime") var dateTime: Long?,
     @SerializedName("attendees") var attendeeModels: ArrayList<AttendeeModel>,
     @SerializedName("liked") var liked: Boolean,
-) {
-    val isMyEvent: Boolean = false
-}
+)

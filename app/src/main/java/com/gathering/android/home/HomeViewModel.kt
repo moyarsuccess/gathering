@@ -6,7 +6,6 @@ import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
-import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
@@ -59,37 +59,26 @@ class HomeViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-        eventRepository.getEvents(page) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false,
-                            showNoData = true,
-                            errorMessage = EVENTS_REQUEST_FAILED
-                        )
-                    }
-                }
 
-                is ResponseState.Success<List<EventModel>> -> {
-                    val currentPageEvents = request.data as? List<EventModel>
-                    if (currentPageEvents.isNullOrEmpty()) {
-                        if (page == 1) {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(showNoData = true)
-                            }
-                        }
-                    } else {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                events = currentViewState.events + currentPageEvents.map { it.toEvent() }
-                            )
-                        }
-                    }
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(showProgress = false)
-                    }
+        viewModelScope.launch {
+            val events = try {
+                eventRepository.getEvents(page)
+            } catch (e: Exception) {
+                viewModelState.update { currentState ->
+                    currentState.copy(
+                        showProgress = false,
+                        showNoData = true,
+                        errorMessage = SERVER_ERROR,
+                    )
                 }
+                return@launch
+            }
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    showNoData = false,
+                    showProgress = false,
+                    events = (currentViewState.events + events.map { it.toEvent() }).distinct()
+                )
             }
         }
     }
@@ -137,6 +126,6 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
-        private const val EVENTS_REQUEST_FAILED = "FAILED TO LOAD EVENTS."
+        private const val SERVER_ERROR = "The event list is not available now :("
     }
 }
