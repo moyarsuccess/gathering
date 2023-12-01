@@ -4,10 +4,12 @@ import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.repo.AuthRepository
+import com.gathering.android.auth.repo.exception.AuthException
 import com.gathering.android.common.EmailAlreadyInUse
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.WrongCredentialsException
 import com.gathering.android.notif.FirebaseRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,24 @@ class SignUpViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var signUpNavigator: SignUpNavigator? = null
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is AuthException -> {
+                when (throwable) {
+                    AuthException.EmailAlreadyInUseException -> "Already in use"
+                    else -> "General error"
+                }
+            }
+
+            else -> {
+                "General error"
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(errorMessage = errorMessage)
+        }
+    }
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.stateIn(
