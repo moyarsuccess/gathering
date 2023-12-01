@@ -2,7 +2,7 @@ package com.gathering.android.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.auth.verification.repo.VerificationRepository
+import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
-    private val verificationRepository: VerificationRepository,
+    private val repository: AuthRepository,
     private val eventRepository: EventRepository,
 ) : ViewModel() {
 
@@ -47,7 +47,7 @@ class HomeViewModel @Inject constructor(
 
     fun onViewCreated(homeNavigator: HomeNavigator) {
         this.homeNavigator = homeNavigator
-        if (verificationRepository.isUserVerified()) {
+        if (repository.isUserVerified()) {
             page = 1
             getEvents(page)
         } else {

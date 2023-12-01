@@ -1,15 +1,19 @@
-package com.gathering.android.auth.password
+package com.gathering.android.auth.password.forgetPassword
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.auth.password.repo.PasswordRepository
+import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class ForgetPasswordViewModel @Inject constructor(
-    private val passwordRepository: PasswordRepository
+    private val repository: AuthRepository
 ) : ViewModel() {
 
     private var forgetPasswordNavigator: ForgetPasswordNavigator? = null
@@ -39,7 +43,7 @@ class ForgetPasswordViewModel @Inject constructor(
             return
         }
 
-        passwordRepository.forgetPassword(email) { state ->
+        repository.forgetPassword(email) { state ->
             when (state) {
                 is ResponseState.Failure -> {
                     viewModelState.update { currentViewState ->
@@ -48,6 +52,7 @@ class ForgetPasswordViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is ResponseState.Success -> {
                     Log.d("ResetEmail", RESET_PASS_EMAIL_SENT_SUCCESSFULLY)
                     viewModelState.update { currentViewState ->
