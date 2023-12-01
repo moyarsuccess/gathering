@@ -113,7 +113,7 @@ class HomeViewModel @Inject constructor(
             val liked = !event.liked
             val eventId = event.eventId
 
-            eventRepository.likeEvent2(eventId, liked)
+            eventRepository.likeEvent(eventId, liked)
 
             viewModelState.update { currentViewState ->
                 val list = currentViewState.events.toMutableList()
@@ -133,6 +133,5 @@ class HomeViewModel @Inject constructor(
         private const val SERVER_NOT_RESPONDING_TO_SHOW_EVENTS =
             "The event list is not available now :("
         private const val General_ERROR = "Oops! something wrong"
-        private const val SERVER_ERROR = "The event list is not available now :("
     }
 }
