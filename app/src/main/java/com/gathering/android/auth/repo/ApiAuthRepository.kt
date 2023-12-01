@@ -38,6 +38,10 @@ class ApiAuthRepository @Inject constructor(
         })
     }
 
+    override suspend fun forgetPassword2(email: String) {
+        remoteService.forgetPassword2(email)
+    }
+
     override fun resetPassword(
         token: String,
         password: String,
@@ -69,6 +73,14 @@ class ApiAuthRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+    }
+
+    override suspend fun resetPassword2(
+        token: String,
+        password: String,
+        deviceToken: String
+    ): AuthorizedResponse {
+        return remoteService.resetPassword2(token, password, deviceToken)
     }
 
     override fun signInUser(
@@ -110,6 +122,14 @@ class ApiAuthRepository @Inject constructor(
             })
     }
 
+    override suspend fun signInUser2(
+        email: String,
+        pass: String,
+        deviceToken: String
+    ): AuthorizedResponse {
+        return remoteService.signIn2(email, pass, deviceToken)
+    }
+
     override fun signUpUser(
         email: String,
         pass: String,
@@ -136,6 +156,9 @@ class ApiAuthRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+
+    override suspend fun signUpUser2(email: String, pass: String, deviceToken: String) {
+        remoteService.signIn2(email, pass, deviceToken)
     }
 
     override fun sendEmailVerification(
@@ -157,6 +180,10 @@ class ApiAuthRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+    }
+
+    override suspend fun sendEmailVerification2(email: String) {
+        remoteService.sendEmailVerification2(email)
     }
 
     override fun emailVerify(
@@ -195,6 +222,9 @@ class ApiAuthRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+
+    override suspend fun emailVerify2(token: String): AuthorizedResponse {
+        return remoteService.emailVerify2(token)
     }
 
     override fun isUserVerified(): Boolean {
