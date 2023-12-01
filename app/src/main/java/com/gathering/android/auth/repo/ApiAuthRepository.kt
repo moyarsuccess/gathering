@@ -139,23 +139,24 @@ class ApiAuthRepository @Inject constructor(
         remoteService.signUp(
             email = email, password = pass, deviceToken = deviceToken
         ).enqueue(object : Callback<GeneralApiResponse> {
-                override fun onResponse(
-                    call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        if (response.code() == CONFLICT_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(EmailAlreadyInUse()))
-                            return
-                        }
-                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
+            override fun onResponse(
+                call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
+            ) {
+                if (!response.isSuccessful) {
+                    if (response.code() == CONFLICT_HTTP_CODE) {
+                        onResponseReady(ResponseState.Failure(EmailAlreadyInUse()))
+                        return
                     }
-                    onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
+                    onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
                 }
+                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
+            }
 
-                override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
+            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
+                onResponseReady(ResponseState.Failure(t))
+            }
+        })
+    }
 
     override suspend fun signUpUser2(email: String, pass: String, deviceToken: String) {
         remoteService.signIn2(email, pass, deviceToken)
@@ -190,38 +191,39 @@ class ApiAuthRepository @Inject constructor(
         token: String, onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
     ) {
         remoteService.emailVerify(token).enqueue(object : Callback<AuthorizedResponse> {
-                override fun onResponse(
-                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        onResponseReady(
-                            ResponseState.Failure(
-                                Exception(
-                                    RESPONSE_IS_NOT_SUCCESSFUL
-                                )
+            override fun onResponse(
+                call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
+            ) {
+                if (!response.isSuccessful) {
+                    onResponseReady(
+                        ResponseState.Failure(
+                            Exception(
+                                RESPONSE_IS_NOT_SUCCESSFUL
                             )
                         )
-                        return
-                    }
-                    response.body()?.also { body ->
-                        userRepo.saveUser(body.user)
-                        tokenRepo.saveToken(body.jwt)
-                        onResponseReady(ResponseState.Success(body))
-                    } ?: run {
-                        onResponseReady(
-                            ResponseState.Failure(
-                                Exception(
-                                    RESPONSE_IS_NOT_SUCCESSFUL
-                                )
-                            )
-                        )
-                    }
+                    )
+                    return
                 }
+                response.body()?.also { body ->
+                    userRepo.saveUser(body.user)
+                    tokenRepo.saveToken(body.jwt)
+                    onResponseReady(ResponseState.Success(body))
+                } ?: run {
+                    onResponseReady(
+                        ResponseState.Failure(
+                            Exception(
+                                RESPONSE_IS_NOT_SUCCESSFUL
+                            )
+                        )
+                    )
+                }
+            }
 
-                override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
+            override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
+                onResponseReady(ResponseState.Failure(t))
+            }
+        })
+    }
 
     override suspend fun emailVerify2(token: String): AuthorizedResponse {
         return remoteService.emailVerify2(token)
