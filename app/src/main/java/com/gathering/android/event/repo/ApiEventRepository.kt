@@ -48,6 +48,13 @@ class ApiEventRepository @Inject constructor(
         })
     }
 
+    override suspend fun likeEvent2(
+        eventId: Long,
+        like: Boolean
+    ) {
+        eventRemoteService.likeEvent2(eventId = eventId, like = like)
+    }
+
     override fun getMyLikedEvents(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
