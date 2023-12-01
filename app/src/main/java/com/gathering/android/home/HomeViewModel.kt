@@ -6,8 +6,10 @@ import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
+import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +26,25 @@ class HomeViewModel @Inject constructor(
 
     private var homeNavigator: HomeNavigator? = null
     private var page = 1
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is EventException -> {
+                when (throwable) {
+                    EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
+                    EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
+                    is EventException.GeneralException -> General_ERROR
+                }
+            }
+
+            else -> {
+                General_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(errorMessage = errorMessage)
+        }
+    }
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.map {
@@ -125,7 +146,10 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
+        private const val LIKE_EVENT_REQUEST_FAILED = "You are not able to like this event"
+        private const val SERVER_NOT_RESPONDING_TO_SHOW_EVENTS =
+            "The event list is not available now :("
+        private const val General_ERROR = "Oops! something wrong"
         private const val SERVER_ERROR = "The event list is not available now :("
     }
 }
