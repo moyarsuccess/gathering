@@ -3,7 +3,6 @@ package com.gathering.android.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.repo.EventException
@@ -42,7 +41,11 @@ class HomeViewModel @Inject constructor(
             }
         }
         viewModelState.update { currentState ->
-            currentState.copy(errorMessage = errorMessage)
+            currentState.copy(
+                errorMessage = errorMessage,
+                showProgress = false,
+                showNoData = currentState.events.isEmpty(),
+            )
         }
     }
 
@@ -80,20 +83,8 @@ class HomeViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-
-        viewModelScope.launch {
-            val events = try {
-                eventRepository.getEvents(page)
-            } catch (e: Exception) {
-                viewModelState.update { currentState ->
-                    currentState.copy(
-                        showProgress = false,
-                        showNoData = true,
-                        errorMessage = SERVER_ERROR,
-                    )
-                }
-                return@launch
-            }
+        viewModelScope.launch(exceptionHandler) {
+            val events = eventRepository.getEvents(page)
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
                     showNoData = false,
@@ -101,6 +92,7 @@ class HomeViewModel @Inject constructor(
                     events = (currentViewState.events + events.map { it.toEvent() }).distinct()
                 )
             }
+
         }
     }
 
@@ -114,33 +106,24 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onEventLikeClicked(event: Event) {
-        viewModelState.update { currentViewState ->
-            currentViewState.copy(showProgress = true)
-        }
-        val liked = !event.liked
-        val eventId = event.eventId
-        eventRepository.likeEvent(eventId, liked) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false, errorMessage = LIKE_EVENT_REQUEST_FAILED
-                        )
-                    }
-                }
+        viewModelScope.launch(exceptionHandler) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(showProgress = true)
+            }
+            val liked = !event.liked
+            val eventId = event.eventId
 
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        val list = currentViewState.events.toMutableList()
-                        val index = list.indexOfFirst { it.eventId == eventId }
-                        val newEvent = list[index].copy(liked = liked)
-                        list[index] = newEvent
-                        currentViewState.copy(
-                            showProgress = false,
-                            events = list
-                        )
-                    }
-                }
+            eventRepository.likeEvent2(eventId, liked)
+
+            viewModelState.update { currentViewState ->
+                val list = currentViewState.events.toMutableList()
+                val index = list.indexOfFirst { it.eventId == eventId }
+                val newEvent = list[index].copy(liked = liked)
+                list[index] = newEvent
+                currentViewState.copy(
+                    showProgress = false,
+                    events = list
+                )
             }
         }
     }
