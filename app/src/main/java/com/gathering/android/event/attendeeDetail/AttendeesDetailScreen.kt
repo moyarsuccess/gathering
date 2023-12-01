@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +21,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -28,9 +32,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gathering.android.R
 import com.gathering.android.common.ATTENDEE_LIST
+import com.gathering.android.common.composables.CircularImageView
 import com.gathering.android.common.isComposeEnabled
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.databinding.ScreenAttendeesDetailBinding
-import com.gathering.android.event.composables.AttendeeItem
+import com.gathering.android.event.composables.EmailTextView
 import com.gathering.android.event.eventdetail.AcceptType
 import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.ui.theme.GatheringTheme
@@ -176,6 +182,21 @@ class AttendeesDetailScreen : DialogFragment() {
                     AttendeeItem(attendeeModel = attendee)
                 }
             }
+        }
+    }
+
+    @Composable
+    fun AttendeeItem(attendeeModel: AttendeeModel) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        )
+        {
+            CircularImageView(imageUri = attendeeModel.imageName?.toImageUrl(), size = 50.dp) {}
+            EmailTextView(attendeeModel)
+            Spacer(modifier = Modifier.padding(7.dp))
         }
     }
 
