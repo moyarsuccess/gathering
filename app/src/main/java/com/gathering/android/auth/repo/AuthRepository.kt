@@ -23,11 +23,10 @@ interface AuthRepository {
         onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
     )
 
-    fun signUpUser(
+    suspend fun signUpUser(
         email: String,
         pass: String,
         deviceToken: String,
-        onResponseReady: (ResponseState<String>) -> Unit
     )
 
     fun sendEmailVerification(email: String, onResponseReady: (ResponseState<String>) -> Unit)

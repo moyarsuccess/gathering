@@ -27,11 +27,11 @@ interface AuthRemoteService {
     ): Call<AuthorizedResponse>
 
     @GET("auth/register")
-    fun signUp(
+    suspend fun signUp(
         @Query("email") email: String,
         @Query("password") password: String,
         @Query("device_token") deviceToken: String,
-    ): Call<GeneralApiResponse>
+    ): GeneralApiResponse
 
     @GET("auth/verification/email")
     fun sendEmailVerification(@Query("email") email: String): Call<GeneralApiResponse>

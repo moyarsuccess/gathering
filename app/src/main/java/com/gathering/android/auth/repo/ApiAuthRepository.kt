@@ -2,7 +2,6 @@ package com.gathering.android.auth.repo
 
 import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.EmailAlreadyInUse
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
@@ -12,6 +11,7 @@ import com.gathering.android.common.UserRepo
 import com.gathering.android.common.WrongCredentialsException
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -110,32 +110,24 @@ class ApiAuthRepository @Inject constructor(
             })
     }
 
-    override fun signUpUser(
+    override suspend fun signUpUser(
         email: String,
         pass: String,
         deviceToken: String,
-        onResponseReady: (ResponseState<String>) -> Unit
     ) {
-        remoteService.signUp(
-            email = email, password = pass, deviceToken = deviceToken
-        ).enqueue(object : Callback<GeneralApiResponse> {
-                override fun onResponse(
-                    call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        if (response.code() == CONFLICT_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(EmailAlreadyInUse()))
-                            return
-                        }
-                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                    }
-                    onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
-                }
-
-                override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
+        try {
+            remoteService.signUp(
+                email = email,
+                password = pass,
+                deviceToken = deviceToken,
+            )
+        } catch (e:HttpException) {
+            val throwable = when (e.code()) {
+                CONFLICT_HTTP_CODE -> AuthException.EmailAlreadyInUseException
+                else -> AuthException.General(e.code())
+            }
+            throw throwable
+        }
     }
 
     override fun sendEmailVerification(
@@ -163,38 +155,38 @@ class ApiAuthRepository @Inject constructor(
         token: String, onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
     ) {
         remoteService.emailVerify(token).enqueue(object : Callback<AuthorizedResponse> {
-                override fun onResponse(
-                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        onResponseReady(
-                            ResponseState.Failure(
-                                Exception(
-                                    RESPONSE_IS_NOT_SUCCESSFUL
-                                )
+            override fun onResponse(
+                call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
+            ) {
+                if (!response.isSuccessful) {
+                    onResponseReady(
+                        ResponseState.Failure(
+                            Exception(
+                                RESPONSE_IS_NOT_SUCCESSFUL
                             )
                         )
-                        return
-                    }
-                    response.body()?.also { body ->
-                        userRepo.saveUser(body.user)
-                        tokenRepo.saveToken(body.jwt)
-                        onResponseReady(ResponseState.Success(body))
-                    } ?: run {
-                        onResponseReady(
-                            ResponseState.Failure(
-                                Exception(
-                                    RESPONSE_IS_NOT_SUCCESSFUL
-                                )
-                            )
-                        )
-                    }
+                    )
+                    return
                 }
+                response.body()?.also { body ->
+                    userRepo.saveUser(body.user)
+                    tokenRepo.saveToken(body.jwt)
+                    onResponseReady(ResponseState.Success(body))
+                } ?: run {
+                    onResponseReady(
+                        ResponseState.Failure(
+                            Exception(
+                                RESPONSE_IS_NOT_SUCCESSFUL
+                            )
+                        )
+                    )
+                }
+            }
 
-                override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
+            override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
+                onResponseReady(ResponseState.Failure(t))
+            }
+        })
     }
 
     override fun isUserVerified(): Boolean {
