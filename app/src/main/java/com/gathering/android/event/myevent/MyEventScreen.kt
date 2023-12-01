@@ -68,17 +68,18 @@ class MyEventScreen : Fragment(), MyEventNavigator {
 
                             EventList(
                                 showEditIcon = true,
+                                swipeEnabled = true,
                                 showFavoriteIcon = false,
                                 events = state.value.myEvents,
-                                onItemClick = { viewModel.onEventItemClicked(it) },
-                                onEditClick = { viewModel.onEditEventClicked(it) },
-                                onFavClick = {},
                                 isLoading = state.value.showProgress,
                                 isNoData = state.value.showNoData,
-                                onFabClick = viewModel::onFabButtonClicked,
                                 onDeleteClick = { viewModel.onSwipedToDelete(it) },
                                 onUndoDeleteEvent = { viewModel.onUndoDeleteEvent(it) },
-                                swipeEnabled = true
+                                onItemClick = { viewModel.onEventItemClicked(it) },
+                                onEditClick = { viewModel.onEditEventClicked(it) },
+                                onNextPageRequested = viewModel::onNextPageRequested,
+                                onFabClick = viewModel::onFabButtonClicked,
+                                onFavClick = {},
                             )
                         }
                     }

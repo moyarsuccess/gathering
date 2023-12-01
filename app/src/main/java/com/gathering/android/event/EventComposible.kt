@@ -26,7 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gathering.android.common.composables.NavigationBarPaddingSpacer
@@ -66,7 +70,8 @@ fun EventListPreview() {
         onFavClick = {},
         onDeleteClick = {},
         onUndoDeleteEvent = {},
-        swipeEnabled = true
+        onNextPageRequested = {},
+        swipeEnabled = true,
     )
 }
 
@@ -85,8 +90,18 @@ fun EventList(
     onFabClick: () -> Unit,
     onDeleteClick: (Event) -> Unit,
     onUndoDeleteEvent: (Event) -> Unit,
+    onNextPageRequested: () -> Unit
 ) {
     var deletedEvent by remember { mutableStateOf<Event?>(null) }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                onNextPageRequested()
+                return Offset.Zero
+            }
+        }
+    }
 
     if (showFavoriteIcon) {
         ProgressBar(
@@ -111,11 +126,13 @@ fun EventList(
     ) {
         LazyColumn(
             state = rememberLazyListState(),
+
             contentPadding = PaddingValues(10.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(7.dp)
                 .weight(1f)
+                .nestedScroll(nestedScrollConnection)
         ) {
             itemsIndexed(items = events.distinctBy { it.eventId }, key = { _, listItem ->
                 listItem.hashCode()

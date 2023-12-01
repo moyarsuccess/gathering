@@ -13,20 +13,15 @@ import javax.inject.Inject
 class ApiEventRepository @Inject constructor(
     private val eventRemoteService: EventRemoteService,
 ) : EventRepository {
+    override suspend fun getEvents(page: Int): List<EventModel> {
+        return eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
+    }
 
     override fun getMyEvents(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     ) {
         eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
-            .enqueue(handleGetEventResponse(onResponseReady))
-    }
-
-    override fun getEvents(
-        page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    ) {
-        eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
@@ -57,7 +52,7 @@ class ApiEventRepository @Inject constructor(
         page: Int,
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     ) {
-        eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
+        eventRemoteService.getMyLikedEvents(pageSize = PAGE_SIZE, pageNumber = page)
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
