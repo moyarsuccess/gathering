@@ -2,14 +2,12 @@ package com.gathering.android.event.myevent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.DELETE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.Event
 import com.gathering.android.event.General_ERROR
 import com.gathering.android.event.LIKE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
-import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
@@ -35,7 +33,9 @@ class MyEventViewModel @Inject constructor(
         val errorMessage = when (throwable) {
             is EventException -> {
                 when (throwable) {
-                    is EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
+                    EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
+                    EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
+                    EventException.DeleteEventServerRequestFailedException -> DELETE_EVENT_REQUEST_FAILED
                     else -> {
                         General_ERROR
                     }
@@ -50,6 +50,7 @@ class MyEventViewModel @Inject constructor(
             currentState.copy(
                 errorMessage = errorMessage,
                 showProgress = false,
+                showNoData = currentState.myEvents.isEmpty()
             )
         }
     }
@@ -92,36 +93,14 @@ class MyEventViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-        eventRepository.getMyEvents(page) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false,
-                            errorMessage = SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
-                        )
-                    }
-                }
-
-                is ResponseState.Success<List<EventModel>> -> {
-                    val currentPageEvents = request.data as? List<EventModel>
-                    if (currentPageEvents.isNullOrEmpty()) {
-                        if (page == 1) {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(showNoData = true)
-                            }
-                        }
-                    } else {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                myEvents = currentViewState.myEvents.plus(currentPageEvents.map { it.toEvent() })
-                            )
-                        }
-                    }
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(showProgress = false)
-                    }
-                }
+        viewModelScope.launch(exceptionHandler) {
+            val myEvents = eventRepository.getMyEvents(page)
+            viewModelState.update { currentState ->
+                currentState.copy(
+                    showNoData = false,
+                    showProgress = false,
+                    myEvents = currentState.myEvents.plus(myEvents.map { it.toEvent() })
+                )
             }
         }
     }
@@ -135,26 +114,16 @@ class MyEventViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-        eventRepository.deleteEvent(event.eventId) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false, errorMessage = DELETE_EVENT_REQUEST_FAILED
-                        )
-                    }
-                }
+        viewModelScope.launch(exceptionHandler) {
+            eventRepository.deleteEvent(event.eventId)
+            deletedEvent = event
+            deletedEventIndex =
+                viewModelState.value.myEvents.indexOfFirst { it.eventId == event.eventId }
 
-                is ResponseState.Success -> {
-                    deletedEvent = event
-                    deletedEventIndex =
-                        viewModelState.value.myEvents.indexOfFirst { it.eventId == event.eventId }
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(showProgress = false,
-                            myEvents = currentViewState.myEvents.toMutableList()
-                                .apply { this.removeAt(deletedEventIndex) })
-                    }
-                }
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(showProgress = false,
+                    myEvents = currentViewState.myEvents.toMutableList()
+                        .apply { this.removeAt(deletedEventIndex) })
             }
         }
     }

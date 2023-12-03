@@ -1,7 +1,6 @@
 package com.gathering.android.event.repo
 
 import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.EventModel
@@ -17,12 +16,8 @@ class ApiEventRepository @Inject constructor(
         return eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
     }
 
-    override fun getMyEvents(
-        page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    ) {
-        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
-            .enqueue(handleGetEventResponse(onResponseReady))
+    override suspend fun getMyEvents(page: Int): List<EventModel> {
+        return eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
     }
 
     override suspend fun likeEvent(
@@ -71,28 +66,11 @@ class ApiEventRepository @Inject constructor(
             }
         }
 
-    override fun deleteEvent(
-        eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
-    ) {
-        eventRemoteService.deleteEvent(eventId).enqueue(object : Callback<GeneralApiResponse> {
-            override fun onResponse(
-                call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
-            ) {
-                if (!response.isSuccessful) {
-                    onResponseReady(ResponseState.Success(EVENT_DELETED_SUCCESSFULLY))
-                    return
-                }
-                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
-            }
-
-            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                onResponseReady(ResponseState.Failure(t))
-            }
-        })
+    override suspend fun deleteEvent(eventId: Long) {
+        eventRemoteService.deleteEvent(eventId)
     }
 
     companion object {
         const val PAGE_SIZE = 15
-        const val EVENT_DELETED_SUCCESSFULLY = "event deleted successfully."
     }
 }
