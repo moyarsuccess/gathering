@@ -19,9 +19,7 @@ interface EventRepository {
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     )
 
-    fun likeEvent(
-        eventId: Long, like: Boolean, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
-    )
+    suspend fun likeEvent(eventId: Long, like: Boolean)
 
     fun deleteEvent(
         eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit

@@ -23,10 +23,10 @@ interface EventRemoteService {
     ): Call<List<EventModel>>
 
     @PUT("event/like")
-    fun likeEvent(
+    suspend fun likeEvent(
         @Query("event_id") eventId: Long,
         @Query("like") like: Boolean,
-    ): Call<GeneralApiResponse>
+    ): GeneralApiResponse
 
     @DELETE("event")
     fun deleteEvent(

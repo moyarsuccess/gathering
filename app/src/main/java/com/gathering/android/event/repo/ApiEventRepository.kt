@@ -25,27 +25,11 @@ class ApiEventRepository @Inject constructor(
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
-    override fun likeEvent(
+    override suspend fun likeEvent(
         eventId: Long,
-        like: Boolean,
-        onResponseReady: (eventRequest: ResponseState<String>) -> Unit
+        like: Boolean
     ) {
-        eventRemoteService.likeEvent(eventId, like).enqueue(object : Callback<GeneralApiResponse> {
-            override fun onResponse(
-                call: Call<GeneralApiResponse>,
-                response: Response<GeneralApiResponse>
-            ) {
-                if (!response.isSuccessful) {
-                    onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                    return
-                }
-                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
-            }
-
-            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                onResponseReady(ResponseState.Failure(t))
-            }
-        })
+        eventRemoteService.likeEvent(eventId = eventId, like = like)
     }
 
     override fun getMyLikedEvents(
