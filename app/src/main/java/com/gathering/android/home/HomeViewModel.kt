@@ -36,6 +36,9 @@ class HomeViewModel @Inject constructor(
                     EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
                     EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
                     is EventException.GeneralException -> General_ERROR
+                    else -> {
+                        General_ERROR
+                    }
                 }
             }
 

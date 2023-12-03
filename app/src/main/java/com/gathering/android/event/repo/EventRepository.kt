@@ -7,12 +7,7 @@ interface EventRepository {
 
     suspend fun getEvents(page: Int): List<EventModel>
 
-    fun getMyEvents(
-        page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    )
-
-    suspend fun getMyEvents2(page: Int): List<EventModel>
+    suspend fun getMyEvents(page: Int): List<EventModel>
 
     suspend fun getEventById(eventId: Long): EventModel
 
@@ -23,5 +18,5 @@ interface EventRepository {
 
     suspend fun likeEvent(eventId: Long, like: Boolean)
 
-    suspend fun deleteEvent(eventId: Long): String
+    suspend fun deleteEvent(eventId: Long)
 }

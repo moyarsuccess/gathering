@@ -1,7 +1,6 @@
 package com.gathering.android.event.repo
 
 import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.EventModel
@@ -17,16 +16,8 @@ class ApiEventRepository @Inject constructor(
         return eventRemoteService.getAllEvents(pageSize = PAGE_SIZE, pageNumber = page)
     }
 
-    override fun getMyEvents(
-        page: Int,
-        onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
-    ) {
-        eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
-            .enqueue(handleGetEventResponse(onResponseReady))
-    }
-
-    override suspend fun getMyEvents2(page: Int): List<EventModel> {
-        return eventRemoteService.getMyEvents2(pageSize = PAGE_SIZE, pageNumber = page)
+    override suspend fun getMyEvents(page: Int): List<EventModel> {
+        return eventRemoteService.getMyEvents(pageSize = PAGE_SIZE, pageNumber = page)
     }
 
     override suspend fun likeEvent(
@@ -75,9 +66,8 @@ class ApiEventRepository @Inject constructor(
             }
         }
 
-    override suspend fun deleteEvent(eventId: Long): String {
-        val generalApiResponse = eventRemoteService.deleteEvent2(eventId)
-        return generalApiResponse.message ?: ""
+    override suspend fun deleteEvent(eventId: Long) {
+        eventRemoteService.deleteEvent(eventId)
     }
 
     companion object {
