@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
+import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.LIKE_EVENT_REQUEST_FAILED
+import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
 import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
@@ -126,12 +129,5 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    companion object {
-        private const val LIKE_EVENT_REQUEST_FAILED = "You are not able to like this event"
-        private const val SERVER_NOT_RESPONDING_TO_SHOW_EVENTS =
-            "The event list is not available now :("
-        private const val General_ERROR = "Oops! something wrong"
     }
 }
