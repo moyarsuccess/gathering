@@ -4,16 +4,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
+import com.gathering.android.event.DELETE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.Event
+import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.LIKE_EVENT_REQUEST_FAILED
+import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
 import com.gathering.android.event.model.EventModel
+import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MyEventViewModel @Inject constructor(
@@ -23,6 +30,29 @@ class MyEventViewModel @Inject constructor(
     private var deletedEventIndex: Int = 0
     private var page = 1
     private var myEventNavigator: MyEventNavigator? = null
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is EventException -> {
+                when (throwable) {
+                    is EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
+                    else -> {
+                        General_ERROR
+                    }
+                }
+            }
+
+            else -> {
+                General_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(
+                errorMessage = errorMessage,
+                showProgress = false,
+            )
+        }
+    }
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.map {
@@ -68,7 +98,7 @@ class MyEventViewModel @Inject constructor(
                     viewModelState.update { currentViewState ->
                         currentViewState.copy(
                             showProgress = false,
-                            errorMessage = MY_EVENTS_REQUEST_FAILED
+                            errorMessage = SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
                         )
                     }
                 }
@@ -153,39 +183,25 @@ class MyEventViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
+
         val liked = !event.liked
         val eventId = event.eventId
-        eventRepository.likeEvent(eventId, liked) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false, errorMessage = LIKE_EVENT_REQUEST_FAILED
-                        )
-                    }
-                }
 
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false,
-                            myEvents = currentViewState.myEvents.apply {
-                                val index = this.indexOfFirst { it.eventId == eventId }
-                                this.toMutableList()[index] = event.copy(liked = liked)
-                            })
-                    }
-                }
-            }
+        viewModelScope.launch(exceptionHandler) {
+            eventRepository.likeEvent(eventId, liked)
+        }
+
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(
+                showProgress = false,
+                myEvents = currentViewState.myEvents.apply {
+                    val index = this.indexOfFirst { it.eventId == eventId }
+                    this.toMutableList()[index] = event.copy(liked = liked)
+                })
         }
     }
 
     fun onFabButtonClicked() {
         myEventNavigator?.navigateToAddEvent()
-    }
-
-    companion object {
-        const val DELETE_EVENT_REQUEST_FAILED = "DELETE_EVENT_REQUEST_FAILED"
-        const val LIKE_EVENT_REQUEST_FAILED = "LIKE_EVENT_REQUEST_FAILED"
-        const val MY_EVENTS_REQUEST_FAILED = "COULD NOT GET MY EVENTS LIST"
     }
 }
