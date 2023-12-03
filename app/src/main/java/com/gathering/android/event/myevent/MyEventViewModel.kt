@@ -35,7 +35,9 @@ class MyEventViewModel @Inject constructor(
         val errorMessage = when (throwable) {
             is EventException -> {
                 when (throwable) {
-                    is EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
+                    EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
+                    EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
+                    EventException.DeleteEventServerRequestFailedException -> DELETE_EVENT_REQUEST_FAILED
                     else -> {
                         General_ERROR
                     }
@@ -135,26 +137,16 @@ class MyEventViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-        eventRepository.deleteEvent(event.eventId) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            showProgress = false, errorMessage = DELETE_EVENT_REQUEST_FAILED
-                        )
-                    }
-                }
+        viewModelScope.launch(exceptionHandler) {
+            eventRepository.deleteEvent(event.eventId)
+            deletedEvent = event
+            deletedEventIndex =
+                viewModelState.value.myEvents.indexOfFirst { it.eventId == event.eventId }
 
-                is ResponseState.Success -> {
-                    deletedEvent = event
-                    deletedEventIndex =
-                        viewModelState.value.myEvents.indexOfFirst { it.eventId == event.eventId }
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(showProgress = false,
-                            myEvents = currentViewState.myEvents.toMutableList()
-                                .apply { this.removeAt(deletedEventIndex) })
-                    }
-                }
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(showProgress = false,
+                    myEvents = currentViewState.myEvents.toMutableList()
+                        .apply { this.removeAt(deletedEventIndex) })
             }
         }
     }

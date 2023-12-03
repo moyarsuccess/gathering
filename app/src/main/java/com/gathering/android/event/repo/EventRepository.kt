@@ -23,9 +23,5 @@ interface EventRepository {
 
     suspend fun likeEvent(eventId: Long, like: Boolean)
 
-    fun deleteEvent(
-        eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
-    )
-
-    suspend fun deleteEvent2(eventId: Long): String
+    suspend fun deleteEvent(eventId: Long): String
 }
