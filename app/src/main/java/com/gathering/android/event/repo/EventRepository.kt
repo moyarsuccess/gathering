@@ -12,6 +12,8 @@ interface EventRepository {
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     )
 
+    suspend fun getMyEvents2(page: Int): List<EventModel>
+
     suspend fun getEventById(eventId: Long): EventModel
 
     fun getMyLikedEvents(
@@ -24,4 +26,6 @@ interface EventRepository {
     fun deleteEvent(
         eventId: Long, onResponseReady: (eventRequest: ResponseState<String>) -> Unit
     )
+
+    suspend fun deleteEvent2(eventId: Long): String
 }

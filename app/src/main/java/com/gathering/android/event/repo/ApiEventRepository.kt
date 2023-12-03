@@ -25,6 +25,10 @@ class ApiEventRepository @Inject constructor(
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
+    override suspend fun getMyEvents2(page: Int): List<EventModel> {
+        return eventRemoteService.getMyEvents2(pageSize = PAGE_SIZE, pageNumber = page)
+    }
+
     override suspend fun likeEvent(
         eventId: Long,
         like: Boolean
@@ -89,6 +93,12 @@ class ApiEventRepository @Inject constructor(
                 onResponseReady(ResponseState.Failure(t))
             }
         })
+    }
+
+
+    override suspend fun deleteEvent2(eventId: Long): String {
+        val generalApiResponse = eventRemoteService.deleteEvent2(eventId)
+        return generalApiResponse.message ?: ""
     }
 
     companion object {

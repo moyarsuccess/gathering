@@ -22,6 +22,12 @@ interface EventRemoteService {
         @Query("page_number") pageNumber: Int,
     ): Call<List<EventModel>>
 
+    @GET("my_event")
+    suspend fun getMyEvents2(
+        @Query("page_size") pageSize: Int,
+        @Query("page_number") pageNumber: Int,
+    ): List<EventModel>
+
     @PUT("event/like")
     suspend fun likeEvent(
         @Query("event_id") eventId: Long,
@@ -32,6 +38,11 @@ interface EventRemoteService {
     fun deleteEvent(
         @Query("event_id") eventId: Long,
     ): Call<GeneralApiResponse>
+
+    @DELETE("event")
+   suspend fun deleteEvent2(
+        @Query("event_id") eventId: Long,
+    ): GeneralApiResponse
 
     @GET("my_event")
     fun getMyLikedEvents(
