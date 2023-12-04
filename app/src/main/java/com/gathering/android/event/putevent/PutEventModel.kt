@@ -1,4 +1,4 @@
-package com.gathering.android.event.putevent.repo
+package com.gathering.android.event.putevent
 
 import com.google.gson.Gson
 
