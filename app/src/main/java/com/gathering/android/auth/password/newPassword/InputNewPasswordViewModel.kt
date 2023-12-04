@@ -2,9 +2,10 @@ package com.gathering.android.auth.password.newPassword
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.notif.FirebaseRepository
+import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.ResponseState
+import com.gathering.android.notif.FirebaseRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,25 @@ class InputNewPasswordViewModel @Inject constructor(
     private val firebaseMessagingRepository: FirebaseRepository
 ) : ViewModel() {
 
+    private var inputNewPasswordNavigator: InputNewPasswordNavigator? = null
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is AuthException -> {
+                when (throwable) {
+                    AuthException.FailedConnectingToServerException -> CAN_NOT_REACH_SERVER
+                    else -> GENERAL_ERROR
+                }
+            }
+
+            else -> {
+                GENERAL_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(errorMessage = errorMessage)
+        }
+    }
+
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.stateIn(
         scope = viewModelScope,
@@ -29,8 +49,6 @@ class InputNewPasswordViewModel @Inject constructor(
         val isInProgress: Boolean = false,
         var errorMessage: String? = null
     )
-
-    private var inputNewPasswordNavigator: InputNewPasswordNavigator? = null
 
     fun onViewCreated(inputNewPasswordNavigator: InputNewPasswordNavigator) {
         this.inputNewPasswordNavigator = inputNewPasswordNavigator
@@ -52,7 +70,7 @@ class InputNewPasswordViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(isInProgress = true, errorMessage = null)
         }
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val deviceToken = firebaseMessagingRepository.getDeviceToken()
             if (deviceToken.isNullOrEmpty()) {
                 viewModelState.update { currentState ->
@@ -62,29 +80,11 @@ class InputNewPasswordViewModel @Inject constructor(
                 }
                 return@launch
             }
-            repository.resetPassword(
-                token = token,
-                password = newPassword,
-                deviceToken = deviceToken ?: ""
-            ) { response ->
-                when (response) {
-                    is ResponseState.Failure -> {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                errorMessage = CAN_NOT_REACH_SERVER,
-                                isInProgress = false
-                            )
-                        }
-                    }
-
-                    is ResponseState.Success -> {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(isInProgress = false)
-                        }
-                        inputNewPasswordNavigator?.navigateToHomeFragment()
-                    }
-                }
+            repository.resetPassword(password = newPassword, token = token, deviceToken = deviceToken)
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(isInProgress = false)
             }
+            inputNewPasswordNavigator?.navigateToHomeFragment()
         }
     }
 
@@ -92,8 +92,7 @@ class InputNewPasswordViewModel @Inject constructor(
         private const val LINK_NOT_VALID = "LINK NOT VALID"
         private const val PASSWORDS_DO_NOT_MATCH = "PASSWORDS DO NOT MATCH"
         private const val CAN_NOT_REACH_SERVER = "CAN NOT REACH SERVER"
-        private const val INVALID_DEVICE_TOKEN = "INVALID_DEVICE_TOKEN"
+        private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
+        private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }
-
-

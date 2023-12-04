@@ -2,18 +2,39 @@ package com.gathering.android.auth.verification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.ResponseState
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class VerificationViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is AuthException -> {
+                when (throwable) {
+                    AuthException.FailedConnectingToServerException -> FAILED_TO_SEND_EMAIL_VERIFICATION
+                    AuthException.UserVerificationFailedException -> FAILED_TO_VERIFY_USER
+                    else -> GENERAL_ERROR
+                }
+            }
+
+            else -> {
+                GENERAL_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(message = errorMessage)
+        }
+    }
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.stateIn(
@@ -48,23 +69,12 @@ class VerificationViewModel @Inject constructor(
                 isInProgress = true,
             )
         }
-        repository.sendEmailVerification(email ?: "") { state ->
-            when (state) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = false, message = FAILED_TO_SEND_EMAIL_VERIFICATION
-                        )
-                    }
-                }
-
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = false, message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
-                        )
-                    }
-                }
+        viewModelScope.launch(exceptionHandler) {
+            repository.sendEmailVerification(email ?: "")
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    isInProgress = false, message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
+                )
             }
         }
     }
@@ -75,23 +85,14 @@ class VerificationViewModel @Inject constructor(
                 isInProgress = true,
             )
         }
-        repository.emailVerify(token ?: "") { state ->
-            when (state) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(isInProgress = false, message = FAILED_TO_VERIFY_USER)
-                    }
-                }
-
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = false, message = USER_VERIFIED_SUCCESSFULLY
-                        )
-                    }
-                    verificationNavigator?.navigateToHomeScreen()
-                }
+        viewModelScope.launch(exceptionHandler) {
+            repository.emailVerify(token ?: "")
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    isInProgress = false, message = USER_VERIFIED_SUCCESSFULLY
+                )
             }
+            verificationNavigator?.navigateToHomeScreen()
         }
     }
 
@@ -102,5 +103,6 @@ class VerificationViewModel @Inject constructor(
             "FAILED TO SEND EMAIL VERIFICATION, TRY AGAIN!"
         private const val FAILED_TO_VERIFY_USER = "FAILED TO VERIFY THE USER"
         private const val USER_VERIFIED_SUCCESSFULLY = "USER VERIFIED SUCCESSFULLY"
+        private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }

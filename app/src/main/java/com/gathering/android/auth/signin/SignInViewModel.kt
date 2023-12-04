@@ -3,11 +3,10 @@ package com.gathering.android.auth.signin
 import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.UserNotVerifiedException
-import com.gathering.android.common.WrongCredentialsException
 import com.gathering.android.notif.FirebaseRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +26,25 @@ class SignInViewModel @Inject constructor(
     )
 
     private var signInNavigator: SignInNavigator? = null
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is AuthException -> {
+                when (throwable) {
+                    AuthException.FailedConnectingToServerException -> CAN_NOT_REACH_THE_SERVER
+                    AuthException.UserNotVerifiedException -> EMAIL_NOT_VERIFIED
+                    AuthException.WrongCredentialsException -> SIGN_IN_FAILED
+                    else -> GENERAL_ERROR
+                }
+            }
+
+            else -> {
+                GENERAL_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(errorMessage = errorMessage, isInProgress = false)
+        }
+    }
 
     data class UiState(
         val isInProgress: Boolean = false,
@@ -39,26 +57,11 @@ class SignInViewModel @Inject constructor(
 
     fun onSignInButtonClicked(email: String, pass: String) {
         viewModelState.update { currentViewState ->
-            currentViewState.copy(isInProgress = true, errorMessage = null)
+            currentViewState.copy(isInProgress = true)
         }
-        if (!isEmailValid(email)) {
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(
-                    errorMessage = INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE, isInProgress = false
-                )
-            }
-            return
-        }
-
-        if (!isPassValid(pass)) {
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(
-                    errorMessage = INVALID_PASS_FORMAT_ERROR_MESSAGE, isInProgress = false
-                )
-            }
-            return
-        }
-        viewModelScope.launch {
+        checkEmailValidity(email)
+        checkPasswordValidity(pass)
+        viewModelScope.launch(exceptionHandler) {
             val deviceToken = firebaseMessagingRepository.getDeviceToken()
             if (deviceToken.isNullOrEmpty()) {
                 viewModelState.update { currentState ->
@@ -68,55 +71,35 @@ class SignInViewModel @Inject constructor(
                 }
                 return@launch
             }
-            repository.signInUser(
-                email = email,
-                pass = pass,
-                deviceToken = deviceToken ?: "",
-                onResponseReady = { state ->
-                    when (state) {
-                        is ResponseState.Failure -> {
-                            when (state.throwable) {
-                                is WrongCredentialsException -> {
-                                    viewModelState.update { currentViewState ->
-                                        currentViewState.copy(
-                                            errorMessage = SIGN_IN_FAILED,
-                                            isInProgress = false,
-                                        )
-                                    }
-                                }
-
-                                is UserNotVerifiedException -> {
-                                    viewModelState.update { currentViewState ->
-                                        currentViewState.copy(
-                                            errorMessage = EMAIL_NOT_VERIFIED, isInProgress = false
-                                        )
-                                    }
-                                    signInNavigator?.navigateToVerification(email)
-                                }
-
-                                else -> {
-                                    viewModelState.update { currentViewState ->
-                                        currentViewState.copy(
-                                            errorMessage = CAN_NOT_REACH_THE_SERVER,
-                                            isInProgress = false,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        is ResponseState.Success -> {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(
-                                    isInProgress = true
-                                )
-                            }
-                            signInNavigator?.navigateToHome()
-                        }
-                    }
-                })
+            repository.signInUser(deviceToken = deviceToken, email = email, pass = pass)
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    isInProgress = false
+                )
+            }
+            signInNavigator?.navigateToHome()
         }
+    }
 
+    private fun checkEmailValidity(email: String) {
+        if (!isEmailValid(email)) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    errorMessage = INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE,
+                    isInProgress = false
+                )
+            }
+        }
+    }
+
+    private fun checkPasswordValidity(pass: String) {
+        if (!isPassValid(pass)) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    errorMessage = INVALID_PASS_FORMAT_ERROR_MESSAGE, isInProgress = false
+                )
+            }
+        }
     }
 
     fun onForgotPassTvClicked() {
@@ -140,5 +123,6 @@ class SignInViewModel @Inject constructor(
         private const val EMAIL_NOT_VERIFIED = "EMAIL NOT VERIFIED"
         private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
         private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
+        private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }
