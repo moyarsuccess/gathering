@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gathering.android.common.composables.CircularImageView
@@ -43,7 +44,6 @@ fun AttendeeItem(attendeeModel: AttendeeModel) {
         Spacer(modifier = Modifier.padding(7.dp))
     }
 }
-
 @Composable
 private fun RsvpTextView(
     textColor: Color,
@@ -61,14 +61,10 @@ private fun RsvpTextView(
     )
 }
 
+@Preview(showBackground = true)
 @Composable
-private fun EmailTextView(attendeeModel: AttendeeModel) {
-    Text(
-        style = TextStyle(
-            fontSize = 14.sp
-        ),
-        text = attendeeModel.email ?: "",
-        modifier = Modifier.wrapContentWidth(),
-        fontWeight = FontWeight.Bold,
+fun AttendeeItemPreview() {
+    AttendeeItem(
+        attendeeModel = AttendeeModel(accepted = "coming")
     )
 }
