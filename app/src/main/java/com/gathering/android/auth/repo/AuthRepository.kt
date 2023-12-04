@@ -4,11 +4,7 @@ import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.ResponseState
 
 interface AuthRepository {
-    fun forgetPassword(
-        email: String, onResponseReady: (ResponseState<String>) -> Unit
-    )
-
-    suspend fun forgetPassword1(
+    suspend fun forgetPassword(
         email: String,
     )
 

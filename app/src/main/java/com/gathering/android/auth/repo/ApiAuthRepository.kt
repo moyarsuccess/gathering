@@ -20,26 +20,8 @@ class ApiAuthRepository @Inject constructor(
     private val tokenRepo: TokenRepo,
     private val userRepo: UserRepo
 ) : AuthRepository {
-    override fun forgetPassword(email: String, onResponseReady: (ResponseState<String>) -> Unit) {
-        remoteService.forgetPassword(email).enqueue(object : Callback<GeneralApiResponse> {
-            override fun onResponse(
-                call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
-            ) {
-                if (!response.isSuccessful) {
-                    onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                    return
-                }
-                onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
-            }
-
-            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                onResponseReady(ResponseState.Failure(t))
-            }
-        })
-    }
-
-    override suspend fun forgetPassword1(email: String) {
-        remoteService.forgetPassword1(email = email)
+    override suspend fun forgetPassword(email: String) {
+        remoteService.forgetPassword(email = email)
     }
 
     override fun resetPassword(

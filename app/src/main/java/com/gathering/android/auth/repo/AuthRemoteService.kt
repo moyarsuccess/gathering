@@ -7,13 +7,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface AuthRemoteService {
-    @GET("auth/password/forget")
-    fun forgetPassword(
-        @Query("email") email: String,
-    ): Call<GeneralApiResponse>
 
     @GET("auth/password/forget")
-    suspend fun forgetPassword1(
+    suspend fun forgetPassword(
         @Query("email") email: String,
     ): GeneralApiResponse
 
