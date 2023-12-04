@@ -126,7 +126,6 @@ fun EventList(
     ) {
         LazyColumn(
             state = rememberLazyListState(),
-
             contentPadding = PaddingValues(10.dp),
             modifier = Modifier
                 .fillMaxSize()

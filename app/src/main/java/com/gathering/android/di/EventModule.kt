@@ -2,14 +2,11 @@ package com.gathering.android.di
 
 import android.content.Context
 import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRemoteService
-import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
 import com.gathering.android.event.eventdetail.acceptrepo.ApiAttendanceStateRepository
+import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
 import com.gathering.android.event.repo.ApiEventRepository
 import com.gathering.android.event.repo.EventRemoteService
 import com.gathering.android.event.repo.EventRepository
-import com.gathering.android.event.putevent.repo.PutEventRemoteService
-import com.gathering.android.event.putevent.repo.PutEventRepository
-import com.gathering.android.event.putevent.repo.ApiPutEventRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +23,9 @@ class EventModule {
     @Singleton
     fun provideEventRepository(
         eventRemoteService: EventRemoteService,
+        @ApplicationContext context: Context,
     ): EventRepository {
-        return ApiEventRepository(eventRemoteService)
+        return ApiEventRepository(eventRemoteService, context)
     }
 
     @Provides
@@ -38,22 +36,6 @@ class EventModule {
         return retrofit.create(EventRemoteService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideAddEventRepository(
-        @ApplicationContext context: Context,
-        putEventRemoteService: PutEventRemoteService
-    ): PutEventRepository {
-        return ApiPutEventRepository(context, putEventRemoteService)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAddEventRemoteService(
-        @AuthorizedRetrofitQualifier retrofit: Retrofit
-    ): PutEventRemoteService {
-        return retrofit.create(PutEventRemoteService::class.java)
-    }
     @Provides
     @Singleton
     fun provideAcceptTypeRemoteService(

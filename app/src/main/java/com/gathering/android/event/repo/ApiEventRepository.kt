@@ -7,7 +7,7 @@ import com.gathering.android.common.ResponseState
 import com.gathering.android.common.createRequestPartFromUri
 import com.gathering.android.common.requestBody
 import com.gathering.android.event.model.EventModel
-import com.gathering.android.event.putevent.repo.PutEventModel
+import com.gathering.android.event.putevent.PutEventModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -50,14 +50,16 @@ class ApiEventRepository @Inject constructor(
         val attendees = event.getAttendeesJson().requestBody()
         val filePart = context.createRequestPartFromUri(event.photoUri)
 
-        eventRemoteService.editEvent(eventId = eventId,
+        eventRemoteService.editEvent(
+            eventId = eventId,
             eventName = eventName,
             eventDescription = eventDescription,
             latitude = latitude,
             longitude = longitude,
             dateTime = dateTime,
             attendees = attendees,
-            photo = filePart)
+            photo = filePart
+        )
     }
 
     override suspend fun getEvents(page: Int): List<EventModel> {
