@@ -28,14 +28,7 @@ interface AuthRemoteService {
     ): AuthorizedResponse
 
     @GET("auth/register")
-    fun signUp(
-        @Query("email") email: String,
-        @Query("password") password: String,
-        @Query("device_token") deviceToken: String,
-    ): Call<GeneralApiResponse>
-
-    @GET("auth/register")
-    suspend fun signUp1(
+    suspend fun signUp(
         @Query("email") email: String,
         @Query("password") password: String,
         @Query("device_token") deviceToken: String,
