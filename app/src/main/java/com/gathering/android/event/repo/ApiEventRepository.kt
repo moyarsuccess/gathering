@@ -7,7 +7,7 @@ import com.gathering.android.common.ResponseState
 import com.gathering.android.common.createRequestPartFromUri
 import com.gathering.android.common.requestBody
 import com.gathering.android.event.model.EventModel
-import com.gathering.android.event.putevent.repo.PutEventModel
+import com.gathering.android.event.putevent.PutEventModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.RequestBody
 import retrofit2.Call

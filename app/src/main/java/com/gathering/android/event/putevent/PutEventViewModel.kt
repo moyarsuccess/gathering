@@ -13,7 +13,6 @@ import com.gathering.android.common.getYear
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.model.EventLocation
-import com.gathering.android.event.putevent.repo.PutEventModel
 import com.gathering.android.event.repo.EventRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

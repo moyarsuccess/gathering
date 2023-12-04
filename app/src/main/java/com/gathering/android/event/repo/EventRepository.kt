@@ -2,7 +2,7 @@ package com.gathering.android.event.repo
 
 import com.gathering.android.common.ResponseState
 import com.gathering.android.event.model.EventModel
-import com.gathering.android.event.putevent.repo.PutEventModel
+import com.gathering.android.event.putevent.PutEventModel
 
 interface EventRepository {
 

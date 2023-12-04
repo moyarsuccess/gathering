@@ -4,9 +4,6 @@ import android.content.Context
 import com.gathering.android.event.eventdetail.acceptrepo.AcceptTypeRemoteService
 import com.gathering.android.event.eventdetail.acceptrepo.ApiAttendanceStateRepository
 import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
-import com.gathering.android.event.putevent.repo.ApiPutEventRepository
-import com.gathering.android.event.putevent.repo.PutEventRemoteService
-import com.gathering.android.event.putevent.repo.PutEventRepository
 import com.gathering.android.event.repo.ApiEventRepository
 import com.gathering.android.event.repo.EventRemoteService
 import com.gathering.android.event.repo.EventRepository
@@ -37,23 +34,6 @@ class EventModule {
         @AuthorizedRetrofitQualifier retrofit: Retrofit
     ): EventRemoteService {
         return retrofit.create(EventRemoteService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAddEventRepository(
-        @ApplicationContext context: Context,
-        putEventRemoteService: PutEventRemoteService
-    ): PutEventRepository {
-        return ApiPutEventRepository(context, putEventRemoteService)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAddEventRemoteService(
-        @AuthorizedRetrofitQualifier retrofit: Retrofit
-    ): PutEventRemoteService {
-        return retrofit.create(PutEventRemoteService::class.java)
     }
 
     @Provides
