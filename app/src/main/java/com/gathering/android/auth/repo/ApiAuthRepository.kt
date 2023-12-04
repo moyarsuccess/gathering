@@ -1,17 +1,16 @@
 package com.gathering.android.auth.repo
 
+import com.gathering.android.auth.AuthException
 import com.gathering.android.common.AuthorizedResponse
-import com.gathering.android.common.BODY_WAS_NULL
 import com.gathering.android.common.EmailAlreadyInUse
 import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.UserRepo
-import com.gathering.android.common.WrongCredentialsException
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -32,47 +31,22 @@ class ApiAuthRepository @Inject constructor(
         )
     }
 
-    override fun signInUser(
+    override suspend fun signInUser(
         email: String,
         pass: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
+        deviceToken: String
     ) {
-        remoteService.signIn(email, pass, deviceToken)
-            .enqueue(object : Callback<AuthorizedResponse> {
-                override fun onResponse(
-                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        if (response.code() == BAD_REQUEST_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(WrongCredentialsException()))
-                            return
-                        }
-                        if (response.code() == UNAUTHORIZED_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(UserNotVerifiedException()))
-                            return
-                        }
-                        onResponseReady(ResponseState.Failure(Exception(response.message())))
-                        return
-                    }
-                    val body = response.body()
-                    if (body == null) {
-                        onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
-                        return
-                    }
-                    tokenRepo.saveToken(body.jwt)
-                    userRepo.saveUser(body.user)
-                    onResponseReady(ResponseState.Success(body))
-                }
-
-                override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
-    }
-
-    override suspend fun signInUser1(email: String, pass: String, deviceToken: String) {
-        remoteService.signIn1(deviceToken = deviceToken, password = pass, email = email)
+        try {
+            val response = remoteService.signIn(email, pass, deviceToken)
+            tokenRepo.saveToken(response.jwt)
+            userRepo.saveUser(response.user)
+        } catch (e: HttpException) {
+            val throwable = when (e.code()) {
+                UNAUTHORIZED_HTTP_CODE -> AuthException.UserNotVerifiedException
+                else -> AuthException.General(e.code())
+            }
+            throw throwable
+        }
     }
 
     override fun signUpUser(

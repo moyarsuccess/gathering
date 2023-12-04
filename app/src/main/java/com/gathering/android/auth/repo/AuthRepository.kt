@@ -13,14 +13,7 @@ interface AuthRepository {
         deviceToken: String,
     )
 
-    fun signInUser(
-        email: String,
-        pass: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
-    )
-
-    suspend fun signInUser1(
+    suspend fun signInUser(
         email: String,
         pass: String,
         deviceToken: String,
