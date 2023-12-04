@@ -3,11 +3,13 @@ package com.gathering.android.auth.signin
 import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.WrongCredentialsException
 import com.gathering.android.notif.FirebaseRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +29,25 @@ class SignInViewModel @Inject constructor(
     )
 
     private var signInNavigator: SignInNavigator? = null
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is AuthException -> {
+                when (throwable) {
+                    AuthException.FailedConnectingToServerException -> CAN_NOT_REACH_THE_SERVER
+                    AuthException.UserNotVerifiedException -> EMAIL_NOT_VERIFIED
+                    AuthException.WrongCredentialsException -> SIGN_IN_FAILED
+                    else -> GENERAL_ERROR
+                }
+            }
+
+            else -> {
+                GENERAL_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(errorMessage = errorMessage)
+        }
+    }
 
     data class UiState(
         val isInProgress: Boolean = false,
@@ -140,5 +161,6 @@ class SignInViewModel @Inject constructor(
         private const val EMAIL_NOT_VERIFIED = "EMAIL NOT VERIFIED"
         private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
         private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
+        private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }
