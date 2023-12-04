@@ -5,9 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.EmailAlreadyInUse
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.WrongCredentialsException
 import com.gathering.android.notif.FirebaseRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,7 +90,7 @@ class SignUpViewModel @Inject constructor(
             }
             return
         }
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val deviceToken = firebaseMessagingRepository.getDeviceToken()
             if (deviceToken.isNullOrEmpty()) {
                 viewModelState.update { currentState ->
@@ -103,51 +100,14 @@ class SignUpViewModel @Inject constructor(
                 }
                 return@launch
             }
-            repository.signUpUser(email, pass, deviceToken ?: "") { state ->
-                when (state) {
-                    is ResponseState.Failure -> {
-                        when (state.throwable) {
-                            is WrongCredentialsException -> {
-                                viewModelState.update { currentViewState ->
-                                    currentViewState.copy(
-                                        errorMessage = SIGN_UP_FAILED,
-                                        isInProgress = false,
-                                    )
-                                }
-                            }
-
-                            is EmailAlreadyInUse -> {
-                                viewModelState.update { currentViewState ->
-                                    currentViewState.copy(
-                                        errorMessage = EMAIL_ALREADY_IN_USE,
-                                        isInProgress = false,
-                                    )
-                                }
-                            }
-
-                            else -> {
-                                viewModelState.update { currentViewState ->
-                                    currentViewState.copy(
-                                        errorMessage = CAN_NOT_REACH_THE_SERVER,
-                                        isInProgress = false,
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    is ResponseState.Success -> {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                isInProgress = true
-                            )
-                        }
-                        signUpNavigator?.navigateToVerification(email)
-                    }
-                }
+            repository.signUpUser(email = email, pass = pass, deviceToken = deviceToken)
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    isInProgress = true
+                )
             }
+            signUpNavigator?.navigateToVerification(email)
         }
-
     }
 
     private fun isEmailValid(email: String): Boolean {

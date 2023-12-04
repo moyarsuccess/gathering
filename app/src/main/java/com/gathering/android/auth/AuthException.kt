@@ -6,4 +6,5 @@ sealed class AuthException : Throwable() {
     data object EmailAlreadyInUseException : AuthException()
     data object FailedConnectingToServerException : AuthException()
     data object UserVerificationFailedException : AuthException()
+    class General(val code: Int) : AuthException()
 }
