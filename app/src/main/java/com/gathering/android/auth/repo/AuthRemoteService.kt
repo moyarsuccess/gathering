@@ -21,14 +21,7 @@ interface AuthRemoteService {
     ): AuthorizedResponse
 
     @GET("auth/login")
-    fun signIn(
-        @Query("email") email: String,
-        @Query("password") password: String,
-        @Query("device_token") deviceToken: String,
-    ): Call<AuthorizedResponse>
-
-    @GET("auth/login")
-    suspend fun signIn1(
+    suspend fun signIn(
         @Query("email") email: String,
         @Query("password") password: String,
         @Query("device_token") deviceToken: String,
