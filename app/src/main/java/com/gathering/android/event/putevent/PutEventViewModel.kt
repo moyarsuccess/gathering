@@ -2,32 +2,29 @@ package com.gathering.android.event.putevent
 
 import android.icu.text.SimpleDateFormat
 import android.location.Geocoder
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.common.ResponseState
 import com.gathering.android.common.SEPARATOR
 import com.gathering.android.common.getDay
 import com.gathering.android.common.getHour
 import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
-import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.model.EventLocation
 import com.gathering.android.event.putevent.repo.PutEventModel
-import com.gathering.android.event.putevent.repo.PutEventRepository
+import com.gathering.android.event.repo.EventRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
 
 class PutEventViewModel @Inject constructor(
-    private val eventRepository: PutEventRepository,
+    private val eventRepository: EventRepository,
     private var geocoder: Geocoder,
 ) : ViewModel() {
 
@@ -237,33 +234,23 @@ class PutEventViewModel @Inject constructor(
         update { currentState ->
             currentState.copy(showProgress = true)
         }
-        when (viewModelState.value.stateMode) {
-            StateMode.EDIT -> {
-                eventRepository.editEvent(createPutEventModelFromCurrentState(), ::onResponseReady)
-            }
+        viewModelScope.launch {
+            when (viewModelState.value.stateMode) {
+                StateMode.EDIT -> {
+                    eventRepository.editEvent(createPutEventModelFromCurrentState())
+                    dismissPutEvent()
+                }
 
-            StateMode.ADD -> {
-                eventRepository.addEvent(createPutEventModelFromCurrentState(), ::onResponseReady)
+                StateMode.ADD -> {
+                    eventRepository.addEvent(createPutEventModelFromCurrentState())
+                    dismissPutEvent()
+                }
             }
         }
     }
-
-
-    private fun onResponseReady(eventRequest: ResponseState<String>) {
-        when (eventRequest) {
-            is ResponseState.Failure -> {
-                update { currentState ->
-                    currentState.copy(errorMessage = EVENT_REQUEST_FAILED, showProgress = false)
-                }
-            }
-
-            is ResponseState.Success<String> -> {
-                putEventNavigator?.dismissPutEvent()
-                update { currentState ->
-                    currentState.copy(showProgress = false)
-                }
-            }
-        }
+    
+    private fun dismissPutEvent() {
+        putEventNavigator?.dismissPutEvent()
     }
 
     private fun update(stateUpdater: (currentState: EventViewModelState) -> EventViewModelState) {
@@ -285,7 +272,8 @@ class PutEventViewModel @Inject constructor(
             lat = eventLocation.lat ?: 0.0,
             lon = eventLocation.lon ?: 0.0,
             dateAndTime = viewModelState.value.getDate(),
-            attendees = viewModelState.value.eventAttendeeModels?.map { it.email ?: "" } ?: emptyList()
+            attendees = viewModelState.value.eventAttendeeModels?.map { it.email ?: "" }
+                ?: emptyList()
         )
     }
 
