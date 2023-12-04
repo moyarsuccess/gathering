@@ -7,15 +7,7 @@ interface AuthRepository {
     suspend fun forgetPassword(
         email: String,
     )
-
-    fun resetPassword(
-        token: String,
-        password: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
-    )
-
-    suspend fun resetPassword1(
+    suspend fun resetPassword(
         token: String,
         password: String,
         deviceToken: String,

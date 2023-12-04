@@ -24,41 +24,8 @@ class ApiAuthRepository @Inject constructor(
         remoteService.forgetPassword(email = email)
     }
 
-    override fun resetPassword(
-        token: String,
-        password: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
-    ) {
-        remoteService.resetPassword(token, password, deviceToken)
-            .enqueue(object : Callback<AuthorizedResponse> {
-                override fun onResponse(
-                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                        return
-                    }
-                    val body = response.body()
-                    if (body == null) {
-                        onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
-                        return
-                    }
-                    val jwt = body.jwt
-                    tokenRepo.saveToken(jwt)
-                    userRepo.saveUser(body.user)
-                    onResponseReady(ResponseState.Success(body))
-
-                }
-
-                override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
-    }
-
-    override suspend fun resetPassword1(token: String, password: String, deviceToken: String) {
-        remoteService.resetPassword1(
+    override suspend fun resetPassword(token: String, password: String, deviceToken: String) {
+        remoteService.resetPassword(
             password = password,
             deviceToken = deviceToken,
             token = token

@@ -14,14 +14,7 @@ interface AuthRemoteService {
     ): GeneralApiResponse
 
     @GET("auth/password/reset")
-    fun resetPassword(
-        @Query("token") token: String,
-        @Query("password") password: String,
-        @Query("device_token") deviceToken: String,
-    ): Call<AuthorizedResponse>
-
-    @GET("auth/password/reset")
-    suspend fun resetPassword1(
+    suspend fun resetPassword(
         @Query("token") token: String,
         @Query("password") password: String,
         @Query("device_token") deviceToken: String,
