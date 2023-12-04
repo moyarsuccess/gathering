@@ -2,7 +2,6 @@ package com.gathering.android.auth.repo
 
 import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.GeneralApiResponse
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -35,14 +34,8 @@ interface AuthRemoteService {
     ): GeneralApiResponse
 
     @GET("auth/verification/email")
-    fun sendEmailVerification(@Query("email") email: String): Call<GeneralApiResponse>
-
-    @GET("auth/verification/email")
-    suspend fun sendEmailVerification1(@Query("email") email: String): GeneralApiResponse
+    suspend fun sendEmailVerification(@Query("email") email: String): GeneralApiResponse
 
     @GET("auth/verification")
-    fun emailVerify(@Query("token") token: String): Call<AuthorizedResponse>
-
-    @GET("auth/verification")
-    suspend fun emailVerify1(@Query("token") token: String): AuthorizedResponse
+    suspend fun emailVerify(@Query("token") token: String): AuthorizedResponse
 }

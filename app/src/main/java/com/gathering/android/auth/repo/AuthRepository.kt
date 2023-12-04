@@ -1,8 +1,5 @@
 package com.gathering.android.auth.repo
 
-import com.gathering.android.common.AuthorizedResponse
-import com.gathering.android.common.ResponseState
-
 interface AuthRepository {
     suspend fun forgetPassword(
         email: String,
@@ -25,11 +22,9 @@ interface AuthRepository {
         deviceToken: String,
     )
 
-    fun sendEmailVerification(email: String, onResponseReady: (ResponseState<String>) -> Unit)
-    suspend fun sendEmailVerification1(email: String)
+    suspend fun sendEmailVerification(email: String)
 
-    fun emailVerify(token: String, onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit)
-    suspend fun emailVerify1(token: String)
+    suspend fun emailVerify(token: String)
 
     fun isUserVerified(): Boolean
 }
