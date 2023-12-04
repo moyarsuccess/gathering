@@ -20,6 +20,8 @@ interface EventRepository {
         onResponseReady: (eventRequest: ResponseState<List<EventModel>>) -> Unit
     )
 
+    suspend fun getMyLikedEvents2(page: Int)
+
     suspend fun likeEvent(eventId: Long, like: Boolean)
 
     suspend fun deleteEvent(eventId: Long)

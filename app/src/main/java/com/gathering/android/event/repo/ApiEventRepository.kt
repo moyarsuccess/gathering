@@ -85,6 +85,10 @@ class ApiEventRepository @Inject constructor(
             .enqueue(handleGetEventResponse(onResponseReady))
     }
 
+    override suspend fun getMyLikedEvents2(page: Int) {
+        eventRemoteService.getMyLikedEvents2(pageSize = PAGE_SIZE, pageNumber = page)
+    }
+
     override suspend fun getEventById(eventId: Long): EventModel {
         return eventRemoteService.getEventById(eventId = eventId)
     }
