@@ -1,18 +1,9 @@
 package com.gathering.android.auth.repo
 
-import com.gathering.android.common.AuthorizedResponse
-import com.gathering.android.common.BODY_WAS_NULL
-import com.gathering.android.common.EmailAlreadyInUse
-import com.gathering.android.common.GeneralApiResponse
-import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
-import com.gathering.android.common.ResponseState
+import com.gathering.android.auth.AuthException
 import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserNotVerifiedException
 import com.gathering.android.common.UserRepo
-import com.gathering.android.common.WrongCredentialsException
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class ApiAuthRepository @Inject constructor(
@@ -24,187 +15,74 @@ class ApiAuthRepository @Inject constructor(
         remoteService.forgetPassword(email = email)
     }
 
-    override fun resetPassword(
-        token: String,
-        password: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
-    ) {
-        remoteService.resetPassword(token, password, deviceToken)
-            .enqueue(object : Callback<AuthorizedResponse> {
-                override fun onResponse(
-                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                        return
-                    }
-                    val body = response.body()
-                    if (body == null) {
-                        onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
-                        return
-                    }
-                    val jwt = body.jwt
-                    tokenRepo.saveToken(jwt)
-                    userRepo.saveUser(body.user)
-                    onResponseReady(ResponseState.Success(body))
-
-                }
-
-                override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
-    }
-
-    override suspend fun resetPassword1(token: String, password: String, deviceToken: String) {
-        remoteService.resetPassword1(
+    override suspend fun resetPassword(token: String, password: String, deviceToken: String) {
+        remoteService.resetPassword(
             password = password,
             deviceToken = deviceToken,
             token = token
         )
     }
 
-    override fun signInUser(
+    override suspend fun signInUser(
         email: String,
         pass: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
+        deviceToken: String
     ) {
-        remoteService.signIn(email, pass, deviceToken)
-            .enqueue(object : Callback<AuthorizedResponse> {
-                override fun onResponse(
-                    call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        if (response.code() == BAD_REQUEST_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(WrongCredentialsException()))
-                            return
-                        }
-                        if (response.code() == UNAUTHORIZED_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(UserNotVerifiedException()))
-                            return
-                        }
-                        onResponseReady(ResponseState.Failure(Exception(response.message())))
-                        return
-                    }
-                    val body = response.body()
-                    if (body == null) {
-                        onResponseReady(ResponseState.Failure(Exception(BODY_WAS_NULL)))
-                        return
-                    }
-                    tokenRepo.saveToken(body.jwt)
-                    userRepo.saveUser(body.user)
-                    onResponseReady(ResponseState.Success(body))
-                }
-
-                override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
-    }
-
-    override suspend fun signInUser1(email: String, pass: String, deviceToken: String) {
-        remoteService.signIn1(deviceToken = deviceToken, password = pass, email = email)
-    }
-
-    override fun signUpUser(
-        email: String,
-        pass: String,
-        deviceToken: String,
-        onResponseReady: (ResponseState<String>) -> Unit
-    ) {
-        remoteService.signUp(
-            email = email, password = pass, deviceToken = deviceToken
-        ).enqueue(object : Callback<GeneralApiResponse> {
-                override fun onResponse(
-                    call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        if (response.code() == CONFLICT_HTTP_CODE) {
-                            onResponseReady(ResponseState.Failure(EmailAlreadyInUse()))
-                            return
-                        }
-                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                    }
-                    onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
-                }
-
-            override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                onResponseReady(ResponseState.Failure(t))
+        try {
+            val response = remoteService.signIn(email, pass, deviceToken)
+            tokenRepo.saveToken(response.jwt)
+            userRepo.saveUser(response.user)
+        } catch (e: HttpException) {
+            val throwable = when (e.code()) {
+                UNAUTHORIZED_HTTP_CODE -> AuthException.UserNotVerifiedException
+                else -> AuthException.General(e.code())
             }
-        })
+            throw throwable
+        }
     }
 
-    override suspend fun signUpUser1(email: String, pass: String, deviceToken: String) {
-        remoteService.signUp1(email = email, password = pass, deviceToken = deviceToken)
-    }
-
-    override fun sendEmailVerification(
-        email: String, onResponseReady: (ResponseState<String>) -> Unit
-    ) {
-        remoteService.sendEmailVerification(email = email)
-            .enqueue(object : Callback<GeneralApiResponse> {
-                override fun onResponse(
-                    call: Call<GeneralApiResponse>, response: Response<GeneralApiResponse>
-                ) {
-                    if (!response.isSuccessful) {
-                        onResponseReady(ResponseState.Failure(Exception(RESPONSE_IS_NOT_SUCCESSFUL)))
-                        return
-                    }
-                    onResponseReady(ResponseState.Success(response.body()?.message ?: ""))
-                }
-
-                override fun onFailure(call: Call<GeneralApiResponse>, t: Throwable) {
-                    onResponseReady(ResponseState.Failure(t))
-                }
-            })
-    }
-
-    override suspend fun sendEmailVerification1(email: String) {
-        remoteService.sendEmailVerification1(email = email)
-    }
-
-    override fun emailVerify(
-        token: String, onResponseReady: (ResponseState<AuthorizedResponse>) -> Unit
-    ) {
-        remoteService.emailVerify(token).enqueue(object : Callback<AuthorizedResponse> {
-            override fun onResponse(
-                call: Call<AuthorizedResponse>, response: Response<AuthorizedResponse>
-            ) {
-                if (!response.isSuccessful) {
-                    onResponseReady(
-                        ResponseState.Failure(
-                            Exception(
-                                RESPONSE_IS_NOT_SUCCESSFUL
-                            )
-                        )
-                    )
-                    return
-                }
-                response.body()?.also { body ->
-                    userRepo.saveUser(body.user)
-                    tokenRepo.saveToken(body.jwt)
-                    onResponseReady(ResponseState.Success(body))
-                } ?: run {
-                    onResponseReady(
-                        ResponseState.Failure(
-                            Exception(
-                                RESPONSE_IS_NOT_SUCCESSFUL
-                            )
-                        )
-                    )
-                }
+    override suspend fun signUpUser(email: String, pass: String, deviceToken: String) {
+        try {
+            remoteService.signUp(
+                email = email,
+                password = pass,
+                deviceToken = deviceToken,
+            )
+        } catch (e: HttpException) {
+            val throwable = when (e.code()) {
+                CONFLICT_HTTP_CODE -> AuthException.EmailAlreadyInUseException
+                else -> AuthException.General(e.code())
             }
-
-            override fun onFailure(call: Call<AuthorizedResponse>, t: Throwable) {
-                onResponseReady(ResponseState.Failure(t))
-            }
-        })
+            throw throwable
+        }
     }
 
-    override suspend fun emailVerify1(token: String) {
-        remoteService.emailVerify1(token = token)
+    override suspend fun sendEmailVerification(email: String) {
+        try {
+            remoteService.sendEmailVerification(
+                email = email,
+            )
+        } catch (e: HttpException) {
+            val throwable = when (e.code()) {
+                CAN_NOT_REACH_SERVER -> AuthException.FailedConnectingToServerException
+                else -> AuthException.General(e.code())
+            }
+            throw throwable
+        }
+    }
+
+    override suspend fun emailVerify(token: String) {
+        try {
+            val response = remoteService.emailVerify(token)
+            userRepo.saveUser(response.user)
+            tokenRepo.saveToken(response.jwt)
+        } catch (e: HttpException) {
+            val throwable = when (e.code()) {
+                UNAUTHORIZED_HTTP_CODE -> AuthException.UserNotVerifiedException
+                else -> AuthException.General(e.code())
+            }
+            throw throwable
+        }
     }
 
     override fun isUserVerified(): Boolean {
@@ -212,7 +90,7 @@ class ApiAuthRepository @Inject constructor(
     }
 
     companion object {
-        private const val BAD_REQUEST_HTTP_CODE = 400
+        private const val CAN_NOT_REACH_SERVER = 503
         private const val UNAUTHORIZED_HTTP_CODE = 401
         private const val CONFLICT_HTTP_CODE = 409
     }

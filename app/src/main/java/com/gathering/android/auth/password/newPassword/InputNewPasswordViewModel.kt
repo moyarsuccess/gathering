@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.ResponseState
 import com.gathering.android.notif.FirebaseRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +19,7 @@ class InputNewPasswordViewModel @Inject constructor(
     private val firebaseMessagingRepository: FirebaseRepository
 ) : ViewModel() {
 
+    private var inputNewPasswordNavigator: InputNewPasswordNavigator? = null
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val errorMessage = when (throwable) {
             is AuthException -> {
@@ -50,8 +50,6 @@ class InputNewPasswordViewModel @Inject constructor(
         var errorMessage: String? = null
     )
 
-    private var inputNewPasswordNavigator: InputNewPasswordNavigator? = null
-
     fun onViewCreated(inputNewPasswordNavigator: InputNewPasswordNavigator) {
         this.inputNewPasswordNavigator = inputNewPasswordNavigator
     }
@@ -72,7 +70,7 @@ class InputNewPasswordViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(isInProgress = true, errorMessage = null)
         }
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val deviceToken = firebaseMessagingRepository.getDeviceToken()
             if (deviceToken.isNullOrEmpty()) {
                 viewModelState.update { currentState ->
@@ -82,29 +80,11 @@ class InputNewPasswordViewModel @Inject constructor(
                 }
                 return@launch
             }
-            repository.resetPassword(
-                token = token,
-                password = newPassword,
-                deviceToken = deviceToken ?: ""
-            ) { response ->
-                when (response) {
-                    is ResponseState.Failure -> {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                errorMessage = CAN_NOT_REACH_SERVER,
-                                isInProgress = false
-                            )
-                        }
-                    }
-
-                    is ResponseState.Success -> {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(isInProgress = false)
-                        }
-                        inputNewPasswordNavigator?.navigateToHomeFragment()
-                    }
-                }
+            repository.resetPassword(password = newPassword, token = token, deviceToken = deviceToken)
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(isInProgress = false)
             }
+            inputNewPasswordNavigator?.navigateToHomeFragment()
         }
     }
 
