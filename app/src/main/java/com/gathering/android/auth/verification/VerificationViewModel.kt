@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.ResponseState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class VerificationViewModel @Inject constructor(
@@ -69,23 +69,12 @@ class VerificationViewModel @Inject constructor(
                 isInProgress = true,
             )
         }
-        repository.sendEmailVerification(email ?: "") { state ->
-            when (state) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = false, message = FAILED_TO_SEND_EMAIL_VERIFICATION
-                        )
-                    }
-                }
-
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = false, message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
-                        )
-                    }
-                }
+        viewModelScope.launch(exceptionHandler) {
+            repository.sendEmailVerification(email ?: "")
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    isInProgress = false, message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
+                )
             }
         }
     }
@@ -96,23 +85,14 @@ class VerificationViewModel @Inject constructor(
                 isInProgress = true,
             )
         }
-        repository.emailVerify(token ?: "") { state ->
-            when (state) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(isInProgress = false, message = FAILED_TO_VERIFY_USER)
-                    }
-                }
-
-                is ResponseState.Success -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            isInProgress = false, message = USER_VERIFIED_SUCCESSFULLY
-                        )
-                    }
-                    verificationNavigator?.navigateToHomeScreen()
-                }
+        viewModelScope.launch(exceptionHandler) {
+            repository.emailVerify(token ?: "")
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(
+                    isInProgress = false, message = USER_VERIFIED_SUCCESSFULLY
+                )
             }
+            verificationNavigator?.navigateToHomeScreen()
         }
     }
 
