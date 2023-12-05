@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.RESPONSE_IS_NOT_SUCCESSFUL
-import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UserRepo
 import com.gathering.android.common.getDay
 import com.gathering.android.common.getHour
@@ -16,11 +14,14 @@ import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
 import com.gathering.android.event.Event
+import com.gathering.android.event.General_ERROR
 import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
 import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.model.EventLocation
+import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -129,22 +130,13 @@ class EventDetailViewModel @Inject constructor(
     }
 
     private fun requestAcceptTypeChange(acceptType: AcceptType) {
-        attendanceStateRepo.setEventAcceptType(
-            eventId = viewModelState.value.eventId ?: 0,
-            accept = acceptType
-        ) { responseState ->
-            when (responseState) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentState ->
-                        currentState.copy(errorMessage = RESPONSE_IS_NOT_SUCCESSFUL)
-                    }
-                }
-
-                is ResponseState.Success<String> -> {
-                    viewModelState.update { currentState ->
-                        currentState.copy(acceptType = acceptType)
-                    }
-                }
+        viewModelScope.launch {
+            attendanceStateRepo.setEventAcceptType(
+                eventId = viewModelState.value.eventId ?: 0,
+                accept = acceptType
+            )
+            viewModelState.update { currentState ->
+                currentState.copy(acceptType = acceptType)
             }
         }
     }
