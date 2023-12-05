@@ -5,4 +5,5 @@ sealed class EventException : Throwable() {
     data object LikeEventServerRequestFailedException : EventException()
     data object DeleteEventServerRequestFailedException : EventException()
     class GeneralException(code: Int) : EventException()
+
 }

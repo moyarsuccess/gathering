@@ -5,3 +5,4 @@ const val SERVER_NOT_RESPONDING_TO_SHOW_EVENTS = "The event list is not availabl
 const val General_ERROR = "Oops! something wrong"
 const val DELETE_EVENT_REQUEST_FAILED = "You are not able to delete this event"
 const val SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT = "The event list is not available now :("
+const val SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT = "The liked event list is not available now :("
