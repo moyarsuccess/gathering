@@ -99,7 +99,6 @@ class FavoriteEventScreenViewModel @Inject constructor(
         }
     }
 
-    // TODO pagination will be handled in T#151
     fun onNextPageRequested() {
         page++
         loadFavoriteEvents(page)
