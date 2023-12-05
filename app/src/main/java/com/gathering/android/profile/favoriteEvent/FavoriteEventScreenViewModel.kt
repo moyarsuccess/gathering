@@ -6,15 +6,20 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
+import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT
 import com.gathering.android.event.model.EventModel
+import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FavoriteEventScreenViewModel @Inject constructor(
@@ -23,6 +28,32 @@ class FavoriteEventScreenViewModel @Inject constructor(
 
     private var favoriteEventNavigator: FavoriteEventScreen? = null
     private var page = 1
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is EventException -> {
+                when (throwable) {
+                    EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT
+                    is EventException.GeneralException -> General_ERROR
+                    else -> {
+                        General_ERROR
+                    }
+                }
+            }
+
+            else -> {
+                General_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(
+                errorMessage = errorMessage,
+                showProgress = false,
+                showNoData = currentState.favoriteEvents.isEmpty(),
+            )
+        }
+    }
+
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.map {
@@ -59,7 +90,7 @@ class FavoriteEventScreenViewModel @Inject constructor(
                 is ResponseState.Failure -> {
                     viewModelState.update { currentViewState ->
                         currentViewState.copy(
-                            errorMessage = FAILED_TO_LOAD_FAVORITE_EVENTS,
+                            errorMessage = SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT,
                             showProgress = false,
                             showNoData = true
                         )
@@ -94,6 +125,28 @@ class FavoriteEventScreenViewModel @Inject constructor(
         }
     }
 
+    private fun loadFavoriteEvents2(page: Int) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(showProgress = true)
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            val likedEvents =
+                (eventRepository.getMyLikedEvents2(page) as List<EventModel>).filter { it.liked }
+
+            if (likedEvents.isNotEmpty()) {
+                viewModelState.update { currentViewState ->
+                    currentViewState.copy(
+                        favoriteEvents = currentViewState.favoriteEvents
+                            .plus(likedEvents.map { it.toEvent() }),
+                        showNoData = false,
+                        showProgress = false
+                    )
+                }
+            }
+        }
+    }
+
     // TODO pagination will be handled in T#151
     fun onNextPageRequested() {
         page++
@@ -102,10 +155,6 @@ class FavoriteEventScreenViewModel @Inject constructor(
 
     fun onEventItemClicked(event: Event) {
         favoriteEventNavigator?.navigateToEventDetail(event)
-    }
-
-    companion object {
-        private const val FAILED_TO_LOAD_FAVORITE_EVENTS = "FAILED TO LOAD FAVORITE EVENTS."
     }
 }
 
