@@ -32,7 +32,7 @@ class SignInViewModel @Inject constructor(
                 when (throwable) {
                     AuthException.FailedConnectingToServerException -> CAN_NOT_REACH_THE_SERVER
                     AuthException.UserNotVerifiedException -> EMAIL_NOT_VERIFIED
-                    AuthException.WrongCredentialsException -> SIGN_IN_FAILED
+                    AuthException.WrongCredentialsException -> WRONG_CREDENTIALS
                     else -> GENERAL_ERROR
                 }
             }
@@ -118,11 +118,11 @@ class SignInViewModel @Inject constructor(
     companion object {
         private const val INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE =
             "PLEASE ENTER A VALID EMAIL ADDRESS"
-        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "PLEASE ENTER A VALID PASSWORD"
-        private const val SIGN_IN_FAILED = "SIGN IN FAILED"
-        private const val EMAIL_NOT_VERIFIED = "EMAIL NOT VERIFIED"
-        private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
-        private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
+        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "PLEASE ENTER A VALID PASSWORD."
+        private const val WRONG_CREDENTIALS = "WE DO NOT RECOGNIZE THIS PASSWORD/EMAIL COMBINATION."
+        private const val EMAIL_NOT_VERIFIED = "EMAIL NOT VERIFIED."
+        private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER."
+        private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN."
         private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }

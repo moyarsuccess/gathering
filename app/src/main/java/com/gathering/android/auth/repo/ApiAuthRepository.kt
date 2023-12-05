@@ -35,6 +35,7 @@ class ApiAuthRepository @Inject constructor(
         } catch (e: HttpException) {
             val throwable = when (e.code()) {
                 UNAUTHORIZED_HTTP_CODE -> AuthException.UserNotVerifiedException
+                WRONG_CREDENTIAL_HTTP_CODE -> AuthException.WrongCredentialsException
                 else -> AuthException.General(e.code())
             }
             throw throwable
@@ -92,6 +93,7 @@ class ApiAuthRepository @Inject constructor(
     companion object {
         private const val CAN_NOT_REACH_SERVER = 503
         private const val UNAUTHORIZED_HTTP_CODE = 401
+        private const val WRONG_CREDENTIAL_HTTP_CODE = 400
         private const val CONFLICT_HTTP_CODE = 409
     }
 }
