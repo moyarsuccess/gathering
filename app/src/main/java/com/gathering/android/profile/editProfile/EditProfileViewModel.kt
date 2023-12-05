@@ -7,13 +7,17 @@ import com.gathering.android.common.ResponseState
 import com.gathering.android.common.UpdateProfileResponse
 import com.gathering.android.common.UserRepo
 import com.gathering.android.common.toImageUrl
+import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.UPDATE_PROFILE_REQUEST_FAILED
 import com.gathering.android.profile.repo.ProfileRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EditProfileViewModel @Inject constructor(
@@ -26,6 +30,25 @@ class EditProfileViewModel @Inject constructor(
 
     private var editProfileNavigator: EditProfileNavigator? = null
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is ProfileException -> {
+                when (throwable) {
+                    ProfileException.ServerNotRespondingException -> UPDATE_PROFILE_REQUEST_FAILED
+                    is ProfileException.GeneralException -> General_ERROR
+                }
+            }
+
+            else -> {
+                General_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(
+                errorMessage = errorMessage,
+            )
+        }
+    }
 
     private val viewModelState = MutableStateFlow(EditProfileViewModelState())
     val uiState: StateFlow<EditProfileUiState> = viewModelState.map { viewModelState ->
@@ -119,8 +142,27 @@ class EditProfileViewModel @Inject constructor(
                     }
                 }
 
-                else -> {}
             }
+        }
+    }
+
+    fun onSaveButtonClicked2(displayName: String?, imageUrl: String?) {
+
+        viewModelScope.launch(exceptionHandler) {
+            profileRepository.updateProfile2(
+                displayName = displayName,
+                photoUri = imageUrl
+            )
+        }
+
+        viewModelState.update { currentState ->
+            editProfileNavigator?.navigateToProfile(
+                User(
+                    displayName = displayName ?: "",
+                    photoName = imageUrl ?: ""
+                )
+            )
+            currentState.copy(displayName = displayName, imageUri = imageUrl)
         }
     }
 
