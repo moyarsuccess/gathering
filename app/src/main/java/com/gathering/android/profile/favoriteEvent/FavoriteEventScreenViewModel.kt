@@ -3,12 +3,10 @@ package com.gathering.android.profile.favoriteEvent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.common.ResponseState
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.General_ERROR
 import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT
-import com.gathering.android.event.model.EventModel
 import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
@@ -85,60 +83,14 @@ class FavoriteEventScreenViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
         }
-        eventRepository.getMyLikedEvents(page) { request ->
-            when (request) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentViewState ->
-                        currentViewState.copy(
-                            errorMessage = SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT,
-                            showProgress = false,
-                            showNoData = true
-                        )
-                    }
-                }
-
-                is ResponseState.Success<List<EventModel>> -> {
-                    val currentPageEvents = request.data as? List<EventModel>
-                    val likedEvents = currentPageEvents?.filter { it.liked }
-                    if (likedEvents.isNullOrEmpty()) {
-                        if (page == 1) {
-                            viewModelState.update { currentViewState ->
-                                currentViewState.copy(
-                                    showNoData = true,
-                                    showProgress = false
-                                )
-                            }
-                        }
-                    } else {
-                        viewModelState.update { currentViewState ->
-                            currentViewState.copy(
-                                favoriteEvents = currentViewState.favoriteEvents
-                                    .plus(likedEvents.map { it.toEvent() }
-                                    ),
-                                showNoData = false,
-                                showProgress = false
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun loadFavoriteEvents2(page: Int) {
-        viewModelState.update { currentViewState ->
-            currentViewState.copy(showProgress = true)
-        }
 
         viewModelScope.launch(exceptionHandler) {
-            val likedEvents =
-                (eventRepository.getMyLikedEvents2(page) as List<EventModel>).filter { it.liked }
+            val likedEvents = eventRepository.getMyLikedEvents(page)
 
             if (likedEvents.isNotEmpty()) {
                 viewModelState.update { currentViewState ->
                     currentViewState.copy(
-                        favoriteEvents = currentViewState.favoriteEvents
-                            .plus(likedEvents.map { it.toEvent() }),
+                        favoriteEvents = currentViewState.favoriteEvents.plus(likedEvents.map { it.toEvent() }),
                         showNoData = false,
                         showProgress = false
                     )
@@ -147,7 +99,6 @@ class FavoriteEventScreenViewModel @Inject constructor(
         }
     }
 
-    // TODO pagination will be handled in T#151
     fun onNextPageRequested() {
         page++
         loadFavoriteEvents(page)
