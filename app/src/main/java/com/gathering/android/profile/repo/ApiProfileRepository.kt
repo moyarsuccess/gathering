@@ -29,6 +29,7 @@ class ApiProfileRepository @Inject constructor(
         onResponseReady: (ResponseState<UpdateProfileResponse>) -> Unit
     ) {
         val filePart = photoUri?.let { context.createRequestPartFromUri(it) }
+
         if (photoUri?.startsWith(LOCAL_CONTENT_URL_PREFIX) == true) {
             if (filePart == null) {
                 onResponseReady(ResponseState.Failure(IOException(FAIL_TO_CREATE_FILE_PART)))
@@ -68,5 +69,22 @@ class ApiProfileRepository @Inject constructor(
                     onResponseReady(ResponseState.Failure(t))
                 }
             })
+    }
+
+    override suspend fun updateProfile2(
+        displayName: String?,
+        photoUri: String?
+    ) {
+
+        val filePart = photoUri?.let { context.createRequestPartFromUri(it) }
+        if (photoUri?.startsWith(LOCAL_CONTENT_URL_PREFIX) == true) {
+            if (filePart == null) {
+                throw IllegalStateException()
+            }
+
+            val name = displayName?.requestBody()
+            val profileResponse = profileRemoteService.uploadProfile2(name, filePart)
+            userRepo.saveUser(profileResponse.user)
+        }
     }
 }

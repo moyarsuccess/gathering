@@ -9,4 +9,9 @@ interface ProfileRepository {
         photoUri: String?,
         onResponseReady: (ResponseState<UpdateProfileResponse>) -> Unit
     )
+
+    suspend fun updateProfile2(
+        displayName: String?,
+        photoUri: String?
+    )
 }
