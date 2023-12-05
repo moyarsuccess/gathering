@@ -12,17 +12,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
@@ -58,9 +58,10 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
                         val state = viewModel.uiState.collectAsState()
                         FavoriteEventScreenWithCompose(
                             likedEvents = state.value.favoriteEvents,
-                            onItemClick = { viewModel.onEventItemClicked(it) },
                             isLoading = state.value.showProgress,
-                            isNoData = state.value.showNoData
+                            isNoData = state.value.showNoData,
+                            onItemClick = { viewModel.onEventItemClicked(it) },
+                            onNextPageRequested = { viewModel.onNextPageRequested() },
                         )
                     }
                 }
@@ -89,7 +90,6 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
     @Preview(showBackground = true, device = "id:pixel_7")
     fun FavoriteEventScreenPreview() {
         FavoriteEventScreenWithCompose(
-            onItemClick = {},
             likedEvents = listOf(
                 Event(
                     1,
@@ -100,16 +100,19 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
                 )
             ),
             isLoading = false,
-            isNoData = false
+            isNoData = false,
+            onItemClick = {},
+            onNextPageRequested = {}
         )
     }
 
     @Composable
     fun FavoriteEventScreenWithCompose(
         likedEvents: List<Event>,
-        onItemClick: (Event) -> Unit,
         isLoading: Boolean,
-        isNoData: Boolean
+        isNoData: Boolean,
+        onItemClick: (Event) -> Unit,
+        onNextPageRequested: () -> Unit,
     ) {
         ProgressBar(
             text = "oops. no Favorite events yet!!",
@@ -122,19 +125,12 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
                 .padding(20.dp)
 
         ) {
-            Text(
-                text = "My Favorite Events",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(fontSize = (20.sp))
-            )
-
             Spacer(modifier = Modifier.padding(20.dp))
 
             FavoriteEventList(
                 likedEvents = likedEvents,
-                onItemClick = onItemClick
+                onItemClick = onItemClick,
+                onNextPageRequested = { onNextPageRequested() }
             )
         }
     }
@@ -142,9 +138,24 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
     @Composable
     fun FavoriteEventList(
         likedEvents: List<Event>,
-        onItemClick: (Event) -> Unit
+        onItemClick: (Event) -> Unit,
+        onNextPageRequested: () -> Unit
     ) {
-        LazyColumn {
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    onNextPageRequested()
+                    return Offset.Zero
+                }
+            }
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(7.dp)
+                .nestedScroll(nestedScrollConnection)
+        ) {
             items(likedEvents) { event ->
                 FavoriteEventItem(
                     onItemClick = onItemClick,

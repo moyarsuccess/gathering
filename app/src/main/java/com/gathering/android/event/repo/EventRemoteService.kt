@@ -4,7 +4,6 @@ import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.event.model.EventModel
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -64,11 +63,11 @@ interface EventRemoteService {
         @Query("event_id") eventId: Long,
     ): GeneralApiResponse
 
-    @GET("my_event")
-    fun getMyLikedEvents(
+    @GET("liked_event")
+    suspend fun getMyLikedEvents(
         @Query("page_size") pageSize: Int,
         @Query("page_number") pageNumber: Int,
-    ): Call<List<EventModel>>
+    ): List<EventModel>
 
     @GET("event/id")
     suspend fun getEventById(
