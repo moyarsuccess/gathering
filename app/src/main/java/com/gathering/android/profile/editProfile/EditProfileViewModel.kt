@@ -3,8 +3,6 @@ package com.gathering.android.profile.editProfile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.UpdateProfileResponse
 import com.gathering.android.common.UserRepo
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.General_ERROR
@@ -119,50 +117,21 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun onSaveButtonClicked(displayName: String?, imageUrl: String?) {
-        profileRepository.updateProfile(
-            displayName = displayName,
-            photoUri = imageUrl
-        ) { responseState ->
-            when (responseState) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentState ->
-                        currentState.copy(errorMessage = responseState.throwable.message)
-                    }
-                }
-
-                is ResponseState.Success<UpdateProfileResponse> -> {
-                    viewModelState.update { currentState ->
-                        editProfileNavigator?.navigateToProfile(
-                            User(
-                                displayName = displayName ?: "",
-                                photoName = imageUrl ?: ""
-                            )
-                        )
-                        currentState.copy(displayName = displayName, imageUri = imageUrl)
-                    }
-                }
-
-            }
-        }
-    }
-
-    fun onSaveButtonClicked2(displayName: String?, imageUrl: String?) {
 
         viewModelScope.launch(exceptionHandler) {
-            profileRepository.updateProfile2(
+            profileRepository.updateProfile(
                 displayName = displayName,
                 photoUri = imageUrl
             )
-        }
-
-        viewModelState.update { currentState ->
-            editProfileNavigator?.navigateToProfile(
-                User(
-                    displayName = displayName ?: "",
-                    photoName = imageUrl ?: ""
+            viewModelState.update { currentState ->
+                editProfileNavigator?.navigateToProfile(
+                    User(
+                        displayName = displayName ?: "",
+                        photoName = imageUrl ?: ""
+                    )
                 )
-            )
-            currentState.copy(displayName = displayName, imageUri = imageUrl)
+                currentState.copy(displayName = displayName, imageUri = imageUrl)
+            }
         }
     }
 
