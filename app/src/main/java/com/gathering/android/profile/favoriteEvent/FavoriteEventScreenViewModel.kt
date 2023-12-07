@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
-import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.GENERAL_ERROR
 import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT
 import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
@@ -32,15 +32,15 @@ class FavoriteEventScreenViewModel @Inject constructor(
             is EventException -> {
                 when (throwable) {
                     EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT
-                    is EventException.GeneralException -> General_ERROR
+                    is EventException.GeneralException -> GENERAL_ERROR
                     else -> {
-                        General_ERROR
+                        GENERAL_ERROR
                     }
                 }
             }
 
             else -> {
-                General_ERROR
+                GENERAL_ERROR
             }
         }
         viewModelState.update { currentState ->

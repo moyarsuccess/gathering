@@ -3,12 +3,12 @@ package com.gathering.android.profile.editProfile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.ResponseState
-import com.gathering.android.common.UpdateProfileResponse
 import com.gathering.android.common.UserRepo
 import com.gathering.android.common.toImageUrl
-import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.FILE_NOT_FOUND_EXCEPTION
+import com.gathering.android.event.GENERAL_ERROR
 import com.gathering.android.event.UPDATE_PROFILE_REQUEST_FAILED
+import com.gathering.android.profile.repo.ProfileException
 import com.gathering.android.profile.repo.ProfileRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,12 +35,13 @@ class EditProfileViewModel @Inject constructor(
             is ProfileException -> {
                 when (throwable) {
                     ProfileException.ServerNotRespondingException -> UPDATE_PROFILE_REQUEST_FAILED
-                    is ProfileException.GeneralException -> General_ERROR
+                    is ProfileException.GeneralException -> GENERAL_ERROR
+                    ProfileException.FileNotFoundException -> FILE_NOT_FOUND_EXCEPTION
                 }
             }
 
             else -> {
-                General_ERROR
+                GENERAL_ERROR
             }
         }
         viewModelState.update { currentState ->
@@ -119,50 +120,21 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun onSaveButtonClicked(displayName: String?, imageUrl: String?) {
-        profileRepository.updateProfile(
-            displayName = displayName,
-            photoUri = imageUrl
-        ) { responseState ->
-            when (responseState) {
-                is ResponseState.Failure -> {
-                    viewModelState.update { currentState ->
-                        currentState.copy(errorMessage = responseState.throwable.message)
-                    }
-                }
-
-                is ResponseState.Success<UpdateProfileResponse> -> {
-                    viewModelState.update { currentState ->
-                        editProfileNavigator?.navigateToProfile(
-                            User(
-                                displayName = displayName ?: "",
-                                photoName = imageUrl ?: ""
-                            )
-                        )
-                        currentState.copy(displayName = displayName, imageUri = imageUrl)
-                    }
-                }
-
-            }
-        }
-    }
-
-    fun onSaveButtonClicked2(displayName: String?, imageUrl: String?) {
 
         viewModelScope.launch(exceptionHandler) {
-            profileRepository.updateProfile2(
+            profileRepository.updateProfile(
                 displayName = displayName,
                 photoUri = imageUrl
             )
-        }
-
-        viewModelState.update { currentState ->
-            editProfileNavigator?.navigateToProfile(
-                User(
-                    displayName = displayName ?: "",
-                    photoName = imageUrl ?: ""
+            viewModelState.update { currentState ->
+                editProfileNavigator?.navigateToProfile(
+                    User(
+                        displayName = displayName ?: "",
+                        photoName = imageUrl ?: ""
+                    )
                 )
-            )
-            currentState.copy(displayName = displayName, imageUri = imageUrl)
+                currentState.copy(displayName = displayName, imageUri = imageUrl)
+            }
         }
     }
 

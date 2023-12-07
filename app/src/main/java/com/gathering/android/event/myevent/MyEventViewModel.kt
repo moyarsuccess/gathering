@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.DELETE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.Event
-import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.GENERAL_ERROR
 import com.gathering.android.event.LIKE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
 import com.gathering.android.event.repo.EventException
@@ -37,13 +37,13 @@ class MyEventViewModel @Inject constructor(
                     EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT
                     EventException.DeleteEventServerRequestFailedException -> DELETE_EVENT_REQUEST_FAILED
                     else -> {
-                        General_ERROR
+                        GENERAL_ERROR
                     }
                 }
             }
 
             else -> {
-                General_ERROR
+                GENERAL_ERROR
             }
         }
         viewModelState.update { currentState ->
