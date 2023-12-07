@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.model.User
 import com.gathering.android.common.UserRepo
 import com.gathering.android.common.toImageUrl
-import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.FILE_NOT_FOUND_EXCEPTION
+import com.gathering.android.event.GENERAL_ERROR
 import com.gathering.android.event.UPDATE_PROFILE_REQUEST_FAILED
+import com.gathering.android.profile.repo.ProfileException
 import com.gathering.android.profile.repo.ProfileRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,12 +35,13 @@ class EditProfileViewModel @Inject constructor(
             is ProfileException -> {
                 when (throwable) {
                     ProfileException.ServerNotRespondingException -> UPDATE_PROFILE_REQUEST_FAILED
-                    is ProfileException.GeneralException -> General_ERROR
+                    is ProfileException.GeneralException -> GENERAL_ERROR
+                    ProfileException.FileNotFoundException -> FILE_NOT_FOUND_EXCEPTION
                 }
             }
 
             else -> {
-                General_ERROR
+                GENERAL_ERROR
             }
         }
         viewModelState.update { currentState ->
