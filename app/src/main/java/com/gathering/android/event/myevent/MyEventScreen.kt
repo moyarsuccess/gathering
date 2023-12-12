@@ -64,17 +64,16 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                             modifier = Modifier.wrapContentSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            val state = viewModel.uiState.collectAsState()
+                            val state = viewModel.uiState.collectAsState().value
 
                             EventList(
                                 showEditIcon = true,
                                 swipeEnabled = true,
                                 showFavoriteIcon = false,
-                                events = state.value.myEvents,
-                                isLoading = state.value.showProgress,
-                                isNoData = state.value.showNoData,
-                                onDeleteClick = { viewModel.onSwipedToDelete(it) },
-                                onUndoDeleteEvent = { viewModel.onUndoDeleteEvent(it) },
+                                events = state.myEvents,
+                                isLoading = state.showProgress,
+                                isNoData = state.showNoData,
+                                isShowSnackBar = state.showSnackBar,
                                 onItemClick = { viewModel.onEventItemClicked(it) },
                                 onEditClick = { viewModel.onEditEventClicked(it) },
                                 onNextPageRequested = viewModel::onNextPageRequested,
