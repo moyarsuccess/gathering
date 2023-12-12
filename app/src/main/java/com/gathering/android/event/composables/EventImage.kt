@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gathering.android.R
+import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.ui.theme.CustomBackgroundColor
 
@@ -26,7 +27,7 @@ import com.gathering.android.ui.theme.CustomBackgroundColor
 fun EventImage(event: Event) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
-            .data(data = event.photoUrl)
+            .data(data = event.photoUrl.toImageUrl())
             .apply(block = fun ImageRequest.Builder.() {
                 crossfade(true)
                 placeholder(R.drawable.ic_launcher_foreground)
