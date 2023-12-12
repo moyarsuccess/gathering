@@ -39,42 +39,6 @@ import com.gathering.android.event.composables.CustomSnackbar
 import com.gathering.android.event.composables.EventItem
 import com.gathering.android.event.composables.FabButton
 
-@Preview(showBackground = true, device = "id:pixel_2")
-@Composable
-fun EventListPreview() {
-    EventList(
-        showFavoriteIcon = false,
-        events = listOf(
-            Event(
-                1,
-                "ani",
-                "animansoubi@gmail.com",
-                "party",
-                "",
-                0.0, null
-            ), Event(
-                2,
-                "mo",
-                "animansoubi@gmail.com",
-                "party",
-                "",
-                0.0, null
-            )
-        ),
-        isLoading = false,
-        isNoData = false,
-        onFabClick = {},
-        showEditIcon = true,
-        onEditClick = {},
-        onItemClick = {},
-        onFavClick = {},
-        onDeleteClick = {},
-        onUndoDeleteEvent = {},
-        onNextPageRequested = {},
-        swipeEnabled = true,
-    )
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EventList(
@@ -197,4 +161,42 @@ fun EventList(
             NavigationBarPaddingSpacer()
         }
     }
+}
+
+@Preview(showBackground = true, device = "id:pixel_2")
+@Composable
+fun EventListPreview() {
+    EventList(
+        showFavoriteIcon = false,
+        events = listOf(
+            Event(
+                1,
+                "ani",
+                "animansoubi@gmail.com",
+                "party",
+                "",
+                0.0, null
+            ), Event(
+                2,
+                "mo",
+                "animansoubi@gmail.com",
+                "party",
+                "",
+                0.0, null
+            )
+        ),
+        isLoading = false,
+        isNoData = false,
+        isShowSnackBar = false,
+        showEditIcon = true,
+        swipeEnabled = true,
+        onEditClick = {},
+        onItemClick = {},
+        onFabClick = {},
+        onFavClick = {},
+        onSwipedToDelete = {},
+        onUndoClicked = {},
+        onSnackBarDismissed = {},
+        onNextPageRequested = {},
+    )
 }
