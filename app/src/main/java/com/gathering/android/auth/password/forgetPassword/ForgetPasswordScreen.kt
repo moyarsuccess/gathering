@@ -37,7 +37,7 @@ import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextView
 import com.gathering.android.common.composables.EmailTextField
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenForgetPasswordEmailInputBinding
@@ -159,7 +159,7 @@ class ForgetPasswordScreen : FullScreenBottomSheet(), ForgetPasswordNavigator {
                     .width(170.dp),
             )
             if (error != null) {
-                ErrorTextView(error)
+                AlertTextView(error)
             }
         }
     }

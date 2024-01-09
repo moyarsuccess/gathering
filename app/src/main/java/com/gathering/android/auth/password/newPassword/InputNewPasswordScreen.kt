@@ -40,7 +40,7 @@ import com.gathering.android.auth.verification.VerificationScreen
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextView
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.composables.PasswordTextField
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
@@ -189,7 +189,7 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
             )
 
             if (error != null) {
-                ErrorTextView(error)
+                AlertTextView(error)
             }
         }
     }

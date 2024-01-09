@@ -32,7 +32,7 @@ import com.gathering.android.auth.verification.VerificationScreen.Companion.EMAI
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.AuthButton
 import com.gathering.android.common.composables.EmailTextField
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.composables.LogoImage
 import com.gathering.android.common.composables.PasswordTextField
 import com.gathering.android.common.composables.UnderlinedButton
@@ -199,7 +199,7 @@ class SignInScreen : FullScreenBottomSheet(), SignInNavigator {
             )
 
             if (error != null) {
-                ErrorTextView(error)
+                AlertTextView(error)
             }
         }
     }

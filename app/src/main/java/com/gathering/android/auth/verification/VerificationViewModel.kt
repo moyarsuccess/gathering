@@ -44,7 +44,8 @@ class VerificationViewModel @Inject constructor(
     )
 
     data class UiState(
-        val isInProgress: Boolean = false, var message: String? = null
+        val isInProgress: Boolean = false,
+        var message: String? = null
     )
 
     private var verificationNavigator: VerificationNavigator? = null
@@ -73,7 +74,8 @@ class VerificationViewModel @Inject constructor(
             repository.sendEmailVerification(email ?: "")
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
-                    isInProgress = false, message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
+                    isInProgress = false,
+                    message = VERIFICATION_EMAIL_SENT_SUCCESSFULLY
                 )
             }
         }

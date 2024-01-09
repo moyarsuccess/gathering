@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gathering.android.common.FullScreenBottomSheet
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.composables.HorizontalDivider
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.toImageUrl
@@ -117,7 +117,7 @@ class RsvpListScreen : FullScreenBottomSheet() {
             AttendeeList(
                 attendeeModels = attendeeModels, showNoData = showNoData
             )
-            ErrorTextView(errorMessage ?: "")
+            AlertTextView(errorMessage ?: "")
         }
     }
 
