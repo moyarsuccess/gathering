@@ -2,7 +2,6 @@ package com.gathering.android.event.myevent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.DELETE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.Event
 import com.gathering.android.event.GENERAL_ERROR
@@ -24,8 +23,7 @@ import javax.inject.Inject
 class MyEventViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ) : ViewModel() {
-    private var deletedEvent: Event? = null
-    private var deletedEventIndex: Int = 0
+
     private var page = 1
     private var myEventNavigator: MyEventNavigator? = null
 
@@ -55,12 +53,15 @@ class MyEventViewModel @Inject constructor(
         }
     }
 
-    private val viewModelState = MutableStateFlow(UiState())
+    private val viewModelState = MutableStateFlow(ViewModelState())
     val uiState: StateFlow<UiState> = viewModelState.map {
-        it.copy(
-            myEvents = it.myEvents.map { event ->
-                event.copy(photoUrl = event.photoUrl.toImageUrl())
-            }
+        UiState(
+            showNoData = it.showNoData,
+            showProgress = it.showProgress,
+            showSnackBar = it.showSnackBar,
+            myEvents = it.myEvents,
+            errorMessage = it.errorMessage,
+            deletedEventName = it.deletedEvent?.eventName,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -71,9 +72,22 @@ class MyEventViewModel @Inject constructor(
     data class UiState(
         val showNoData: Boolean = false,
         val showProgress: Boolean = false,
+        val showSnackBar: Boolean = false,
         val myEvents: List<Event> = emptyList(),
-        var errorMessage: String? = null,
+        val errorMessage: String? = null,
+        val deletedEventName: String? = null,
     )
+
+    data class ViewModelState(
+        val showNoData: Boolean = false,
+        val showProgress: Boolean = false,
+        val showSnackBar: Boolean = false,
+        val myEvents: List<Event> = emptyList(),
+        val errorMessage: String? = null,
+        var deletedEvent: Event? = null,
+        val deletedEventPosition: Int = -1
+    )
+
 
     fun onViewCreated(myEventNavigator: MyEventNavigator) {
         this.myEventNavigator = myEventNavigator
@@ -112,30 +126,57 @@ class MyEventViewModel @Inject constructor(
 
     fun onSwipedToDelete(event: Event) {
         viewModelState.update { currentViewState ->
-            currentViewState.copy(showProgress = true)
-        }
-        viewModelScope.launch(exceptionHandler) {
-            eventRepository.deleteEvent(event.eventId)
-            deletedEvent = event
-            deletedEventIndex =
-                viewModelState.value.myEvents.indexOfFirst { it.eventId == event.eventId }
-
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(showProgress = false,
-                    myEvents = currentViewState.myEvents.toMutableList()
-                        .apply { this.removeAt(deletedEventIndex) })
-            }
+            val list = currentViewState
+                .myEvents
+                .toMutableList()
+            val deletedIndex = list.indexOfFirst { it.eventId == event.eventId }
+            list.removeAt(deletedIndex)
+            currentViewState.copy(
+                showSnackBar = true,
+                deletedEvent = event,
+                deletedEventPosition = deletedIndex,
+                myEvents = list
+            )
         }
     }
 
-    fun onUndoDeleteEvent(event: Event) {
-        val deletedEventIndex = viewModelState.value.myEvents.indexOf(event)
-        if (deletedEventIndex != -1) {
-            val mutableEventList = viewModelState.value.myEvents.toMutableList()
-            mutableEventList.add(deletedEventIndex, event)
+    fun onUndoClicked() {
+        undoDeletedEvent()
+    }
 
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(myEvents = mutableEventList)
+    private fun undoDeletedEvent() {
+        viewModelState.update { currentViewState ->
+            val deletedEvent = currentViewState.deletedEvent ?: return
+            val index = if (currentViewState.deletedEventPosition != -1) {
+                currentViewState.deletedEventPosition
+            } else return
+            val list = currentViewState
+                .myEvents
+                .toMutableList()
+            list.add(index, deletedEvent)
+            currentViewState.copy(
+                showSnackBar = false,
+                deletedEvent = null,
+                deletedEventPosition = -1,
+                myEvents = list,
+            )
+        }
+    }
+
+    fun onSnackBarDismissed() {
+        viewModelScope.launch(exceptionHandler) {
+            try {
+                val deletedEvent = viewModelState.value.deletedEvent ?: return@launch
+                eventRepository.deleteEvent(deletedEvent.eventId)
+                viewModelState.update { currentViewState ->
+                    currentViewState.copy(
+                        showProgress = false,
+                        deletedEvent = null,
+                        deletedEventPosition = -1,
+                    )
+                }
+            } catch (e: Exception) {
+                undoDeletedEvent()
             }
         }
     }

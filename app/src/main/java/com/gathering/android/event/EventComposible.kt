@@ -1,9 +1,7 @@
 package com.gathering.android.event
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,9 +28,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gathering.android.common.composables.NavigationBarPaddingSpacer
-import com.gathering.android.common.composables.ProgressBar
-import com.gathering.android.event.composables.CustomSnackbar
+import com.gathering.android.common.composables.ProgressNoDataWidget
+import com.gathering.android.common.composables.SnackBarHelpers
 import com.gathering.android.event.composables.EventItem
 import com.gathering.android.event.composables.FabButton
 
@@ -43,8 +37,12 @@ import com.gathering.android.event.composables.FabButton
 @Composable
 fun EventList(
     showFavoriteIcon: Boolean,
-    isLoading: Boolean,
-    isNoData: Boolean,
+    showAddFab: Boolean = false,
+    deletedEventName: String = "",
+    noDataText: String,
+    showProgress: Boolean,
+    showNoData: Boolean,
+    showSnackBar: Boolean,
     showEditIcon: Boolean,
     swipeEnabled: Boolean,
     events: List<Event>,
@@ -52,12 +50,11 @@ fun EventList(
     onEditClick: (Event) -> Unit,
     onFavClick: (Event) -> Unit,
     onFabClick: () -> Unit,
-    onDeleteClick: (Event) -> Unit,
-    onUndoDeleteEvent: (Event) -> Unit,
+    onUndoClicked: () -> Unit,
+    onSwipedToDelete: (Event) -> Unit,
+    onSnackBarDismissed: () -> Unit,
     onNextPageRequested: () -> Unit
 ) {
-    var deletedEvent by remember { mutableStateOf<Event?>(null) }
-
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -67,26 +64,27 @@ fun EventList(
         }
     }
 
-    if (showFavoriteIcon) {
-        ProgressBar(
-            text = "oooops! No events yet.",
-            isLoading = isLoading,
-            isNoData = isNoData
-        )
-    } else {
-        ProgressBar(
-            text = "You don't have any events yet! click on + button to add your event!",
-            isLoading = isLoading,
-            isNoData = isNoData
+    ProgressNoDataWidget(
+        noDataText = noDataText,
+        showProgress = showProgress,
+        showNoData = showNoData
+    )
+
+    if (showSnackBar) {
+        SnackBarHelpers.current.showSnackbar(
+            text = "$deletedEventName deleted.",
+            actionText = "Undo",
+            onDismissed = { onSnackBarDismissed() },
+            onActionPerformed = { onUndoClicked() }
         )
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(7.dp)
-            .background(Color.Transparent),
-        verticalArrangement = Arrangement.Center
+            .background(Color.White),
+        contentAlignment = Alignment.BottomCenter,
     ) {
         LazyColumn(
             state = rememberLazyListState(),
@@ -94,21 +92,23 @@ fun EventList(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(7.dp)
-                .weight(1f)
                 .nestedScroll(nestedScrollConnection)
         ) {
-            itemsIndexed(items = events.distinctBy { it.eventId }, key = { _, listItem ->
-                listItem.hashCode()
-            }) { _, event ->
-                val state = rememberDismissState(confirmStateChange = {
-                    if (it == DismissValue.DismissedToStart) {
-                        onDeleteClick(event)
-                        deletedEvent = event
+            itemsIndexed(
+                items = events.distinctBy { it.eventId },
+                key = { _, listItem -> listItem.hashCode() }
+            ) { _, event ->
+                val state = rememberDismissState(
+                    confirmStateChange = {
+                        if (it == DismissValue.DismissedToStart) {
+                            onSwipedToDelete(event)
+                        }
+                        true
                     }
-                    true
-                })
+                )
                 if (swipeEnabled) {
-                    SwipeToDismiss(state = state,
+                    SwipeToDismiss(
+                        state = state,
                         background = {
                             val color = when (state.dismissDirection) {
                                 DismissDirection.EndToStart -> Color.Red
@@ -119,10 +119,12 @@ fun EventList(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .background(color)
+                                    .padding(10.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "Delete",
+                                    tint = Color.Gray,
                                     modifier = Modifier.align(
                                         Alignment.CenterEnd
                                     )
@@ -137,7 +139,8 @@ fun EventList(
                                 showFavoriteIcon = showFavoriteIcon,
                                 showEditIcon = showEditIcon
                             )
-                        })
+                        }, directions = setOf(DismissDirection.EndToStart)
+                    )
                 } else {
                     EventItem(
                         event = event,
@@ -151,15 +154,7 @@ fun EventList(
                 Spacer(modifier = Modifier.padding(15.dp))
             }
         }
-
-        if (deletedEvent != null) {
-            CustomSnackbar(deletedEvent, onUndoDeleteEvent)
-        }
-        if (!showFavoriteIcon) {
-            FabButton(onFabClick = onFabClick)
-        } else {
-            NavigationBarPaddingSpacer()
-        }
+        if (showAddFab) FabButton(onFabClick = onFabClick)
     }
 }
 
@@ -185,9 +180,10 @@ fun EventListPreview() {
                 0.0, null
             )
         ),
-        isLoading = false,
-        isNoData = false,
-        isShowSnackBar = false,
+        noDataText = "No data",
+        showProgress = false,
+        showNoData = false,
+        showSnackBar = false,
         showEditIcon = true,
         swipeEnabled = true,
         onEditClick = {},

@@ -63,17 +63,20 @@ class HomeScreen : Fragment(), HomeNavigator {
                             EventList(
                                 showEditIcon = false,
                                 showFavoriteIcon = true,
+                                swipeEnabled = false,
+                                noDataText = "oooops! No events yet.",
+                                showSnackBar = false,
                                 events = state.value.events,
+                                showProgress = state.value.showProgress,
+                                showNoData = state.value.showNoData,
                                 onItemClick = viewModel::onEventItemClicked,
-                                onEditClick = {},
-                                onFavClick = viewModel::onEventLikeClicked,
-                                isLoading = state.value.showProgress,
-                                isNoData = state.value.showNoData,
-                                onFabClick = {},
-                                onDeleteClick = {},
-                                onUndoDeleteEvent = {},
                                 onNextPageRequested = viewModel::onNextPageRequested,
-                                swipeEnabled = false
+                                onFavClick = viewModel::onEventLikeClicked,
+                                onFabClick = {},
+                                onEditClick = {},
+                                onSwipedToDelete = {},
+                                onUndoClicked = {},
+                                onSnackBarDismissed = {},
                             )
                         }
                     }

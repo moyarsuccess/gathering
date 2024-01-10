@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -19,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gathering.android.R
+import com.gathering.android.common.composables.SnackbarSupportedSurface
 import com.gathering.android.common.getNavigationResultLiveData
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
@@ -60,25 +60,31 @@ class MyEventScreen : Fragment(), MyEventNavigator {
             ComposeView(requireContext()).apply {
                 setContent {
                     GatheringTheme {
-                        Surface(
+                        SnackbarSupportedSurface(
                             modifier = Modifier.wrapContentSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState().value
-
+                            println("WTF: 2 ${state.myEvents.size}")
                             EventList(
                                 showEditIcon = true,
                                 swipeEnabled = true,
+                                noDataText = "You don't have any events yet! click on + button to add your event!",
                                 showFavoriteIcon = false,
+                                deletedEventName = state.deletedEventName ?: "",
+                                showAddFab = true,
                                 events = state.myEvents,
-                                isLoading = state.showProgress,
-                                isNoData = state.showNoData,
-                                isShowSnackBar = state.showSnackBar,
+                                showProgress = state.showProgress,
+                                showNoData = state.showNoData,
+                                showSnackBar = state.showSnackBar,
                                 onItemClick = { viewModel.onEventItemClicked(it) },
                                 onEditClick = { viewModel.onEditEventClicked(it) },
                                 onNextPageRequested = viewModel::onNextPageRequested,
                                 onFabClick = viewModel::onFabButtonClicked,
                                 onFavClick = {},
+                                onSwipedToDelete = { viewModel.onSwipedToDelete(it) },
+                                onUndoClicked = { viewModel.onUndoClicked() },
+                                onSnackBarDismissed = { viewModel.onSnackBarDismissed() }
                             )
                         }
                     }
@@ -117,10 +123,10 @@ class MyEventScreen : Fragment(), MyEventNavigator {
                         viewModel.onSwipedToDelete(it)
                         // Show a snack bar with an "Undo" option for the delete action
                         val snackBar = Snackbar.make(
-                            binding.root, EVENT_DELETED, Snackbar.LENGTH_LONG
+                            binding.root, EVENT_DELETED, Snackbar.LENGTH_SHORT
                         )
                         snackBar.setAction(UNDO) {
-                            viewModel.onUndoDeleteEvent(event)
+                            viewModel.onUndoClicked()
                         }
                         snackBar.show()
                     }

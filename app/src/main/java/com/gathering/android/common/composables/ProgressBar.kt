@@ -13,11 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ProgressBar(
-    text: String,
+fun ProgressNoDataWidget(
+    noDataText: String,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
-    isNoData: Boolean = false,
+    showProgress: Boolean = false,
+    showNoData: Boolean = false,
 ) {
     Button(
         shape = RoundedCornerShape(0.dp),
@@ -29,16 +29,16 @@ fun ProgressBar(
             containerColor = Color.Transparent
         )
     ) {
-        if (isLoading) {
+        if (showProgress) {
             CircularProgressIndicator(
                 color = Color.DarkGray,
                 strokeWidth = 5.dp
             )
         }
 
-        if (isNoData) {
+        if (showNoData) {
             Text(
-                text = text,
+                text = noDataText,
                 color = Color.Gray
             )
         }

@@ -2,7 +2,6 @@ package com.gathering.android.event.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -28,28 +27,34 @@ fun EventImage(event: Event) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
             .data(data = event.photoUrl.toImageUrl())
-            .apply(block = fun ImageRequest.Builder.() {
-                crossfade(true)
-                placeholder(R.drawable.ic_launcher_foreground)
-                error(com.google.android.material.R.drawable.mtrl_ic_error)
-            }).build()
+            .apply(
+                block = fun ImageRequest.Builder.() {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_launcher_foreground)
+                    error(com.google.android.material.R.drawable.mtrl_ic_error)
+                }
+            ).build()
     )
-    Card(colors = CardDefaults.cardColors(CustomBackgroundColor)) {
-        Image(
-            painter = painter,
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .size(170.dp)
-        )
-    }
+    Image(
+        painter = painter,
+        contentScale = ContentScale.Crop,
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(170.dp)
+    )
 }
 
 @Composable
 fun EventImage(imageUrl: String) {
-    Card(Modifier.border(2.dp, Color.Gray, RoundedCornerShape(10.dp)))
-    {
+    Card(
+        Modifier
+            .border(
+                0.dp,
+                Color.Transparent,
+                RoundedCornerShape(4.dp)
+            )
+    ) {
         val painter = if (imageUrl.isEmpty()) {
             painterResource(id = R.drawable.ic_launcher_foreground)
         } else {
