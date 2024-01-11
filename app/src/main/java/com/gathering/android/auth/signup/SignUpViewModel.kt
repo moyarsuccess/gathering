@@ -61,13 +61,14 @@ class SignUpViewModel @Inject constructor(
     fun onSignUpButtonClicked(email: String, pass: String, confirmPass: String) {
         viewModelState.update { currentViewState ->
             currentViewState.copy(
-                isInProgress = true, errorMessage = null
+                isInProgress = true
             )
         }
         if (!isEmailValid(email)) {
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
-                    errorMessage = INVALID_EMAIL_ADDRESS_FORMAT, isInProgress = false
+                    errorMessage = INVALID_EMAIL_ADDRESS_FORMAT,
+                    isInProgress = false
                 )
             }
             return
@@ -76,7 +77,8 @@ class SignUpViewModel @Inject constructor(
         if (!isPassValid(pass)) {
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
-                    errorMessage = INVALID_PASS_FORMAT, isInProgress = false
+                    errorMessage = INVALID_PASS_FORMAT,
+                    isInProgress = false
                 )
             }
             return
@@ -85,7 +87,8 @@ class SignUpViewModel @Inject constructor(
         if (!isConfirmedPassValid(pass, confirmPass)) {
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
-                    errorMessage = INVALID_CONFIRMED_PASS, isInProgress = false
+                    errorMessage = INVALID_CONFIRMED_PASS,
+                    isInProgress = false
                 )
             }
             return
@@ -95,18 +98,19 @@ class SignUpViewModel @Inject constructor(
             if (deviceToken.isNullOrEmpty()) {
                 viewModelState.update { currentState ->
                     currentState.copy(
-                        errorMessage = INVALID_DEVICE_TOKEN
+                        errorMessage = INVALID_DEVICE_TOKEN,
+                        isInProgress = false
                     )
                 }
                 return@launch
             }
             repository.signUpUser(email = email, pass = pass, deviceToken = deviceToken)
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(
-                    isInProgress = true
-                )
-            }
             signUpNavigator?.navigateToVerification(email)
+        }
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(
+                isInProgress = false
+            )
         }
     }
 
@@ -133,7 +137,7 @@ class SignUpViewModel @Inject constructor(
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
         private const val SIGN_UP_FAILED = "SIGN UP FAILED"
         private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
-        private const val EMAIL_ALREADY_IN_USE = "EMAIL ALREADY IS USE"
+        private const val EMAIL_ALREADY_IN_USE = "EMAIL ADDRESS IS ALREADY IN USE!"
         private const val INVALID_DEVICE_TOKEN = "INVALID_DEVICE_TOKEN"
         private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
