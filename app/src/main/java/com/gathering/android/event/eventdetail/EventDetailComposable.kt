@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.composables.NavigationBarPaddingSpacer
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.composables.EventImage
@@ -86,7 +86,7 @@ fun EventDetail(
     )
     {
         if (errorMessage.isNotEmpty()) {
-            ErrorTextView(error = errorMessage)
+            AlertTextView(msg = errorMessage)
         }
         EventImage(photoUrl.toImageUrl())
         EventInfo(
