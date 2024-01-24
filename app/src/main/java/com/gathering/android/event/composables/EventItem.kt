@@ -1,6 +1,5 @@
 package com.gathering.android.event.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,44 +26,41 @@ fun EventItem(
     onFavClick: (Event?) -> Unit,
     showEditIcon: Boolean
 ) {
+    event ?: return
     Card(
-        modifier = Modifier
-            .clickable {
-                event?.let { onItemClick(it) }
-            },
+        modifier = Modifier.clickable {
+            onItemClick(event)
+        },
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = Color.LightGray
         ),
-        border = BorderStroke(1.dp, Color.Gray)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
         Column(
-            Modifier
-                .background(Color.Transparent)
+            Modifier.background(Color.Transparent)
         ) {
-            event?.let { validEvent ->
-                EventImage(event = validEvent)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = validEvent.eventName,
-                        modifier = Modifier.padding(10.dp),
-                    )
-
-                    if (showEditIcon) {
-                        EditIcon(event = validEvent) { onEditClick(validEvent) }
-                    }
-                    if (showFavoriteIcon) {
-                        FavoriteIcon(event = validEvent) { onFavClick(validEvent) }
-                    }
-                }
+            EventImage(event = event)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = validEvent.eventHostEmail,
+                    text = event.eventName,
                     modifier = Modifier.padding(10.dp),
                 )
+
+                if (showEditIcon) {
+                    EditIcon(event = event) { onEditClick(event) }
+                }
+                if (showFavoriteIcon) {
+                    FavoriteIcon(event = event) { onFavClick(event) }
+                }
             }
+            Text(
+                text = event.eventHostEmail,
+                modifier = Modifier.padding(10.dp),
+            )
         }
     }
 }

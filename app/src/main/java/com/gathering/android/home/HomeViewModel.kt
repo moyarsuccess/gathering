@@ -3,7 +3,6 @@ package com.gathering.android.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
 import com.gathering.android.event.GENERAL_ERROR
 import com.gathering.android.event.LIKE_EVENT_REQUEST_FAILED
@@ -57,10 +56,11 @@ class HomeViewModel @Inject constructor(
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.map {
-        it.copy(
-            events = it.events.map { event ->
-                event.copy(photoUrl = event.photoUrl.toImageUrl())
-            }
+        UiState(
+            showNoData = it.showNoData,
+            showProgress = it.showProgress,
+            events = it.events,
+            errorMessage = it.errorMessage
         )
     }.stateIn(
         scope = viewModelScope,

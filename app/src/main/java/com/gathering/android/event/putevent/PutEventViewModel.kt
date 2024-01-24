@@ -21,7 +21,6 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
-
 class PutEventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private var geocoder: Geocoder,
