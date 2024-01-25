@@ -1,8 +1,12 @@
 package com.gathering.android.auth.repo
 
 import com.gathering.android.auth.AuthException
+import com.gathering.android.common.AuthorizedResponse
+import com.gathering.android.common.GeneralApiResponse
 import com.gathering.android.common.TokenRepo
 import com.gathering.android.common.UserRepo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -11,27 +15,28 @@ class ApiAuthRepository @Inject constructor(
     private val tokenRepo: TokenRepo,
     private val userRepo: UserRepo
 ) : AuthRepository {
-    override suspend fun forgetPassword(email: String) {
-        remoteService.forgetPassword(email = email)
-    }
+    override suspend fun forgetPassword(email: String): GeneralApiResponse =
+        withContext(Dispatchers.IO) {
+            remoteService.forgetPassword(email = email)
+        }
 
-    override suspend fun resetPassword(token: String, password: String, deviceToken: String) {
+    override suspend fun resetPassword(
+        token: String, password: String, deviceToken: String
+    ): AuthorizedResponse = withContext(Dispatchers.IO) {
         remoteService.resetPassword(
-            password = password,
-            deviceToken = deviceToken,
-            token = token
+            password = password, deviceToken = deviceToken, token = token
         )
     }
 
     override suspend fun signInUser(
-        email: String,
-        pass: String,
-        deviceToken: String
-    ) {
+        email: String, pass: String, deviceToken: String
+    ): AuthorizedResponse = withContext(Dispatchers.IO) {
         try {
-            val response = remoteService.signIn(email, pass, deviceToken)
+            val response =
+                remoteService.signIn(password = pass, deviceToken = deviceToken, email = email)
             tokenRepo.saveToken(response.jwt)
             userRepo.saveUser(response.user)
+            response
         } catch (e: HttpException) {
             val throwable = when (e.code()) {
                 UNAUTHORIZED_HTTP_CODE -> AuthException.UserNotVerifiedException
@@ -42,27 +47,32 @@ class ApiAuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun signUpUser(email: String, pass: String, deviceToken: String) {
-        try {
-            remoteService.signUp(
-                email = email,
-                password = pass,
-                deviceToken = deviceToken,
-            )
-        } catch (e: HttpException) {
-            val throwable = when (e.code()) {
-                CONFLICT_HTTP_CODE -> AuthException.EmailAlreadyInUseException
-                else -> AuthException.General(e.code())
+    override suspend fun signUpUser(
+        email: String,
+        pass: String,
+        deviceToken: String
+    ): GeneralApiResponse =
+        withContext(Dispatchers.IO) {
+            try {
+                remoteService.signUp(
+                    email = email,
+                    password = pass,
+                    deviceToken = deviceToken,
+                )
+            } catch (e: HttpException) {
+                val throwable = when (e.code()) {
+                    CONFLICT_HTTP_CODE -> AuthException.EmailAlreadyInUseException
+                    else -> AuthException.General(e.code())
+                }
+                throw throwable
             }
-            throw throwable
         }
-    }
 
-    override suspend fun sendEmailVerification(email: String) {
+    override suspend fun sendEmailVerification(
+        email: String
+    ): GeneralApiResponse = withContext(Dispatchers.IO) {
         try {
-            remoteService.sendEmailVerification(
-                email = email,
-            )
+            remoteService.sendEmailVerification(email = email)
         } catch (e: HttpException) {
             val throwable = when (e.code()) {
                 CAN_NOT_REACH_SERVER -> AuthException.FailedConnectingToServerException
@@ -72,11 +82,11 @@ class ApiAuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun emailVerify(token: String) {
+    override suspend fun emailVerify(
+        token: String
+    ): AuthorizedResponse = withContext(Dispatchers.IO) {
         try {
-            val response = remoteService.emailVerify(token)
-            userRepo.saveUser(response.user)
-            tokenRepo.saveToken(response.jwt)
+            remoteService.emailVerify(token = token)
         } catch (e: HttpException) {
             val throwable = when (e.code()) {
                 UNAUTHORIZED_HTTP_CODE -> AuthException.UserNotVerifiedException
