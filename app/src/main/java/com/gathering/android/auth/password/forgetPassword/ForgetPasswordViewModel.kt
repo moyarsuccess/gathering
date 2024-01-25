@@ -1,9 +1,11 @@
 package com.gathering.android.auth.password.forgetPassword
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
+import com.gathering.android.utils.ValidationChecker
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,10 +16,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ForgetPasswordViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val validationChecker: ValidationChecker,
 ) : ViewModel() {
 
-    private var forgetPasswordNavigator: ForgetPasswordNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var forgetPasswordNavigator: ForgetPasswordNavigator? = null
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val errorMessage = when (throwable) {
             is AuthException -> {
@@ -36,7 +41,6 @@ class ForgetPasswordViewModel @Inject constructor(
         }
     }
 
-
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.stateIn(
         scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = UiState()
@@ -51,11 +55,17 @@ class ForgetPasswordViewModel @Inject constructor(
     }
 
     fun onSendLinkBtnClicked(email: String) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(isInProgress = true)
+        }
         viewModelScope.launch(exceptionHandler) {
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(isInProgress = true)
-            }
-            if (!isEmailValid(email)) {
+            if (validationChecker.isEmailValid(email)) {
+                repository.forgetPassword(email = email)
+                viewModelState.update { currentViewState ->
+                    currentViewState.copy(isInProgress = false)
+                }
+                forgetPasswordNavigator?.navigateToResetPassInfoBottomSheet()
+            } else {
                 viewModelState.update { currentViewState ->
                     currentViewState.copy(
                         isInProgress = false,
@@ -63,24 +73,12 @@ class ForgetPasswordViewModel @Inject constructor(
                     )
                 }
             }
-            repository.forgetPassword(email = email)
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(isInProgress = false)
-            }
-            forgetPasswordNavigator?.navigateToResetPassInfoBottomSheet()
         }
-    }
-
-    private fun isEmailValid(email: String): Boolean {
-        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-        return email.matches(emailPattern.toRegex())
     }
 
     companion object {
         private const val INVALID_EMAIL_ADDRESS = "INVALID EMAIL ADDRESS"
         private const val FAILED_TO_SEND_RESET_PASSWORD_LINK = "FAILED TO SEND RESET PASSWORD LINK"
-        private const val RESET_PASS_EMAIL_SENT_SUCCESSFULLY =
-            "RESET PASSWORD EMAIL WAS SEND SUCCESSFULLY"
         private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }
