@@ -387,8 +387,8 @@ class PutEventScreen : FullScreenBottomSheet(), PutEventNavigator {
             ImageRequest.Builder(LocalContext.current)
                 .data(data = photoUrl)
                 .apply(block = fun ImageRequest.Builder.() {
-                    placeholder(R.drawable.img_event)
-                    error(R.drawable.img_event)
+                    placeholder(R.drawable.your_image_goes_here)
+                    error(R.drawable.your_image_goes_here)
                 }).build()
         )
         Card(colors = CardDefaults.cardColors(CustomBackgroundColor)) {

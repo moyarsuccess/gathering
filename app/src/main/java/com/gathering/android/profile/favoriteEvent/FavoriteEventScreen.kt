@@ -27,7 +27,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.gathering.android.R
 import com.gathering.android.common.FullScreenBottomSheet
-import com.gathering.android.common.composables.ProgressBar
+import com.gathering.android.common.composables.ProgressNoDataWidget
 import com.gathering.android.databinding.ScreenFavoriteEventBinding
 import com.gathering.android.event.Event
 import com.gathering.android.event.KEY_ARGUMENT_EVENT
@@ -114,10 +114,10 @@ class FavoriteEventScreen : FullScreenBottomSheet(), FavoriteEventNavigator {
         onItemClick: (Event) -> Unit,
         onNextPageRequested: () -> Unit,
     ) {
-        ProgressBar(
-            text = "oops. no Favorite events yet!!",
-            isLoading = isLoading,
-            isNoData = isNoData
+        ProgressNoDataWidget(
+            noDataText = "oops. no Favorite events yet!!",
+            showProgress = isLoading,
+            showNoData = isNoData
         )
         Column(
             modifier = Modifier

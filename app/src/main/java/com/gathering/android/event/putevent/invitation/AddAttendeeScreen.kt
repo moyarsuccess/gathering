@@ -46,7 +46,7 @@ import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextField
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.ScreenAddAttendeesBinding
@@ -205,7 +205,7 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
             AttendeeList(attendees, onRemoveClick, email ?: "")
 
             if (errorMessage != null) {
-                ErrorTextView(errorMessage)
+                AlertTextView(errorMessage)
             }
         }
 

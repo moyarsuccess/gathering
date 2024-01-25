@@ -3,9 +3,8 @@ package com.gathering.android.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.Event
-import com.gathering.android.event.General_ERROR
+import com.gathering.android.event.GENERAL_ERROR
 import com.gathering.android.event.LIKE_EVENT_REQUEST_FAILED
 import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
 import com.gathering.android.event.repo.EventException
@@ -35,15 +34,15 @@ class HomeViewModel @Inject constructor(
                 when (throwable) {
                     EventException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
                     EventException.LikeEventServerRequestFailedException -> LIKE_EVENT_REQUEST_FAILED
-                    is EventException.GeneralException -> General_ERROR
+                    is EventException.GeneralException -> GENERAL_ERROR
                     else -> {
-                        General_ERROR
+                        GENERAL_ERROR
                     }
                 }
             }
 
             else -> {
-                General_ERROR
+                GENERAL_ERROR
             }
         }
         viewModelState.update { currentState ->
@@ -57,10 +56,11 @@ class HomeViewModel @Inject constructor(
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.map {
-        it.copy(
-            events = it.events.map { event ->
-                event.copy(photoUrl = event.photoUrl.toImageUrl())
-            }
+        UiState(
+            showNoData = it.showNoData,
+            showProgress = it.showProgress,
+            events = it.events,
+            errorMessage = it.errorMessage
         )
     }.stateIn(
         scope = viewModelScope,

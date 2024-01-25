@@ -18,7 +18,7 @@ class ApiAttendanceStateRepository @Inject constructor(
             } catch (e: HttpException) {
                 val throwable = when (e.code()) {
                     CAN_NOT_REACH_SERVER -> EventException.NotAbleToCatchAttendanceResponseException
-                    else -> EventException.GeneralException(code = e.code())
+                    else -> EventException.GeneralException
                 }
                 throw throwable
             }

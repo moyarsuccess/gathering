@@ -26,8 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +41,7 @@ import com.gathering.android.R
 import com.gathering.android.common.FullScreenBottomSheet
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextView
-import com.gathering.android.common.composables.ErrorTextView
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.showErrorText
 import com.gathering.android.databinding.ScreenVerificationBinding
@@ -153,7 +156,10 @@ class VerificationScreen : FullScreenBottomSheet(), VerificationNavigator {
     }
 
     @Composable
-    fun VerificationScreenCompose(isInProgress: Boolean, error: String? = null) {
+    fun VerificationScreenCompose(
+        isInProgress: Boolean,
+        message: String? = null
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -182,9 +188,29 @@ class VerificationScreen : FullScreenBottomSheet(), VerificationNavigator {
                     .height(60.dp)
                     .width(170.dp),
             )
+            if (message != null) {
+                val styledMessage = when {
+                    message.contains("FAIL") -> {
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Red)) {
+                                append(message)
+                            }
+                        }.toString()
+                    }
 
-            if (error != null) {
-                ErrorTextView(error)
+                    message.contains("SUCCESS") -> {
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Green)) {
+                                append(message)
+                            }
+                        }.toString()
+                    }
+
+                    else -> {
+                        message
+                    }
+                }
+                AlertTextView(styledMessage)
             }
         }
     }

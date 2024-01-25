@@ -14,14 +14,11 @@ import com.gathering.android.common.getMinute
 import com.gathering.android.common.getMonth
 import com.gathering.android.common.getYear
 import com.gathering.android.event.Event
-import com.gathering.android.event.General_ERROR
 import com.gathering.android.event.eventdetail.acceptrepo.AttendanceStateRepository
 import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.model.EventLocation
-import com.gathering.android.event.repo.EventException
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
