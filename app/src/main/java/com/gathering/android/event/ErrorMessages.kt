@@ -8,3 +8,5 @@ const val SERVER_NOT_RESPONDING_TO_SHOW_MY_EVENT = "The event list is not availa
 const val SERVER_NOT_RESPONDING_TO_SHOW_MY_FAVORITE_EVENT = "The liked event list is not available now :("
 const val UPDATE_PROFILE_REQUEST_FAILED = "You are not able to update profile now"
 const val FILE_NOT_FOUND_EXCEPTION = "File can not made from URL"
+const val SERVER_DID_NOT_CATCH_ATTENDANCE_RESPONSE = "we did not catch your response. try RSVPing again!"
+
