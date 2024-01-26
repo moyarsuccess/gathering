@@ -99,6 +99,7 @@ class ForgetPasswordViewModelTest {
             job.cancel()
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `onSendLinkBtnClicked sets uiState error message when email is NOT correct`() =
         runTest {
@@ -171,12 +172,12 @@ class ForgetPasswordViewModelTest {
     @Test
     fun `onSendLinkBtnClicked navigates to reset info bottom sheet if email is valid`() =
         runTest {
-            //WHEN
+            //GIVEN
             val forgetPasswordNavigator = mockk<ForgetPasswordNavigator>()
             every { validationChecker.isEmailValid(any()) } returns true
             classToTest.onViewCreated(forgetPasswordNavigator)
 
-            //GIVEN
+            //WHEN
             classToTest.onSendLinkBtnClicked("amir@gmail.com")
 
             //THEN

@@ -1,11 +1,12 @@
 package com.gathering.android.auth.signup
 
-import android.text.TextUtils
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.notif.FirebaseRepository
+import com.gathering.android.utils.ValidationChecker
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,15 +14,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class SignUpViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val firebaseMessagingRepository: FirebaseRepository,
+    private val validationChecker: ValidationChecker
 ) : ViewModel() {
 
-    private var signUpNavigator: SignUpNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var signUpNavigator: SignUpNavigator? = null
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val errorMessage = when (throwable) {
             is AuthException -> {
@@ -64,7 +67,7 @@ class SignUpViewModel @Inject constructor(
                 isInProgress = true
             )
         }
-        if (!isEmailValid(email)) {
+        if (!validationChecker.isEmailValid(email)) {
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
                     errorMessage = INVALID_EMAIL_ADDRESS_FORMAT,
@@ -74,7 +77,7 @@ class SignUpViewModel @Inject constructor(
             return
         }
 
-        if (!isPassValid(pass)) {
+        if (!validationChecker.isPasswordValid(pass)) {
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
                     errorMessage = INVALID_PASS_FORMAT,
@@ -84,7 +87,7 @@ class SignUpViewModel @Inject constructor(
             return
         }
 
-        if (!isConfirmedPassValid(pass, confirmPass)) {
+        if (!validationChecker.isConfirmedPassValid(pass = pass, confirmedPass = confirmPass)) {
             viewModelState.update { currentViewState ->
                 currentViewState.copy(
                     errorMessage = INVALID_CONFIRMED_PASS,
@@ -114,31 +117,14 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun isEmailValid(email: String): Boolean {
-        return !(TextUtils.isEmpty(email)) && android.util.Patterns.EMAIL_ADDRESS.matcher(email)
-            .matches()
-    }
-
-    private fun isPassValid(pass: String): Boolean {
-        val matcher = Pattern.compile(PASSWORD_REGEX).matcher(pass)
-        return matcher.matches()
-    }
-
-    private fun isConfirmedPassValid(pass: String, confirmedPass: String): Boolean {
-        val matcher = Pattern.compile(PASSWORD_REGEX).matcher(confirmedPass)
-        return (pass == confirmedPass && matcher.matches())
-    }
-
     companion object {
-        private const val INVALID_EMAIL_ADDRESS_FORMAT = "PLEASE ENTER A VALID EMAIL ADDRESS"
-        private const val INVALID_PASS_FORMAT = "PLEASE ENTER A VALID PASSWORD"
-        private const val INVALID_CONFIRMED_PASS = "PASSWORDS DON'T MATCH"
-        private const val PASSWORD_REGEX =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
-        private const val SIGN_UP_FAILED = "SIGN UP FAILED"
-        private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
-        private const val EMAIL_ALREADY_IN_USE = "EMAIL ADDRESS IS ALREADY IN USE!"
-        private const val INVALID_DEVICE_TOKEN = "INVALID_DEVICE_TOKEN"
-        private const val GENERAL_ERROR = "Ooops. something Wrong!"
+        const val INVALID_CONFIRMED_PASS = "PASSWORDS DON'T MATCH"
+        const val INVALID_PASS_FORMAT = "PLEASE ENTER A VALID PASSWORD"
+        const val INVALID_EMAIL_ADDRESS_FORMAT = "PLEASE ENTER A VALID EMAIL ADDRESS"
+        const val SIGN_UP_FAILED = "SIGN UP FAILED"
+        const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER"
+        const val EMAIL_ALREADY_IN_USE = "EMAIL ADDRESS IS ALREADY IN USE!"
+        const val INVALID_DEVICE_TOKEN = "INVALID_DEVICE_TOKEN"
+        const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }
