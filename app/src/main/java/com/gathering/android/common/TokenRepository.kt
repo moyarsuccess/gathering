@@ -2,7 +2,7 @@ package com.gathering.android.common
 
 import javax.inject.Inject
 
-class TokenRepo @Inject constructor(
+class TokenRepository @Inject constructor(
     private val keyValueStorage: KeyValueStorage
 ) {
 

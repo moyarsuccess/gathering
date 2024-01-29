@@ -2,8 +2,8 @@ package com.gathering.android.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.TokenRepository
+import com.gathering.android.common.UserRepository
 import com.gathering.android.common.toImageUrl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val userRepo: UserRepo,
-    private val tokenRepo: TokenRepo
+    private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     private var profileNavigator: ProfileNavigator? = null
@@ -51,14 +51,14 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onSignOutButtonClicked() {
-        userRepo.clearUser()
-        tokenRepo.clearToken()
+        userRepository.clearUser()
+        tokenRepository.clearToken()
         profileNavigator?.navigateToIntro()
     }
 
     private fun showMostRecentUserInfo() {
         viewModelState.update { currentState ->
-            val user = userRepo.getUser() ?: return
+            val user = userRepository.getUser() ?: return
             currentState.copy(
                 imageUri = user.photoName.toImageUrl(),
                 displayName = user.displayName,

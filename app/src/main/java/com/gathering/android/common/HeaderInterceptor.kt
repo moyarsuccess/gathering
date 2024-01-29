@@ -4,13 +4,13 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
-class HeaderInterceptor @Inject constructor(private val tokenRepo: TokenRepo) : Interceptor {
+class HeaderInterceptor @Inject constructor(private val tokenRepository: TokenRepository) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response = chain.run {
         proceed(
             request()
                 .newBuilder()
-                .addHeader(AUTH_HEADER_KEY, "$BEARER ${tokenRepo.getToken()}")
+                .addHeader(AUTH_HEADER_KEY, "$BEARER ${tokenRepository.getToken()}")
                 .build()
         )
     }

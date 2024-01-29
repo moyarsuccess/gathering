@@ -3,8 +3,8 @@ package com.gathering.android.auth.repo
 import com.gathering.android.auth.AuthException
 import com.gathering.android.common.AuthorizedResponse
 import com.gathering.android.common.GeneralApiResponse
-import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.TokenRepository
+import com.gathering.android.common.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -12,8 +12,8 @@ import javax.inject.Inject
 
 class ApiAuthRepository @Inject constructor(
     private val remoteService: AuthRemoteService,
-    private val tokenRepo: TokenRepo,
-    private val userRepo: UserRepo
+    private val tokenRepository: TokenRepository,
+    private val userRepository: UserRepository
 ) : AuthRepository {
     override suspend fun forgetPassword(email: String): GeneralApiResponse =
         withContext(Dispatchers.IO) {
@@ -34,8 +34,8 @@ class ApiAuthRepository @Inject constructor(
         try {
             val response =
                 remoteService.signIn(password = pass, deviceToken = deviceToken, email = email)
-            tokenRepo.saveToken(response.jwt)
-            userRepo.saveUser(response.user)
+            tokenRepository.saveToken(response.jwt)
+            userRepository.saveUser(response.user)
             response
         } catch (e: HttpException) {
             val throwable = when (e.code()) {
@@ -97,7 +97,7 @@ class ApiAuthRepository @Inject constructor(
     }
 
     override fun isUserVerified(): Boolean {
-        return tokenRepo.isTokenValid()
+        return tokenRepository.isTokenValid()
     }
 
     companion object {

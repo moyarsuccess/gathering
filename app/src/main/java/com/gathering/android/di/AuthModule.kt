@@ -3,8 +3,8 @@ package com.gathering.android.di
 import com.gathering.android.auth.repo.ApiAuthRepository
 import com.gathering.android.auth.repo.AuthRemoteService
 import com.gathering.android.auth.repo.AuthRepository
-import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.TokenRepository
+import com.gathering.android.common.UserRepository
 import com.gathering.android.notif.FirebaseDeviceTokenChangeService
 import com.gathering.android.notif.FirebaseRepository
 import dagger.Module
@@ -30,13 +30,13 @@ class AuthModule {
     @Singleton
     fun provideAuthRepository(
         authRemoteService: AuthRemoteService,
-        tokenRepo: TokenRepo,
-        userRepo: UserRepo
+        tokenRepository: TokenRepository,
+        userRepository: UserRepository
     ): AuthRepository {
         return ApiAuthRepository(
             remoteService = authRemoteService,
-            tokenRepo = tokenRepo,
-            userRepo = userRepo
+            tokenRepository = tokenRepository,
+            userRepository = userRepository
         )
     }
 

@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import com.gathering.android.common.ImageLoader
 import com.gathering.android.common.KeyValueStorage
 import com.gathering.android.common.PicassoImageLoader
-import com.gathering.android.common.TokenRepo
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.TokenRepository
+import com.gathering.android.common.UserRepository
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import dagger.Module
@@ -57,8 +57,8 @@ class ApplicationModule {
     @Singleton
     fun provideTokenRepo(
         keyValueStorage: KeyValueStorage
-    ): TokenRepo {
-        return TokenRepo(keyValueStorage)
+    ): TokenRepository {
+        return TokenRepository(keyValueStorage)
     }
 
     @Provides
@@ -66,8 +66,8 @@ class ApplicationModule {
     fun provideUserRepo(
         keyValueStorage: KeyValueStorage,
         gson: Gson
-    ): UserRepo {
-        return UserRepo(keyValueStorage, gson)
+    ): UserRepository {
+        return UserRepository(keyValueStorage, gson)
     }
 
     @Provides
