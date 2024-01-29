@@ -1,11 +1,12 @@
 package com.gathering.android.auth.signin
 
-import android.text.TextUtils
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.AuthException
 import com.gathering.android.auth.repo.AuthRepository
 import com.gathering.android.notif.FirebaseRepository
+import com.gathering.android.utils.ValidationChecker
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val firebaseMessagingRepository: FirebaseRepository,
+    private val validationChecker: ValidationChecker
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(UiState())
@@ -25,7 +27,9 @@ class SignInViewModel @Inject constructor(
         scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = UiState()
     )
 
-    private var signInNavigator: SignInNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var signInNavigator: SignInNavigator? = null
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val errorMessage = when (throwable) {
             is AuthException -> {
@@ -59,14 +63,32 @@ class SignInViewModel @Inject constructor(
         viewModelState.update { currentViewState ->
             currentViewState.copy(isInProgress = true)
         }
-        checkEmailValidity(email)
-        checkPasswordValidity(pass)
+
         viewModelScope.launch(exceptionHandler) {
             val deviceToken = firebaseMessagingRepository.getDeviceToken()
+            if (!validationChecker.isEmailValid(email)) {
+                viewModelState.update { currentState ->
+                    currentState.copy(
+                        errorMessage = INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE,
+                        isInProgress = false
+                    )
+                }
+                return@launch
+            }
+            if (!validationChecker.isPasswordValid(pass)) {
+                viewModelState.update { currentState ->
+                    currentState.copy(
+                        errorMessage = INVALID_PASS_FORMAT_ERROR_MESSAGE,
+                        isInProgress = false
+                    )
+                }
+                return@launch
+            }
             if (deviceToken.isNullOrEmpty()) {
                 viewModelState.update { currentState ->
                     currentState.copy(
-                        errorMessage = INVALID_DEVICE_TOKEN
+                        errorMessage = INVALID_DEVICE_TOKEN,
+                        isInProgress = false
                     )
                 }
                 return@launch
@@ -81,48 +103,19 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun checkEmailValidity(email: String) {
-        if (!isEmailValid(email)) {
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(
-                    errorMessage = INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE,
-                    isInProgress = false
-                )
-            }
-        }
-    }
-
-    private fun checkPasswordValidity(pass: String) {
-        if (!isPassValid(pass)) {
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(
-                    errorMessage = INVALID_PASS_FORMAT_ERROR_MESSAGE, isInProgress = false
-                )
-            }
-        }
-    }
-
     fun onForgotPassTvClicked() {
         signInNavigator?.navigateToPasswordReset()
-    }
-
-    private fun isEmailValid(email: String): Boolean {
-        return !(TextUtils.isEmpty(email)) && android.util.Patterns.EMAIL_ADDRESS.matcher(email)
-            .matches()
-    }
-
-    private fun isPassValid(pass: String): Boolean {
-        return !TextUtils.isEmpty(pass)
     }
 
     companion object {
         private const val INVALID_EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE =
             "PLEASE ENTER A VALID EMAIL ADDRESS"
-        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "PLEASE ENTER A VALID PASSWORD."
-        private const val WRONG_CREDENTIALS = "WE DO NOT RECOGNIZE THIS PASSWORD/EMAIL COMBINATION."
+        private const val INVALID_PASS_FORMAT_ERROR_MESSAGE = "PLEASE ENTER A VALID PASSWORD"
+        private const val WRONG_CREDENTIALS =
+            "WE DO NOT RECOGNIZE THIS PASSWORD/EMAIL COMBINATION."
         private const val EMAIL_NOT_VERIFIED = "EMAIL NOT VERIFIED."
         private const val CAN_NOT_REACH_THE_SERVER = "CAN NOT REACH THE SERVER."
-        private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN."
+        private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
         private const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }

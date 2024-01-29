@@ -172,12 +172,12 @@ class ForgetPasswordViewModelTest {
     @Test
     fun `onSendLinkBtnClicked navigates to reset info bottom sheet if email is valid`() =
         runTest {
-            //GIVEN
+            //WHEN
             val forgetPasswordNavigator = mockk<ForgetPasswordNavigator>()
             every { validationChecker.isEmailValid(any()) } returns true
             classToTest.onViewCreated(forgetPasswordNavigator)
 
-            //WHEN
+            //GIVEN
             classToTest.onSendLinkBtnClicked("amir@gmail.com")
 
             //THEN
