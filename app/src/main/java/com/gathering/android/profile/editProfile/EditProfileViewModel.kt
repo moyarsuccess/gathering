@@ -3,7 +3,7 @@ package com.gathering.android.profile.editProfile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.UserRepository
 import com.gathering.android.common.toImageUrl
 import com.gathering.android.event.FILE_NOT_FOUND_EXCEPTION
 import com.gathering.android.event.GENERAL_ERROR
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EditProfileViewModel @Inject constructor(
-    private val userRepo: UserRepo,
+    private val userRepository: UserRepository,
     private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
@@ -68,7 +68,7 @@ class EditProfileViewModel @Inject constructor(
     fun onViewCreated(editProfileNavigator: EditProfileNavigator) {
         this.editProfileNavigator = editProfileNavigator
         viewModelState.update { currentState ->
-            val user = userRepo.getUser() ?: return
+            val user = userRepository.getUser() ?: return
             currentState.copy(
                 imageUri = user.photoName.toImageUrl(),
                 displayName = user.displayName,

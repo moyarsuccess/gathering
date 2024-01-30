@@ -1,7 +1,7 @@
 package com.gathering.android.di
 
 import android.content.Context
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.UserRepository
 import com.gathering.android.profile.repo.ApiProfileRepository
 import com.gathering.android.profile.repo.ProfileRemoteService
 import com.gathering.android.profile.repo.ProfileRepository
@@ -30,12 +30,12 @@ class ProfileModule {
     fun provideProfileRepository(
         profileRemoteService: ProfileRemoteService,
         @ApplicationContext context: Context,
-        userRepo: UserRepo
+        userRepository: UserRepository
     ): ProfileRepository {
         return ApiProfileRepository(
             context = context,
             profileRemoteService = profileRemoteService,
-            userRepo
+            userRepository
         )
     }
 }

@@ -4,7 +4,7 @@ import com.gathering.android.auth.model.User
 import com.google.gson.Gson
 import javax.inject.Inject
 
-class UserRepo @Inject constructor(
+class UserRepository @Inject constructor(
     private val keyValueStorage: KeyValueStorage,
     private val gson: Gson
 ) {

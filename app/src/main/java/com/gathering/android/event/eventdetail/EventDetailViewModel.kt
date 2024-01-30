@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.R
 import com.gathering.android.auth.model.User
-import com.gathering.android.common.UserRepo
+import com.gathering.android.common.UserRepository
 import com.gathering.android.common.getDay
 import com.gathering.android.common.getHour
 import com.gathering.android.common.getMinute
@@ -40,7 +40,7 @@ import javax.inject.Inject
 class EventDetailViewModel @Inject constructor(
     private val attendanceStateRepo: AttendanceStateRepository,
     private val eventRepository: EventRepository,
-    private val userRepo: UserRepo,
+    private val userRepository: UserRepository,
     private var geocoder: Geocoder,
 ) : ViewModel() {
 
@@ -110,7 +110,7 @@ class EventDetailViewModel @Inject constructor(
                 val cal = Calendar.getInstance().apply {
                     event.dateAndTime.also { time = Date(it) }
                 }
-                val acceptType = userRepo.getUser().obtainAttendeeAcceptType(event)
+                val acceptType = userRepository.getUser().obtainAttendeeAcceptType(event)
                 currentState.copy(
                     eventId = event.eventId,
                     imageUri = event.photoUrl,
