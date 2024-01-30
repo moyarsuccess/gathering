@@ -1,6 +1,5 @@
 package com.gathering.android.auth.password.newPassword
 
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -84,7 +83,6 @@ class InputNewPasswordViewModel @Inject constructor(
                 }
                 return@launch
             }
-            try {
                 repository.resetPassword(
                     password = newPassword,
                     token = token,
@@ -93,23 +91,15 @@ class InputNewPasswordViewModel @Inject constructor(
                 viewModelState.update { currentViewState ->
                     currentViewState.copy(isInProgress = false)
                 }
-                inputNewPasswordNavigator?.navigateToHomeFragment()
-            } catch (e: Exception) {
-                Log.e("InputNewPasswordViewModel", "Error during password reset: ${e.message}", e)
-                viewModelState.update { currentViewState ->
-                    currentViewState.copy(
-                        errorMessage = GENERAL_ERROR
-                    )
-                }
-            }
+                inputNewPasswordNavigator?.navigateToIntroFragment()
         }
     }
 
     companion object {
-        private const val LINK_NOT_VALID = "LINK IS NOT VALID"
-        private const val PASSWORDS_DO_NOT_MATCH = "PASSWORDS DO NOT MATCH"
-        private const val CAN_NOT_REACH_SERVER = "CAN NOT REACH SERVER"
-        private const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
-        private const val GENERAL_ERROR = "Ooops. something Wrong!"
+        const val LINK_NOT_VALID = "LINK IS NOT VALID"
+        const val PASSWORDS_DO_NOT_MATCH = "PASSWORDS DO NOT MATCH"
+        const val CAN_NOT_REACH_SERVER = "CAN NOT REACH SERVER"
+        const val INVALID_DEVICE_TOKEN = "INVALID DEVICE TOKEN"
+        const val GENERAL_ERROR = "Ooops. something Wrong!"
     }
 }
