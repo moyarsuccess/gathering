@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_homeScreen">
+    app:startDestination="@id/navigation_IntroScreen">
     <dialog
         android:id="@+id/introFragment"
         android:name="com.gathering.android.intro.IntroFragment"
@@ -35,7 +35,7 @@
         tools:layout="@layout/screen_sign_in">
         <action
             android:id="@+id/action_signInScreen_to_navigation_homeScreen"
-            app:destination="@id/navigation_homeScreen" />
+            app:destination="@id/navigation_IntroScreen" />
         <action
             android:id="@+id/action_signInScreen_to_verificationScreen"
             app:destination="@id/verificationScreen"
@@ -45,7 +45,7 @@
             app:destination="@id/forgetPasswordScreen" />
     </dialog>
     <fragment
-        android:id="@+id/navigation_homeScreen"
+        android:id="@+id/navigation_IntroScreen"
         android:name="com.gathering.android.home.HomeScreen"
         android:label="HomeScreen"
         tools:layout="@layout/screen_home">
@@ -144,7 +144,7 @@
         tools:layout="@layout/screen_verification">
         <action
             android:id="@+id/action_verification_to_navigation_home"
-            app:destination="@id/navigation_homeScreen" />
+            app:destination="@id/navigation_IntroScreen" />
         <deepLink
             android:id="@+id/verificationScreen"
             android:autoVerify="true"
@@ -199,8 +199,8 @@
             app:action="android.intent.action.VIEW"
             app:uri="gathering://gathering.com/password/reset" />
         <action
-            android:id="@+id/action_newPasswordInputScreen_to_navigation_homeScreen"
-            app:destination="@id/navigation_homeScreen" />
+            android:id="@+id/action_newPasswordInputScreen_to_navigation_IntroScreen"
+            app:destination="@id/navigation_IntroScreen" />
 
     </dialog>
     <dialog
