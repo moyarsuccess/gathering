@@ -1,6 +1,7 @@
 package com.gathering.android.event.putevent.invitation
 
 import android.util.Patterns
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 class AddAttendeesViewModel @Inject constructor() : ViewModel() {
 
-    private var addAttendeeNavigator: AddAttendeeNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var addAttendeeNavigator: AddAttendeeNavigator? = null
 
     private val viewModelState = MutableStateFlow(AddAttendeesViewModelState())
     val uiState: StateFlow<AddAttendeeUiState> = viewModelState.map { viewModelState ->
