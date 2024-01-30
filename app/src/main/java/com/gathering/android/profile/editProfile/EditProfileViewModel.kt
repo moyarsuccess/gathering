@@ -1,5 +1,6 @@
 package com.gathering.android.profile.editProfile
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.model.User
@@ -22,13 +23,11 @@ import javax.inject.Inject
 
 class EditProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
 
-    private var isDisplayNameFilled: Boolean = false
-    private var isImageUrlFilled: Boolean = false
-
-    private var editProfileNavigator: EditProfileNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var editProfileNavigator: EditProfileNavigator? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val errorMessage = when (throwable) {
@@ -57,6 +56,7 @@ class EditProfileViewModel @Inject constructor(
             imageUri = viewModelState.imageUri,
             displayName = viewModelState.displayName,
             email = viewModelState.email,
+            errorMessage = viewModelState.errorMessage,
             saveButtonEnable = viewModelState.saveButtonEnable
         )
     }.stateIn(
@@ -67,14 +67,17 @@ class EditProfileViewModel @Inject constructor(
 
     fun onViewCreated(editProfileNavigator: EditProfileNavigator) {
         this.editProfileNavigator = editProfileNavigator
-        viewModelState.update { currentState ->
-            val user = userRepository.getUser() ?: return
-            currentState.copy(
-                imageUri = user.photoName.toImageUrl(),
-                displayName = user.displayName,
-                email = user.email,
-                saveButtonEnable = false
-            )
+
+        viewModelScope.launch(exceptionHandler) {
+            val user = userRepository.getUser() ?: return@launch
+            viewModelState.update { currentState ->
+                currentState.copy(
+                    imageUri = user.photoName.toImageUrl(),
+                    displayName = user.displayName,
+                    email = user.email,
+                    saveButtonEnable = false
+                )
+            }
         }
     }
 
@@ -83,29 +86,33 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun onImageURLChanged(photoUri: String) {
-        isImageUrlFilled = isImageUrlFilled(photoUri)
-        val errorMessage = if (isImageUrlFilled) null else IMAGE_NOT_FILLED_MESSAGE
-        viewModelState.update { currentState ->
-            currentState.copy(imageUri = photoUri, errorMessage = errorMessage)
+        viewModelScope.launch(exceptionHandler) {
+            if (photoUri.isEmpty()) {
+                viewModelState.update { currentState ->
+                    currentState.copy(errorMessage = IMAGE_NOT_FILLED_MESSAGE)
+                }
+                return@launch
+            }
+            viewModelState.update { currentState ->
+                currentState.copy(imageUri = photoUri, errorMessage = null)
+            }
+            checkAllFieldsReady()
         }
-        checkAllFieldsReady()
     }
 
     fun onDisplayNameChanged(displayName: String) {
-        isDisplayNameFilled = isDisplayNameFilled(displayName)
-        val errorMessage = if (isDisplayNameFilled) null else DISPLAY_NAME_NOT_FILLED_MESSAGE
-        viewModelState.update { currentState ->
-            currentState.copy(errorMessage = errorMessage)
+        viewModelScope.launch(exceptionHandler) {
+            if (displayName.isEmpty()) {
+                viewModelState.update { currentState ->
+                    currentState.copy(errorMessage = DISPLAY_NAME_NOT_FILLED_MESSAGE)
+                }
+                return@launch
+            }
+            viewModelState.update { currentState ->
+                currentState.copy(displayName = displayName, errorMessage = null)
+            }
+            checkAllFieldsReady()
         }
-        checkAllFieldsReady()
-    }
-
-    private fun isDisplayNameFilled(imgUrl: String): Boolean {
-        return imgUrl.isNotEmpty() && imgUrl.isNotBlank()
-    }
-
-    private fun isImageUrlFilled(displayName: String): Boolean {
-        return displayName.isNotEmpty() && displayName.isNotBlank()
     }
 
     private fun checkAllFieldsReady() {
@@ -115,26 +122,28 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun isAllFieldsFilled(): Boolean {
-        return isDisplayNameFilled ||
-                isImageUrlFilled
+        return !viewModelState.value.displayName.isNullOrEmpty() ||
+                !viewModelState.value.imageUri.isNullOrEmpty()
     }
 
     fun onSaveButtonClicked(displayName: String?, imageUrl: String?) {
-
         viewModelScope.launch(exceptionHandler) {
+            if (displayName.isNullOrEmpty() && imageUrl.isNullOrEmpty()) return@launch
+
             profileRepository.updateProfile(
-                displayName = displayName,
-                photoUri = imageUrl
-            )
+                displayName = displayName, photoUri = imageUrl
+            ) ?: return@launch
+
             viewModelState.update { currentState ->
-                editProfileNavigator?.navigateToProfile(
-                    User(
-                        displayName = displayName ?: "",
-                        photoName = imageUrl ?: ""
-                    )
-                )
                 currentState.copy(displayName = displayName, imageUri = imageUrl)
             }
+
+            editProfileNavigator?.navigateToProfile(
+                User(
+                    displayName = displayName ?: "",
+                    photoName = imageUrl ?: ""
+                )
+            )
         }
     }
 
@@ -147,8 +156,8 @@ class EditProfileViewModel @Inject constructor(
     )
 
     companion object {
-        private const val IMAGE_NOT_FILLED_MESSAGE = "Please pick or take a picture"
-        private const val DISPLAY_NAME_NOT_FILLED_MESSAGE = "Please enter display name"
+        const val IMAGE_NOT_FILLED_MESSAGE = "Please pick or take a picture"
+        const val DISPLAY_NAME_NOT_FILLED_MESSAGE = "Please enter display name"
     }
 }
 
