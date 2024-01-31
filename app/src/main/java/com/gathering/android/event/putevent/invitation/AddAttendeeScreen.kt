@@ -44,16 +44,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.gathering.android.common.ATTENDEE_LIST
 import com.gathering.android.common.FullScreenBottomSheet
+import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.composables.CustomActionButton
 import com.gathering.android.common.composables.CustomTextField
-import com.gathering.android.common.composables.AlertTextView
 import com.gathering.android.common.isComposeEnabled
 import com.gathering.android.common.setNavigationResult
 import com.gathering.android.databinding.ScreenAddAttendeesBinding
 import com.gathering.android.event.KEY_ARGUMENT_SELECTED_ATTENDEE_LIST
+import com.gathering.android.ui.theme.CustomBackgroundColor
 import com.gathering.android.ui.theme.GatheringTheme
 import com.gathering.android.ui.theme.Pink80
-import com.gathering.android.ui.theme.CustomBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -85,15 +85,13 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             val state = viewModel.uiState.collectAsState()
-                            AddAttendeeScreenWithCompose(
-                                email = state.value.attendeeEmail,
+                            AddAttendeeScreenWithCompose(attendeeEmail = state.value.attendeeEmail,
                                 errorMessage = state.value.errorMessage,
                                 attendees = state.value.attendeesEmailList,
                                 onAttendeeEmailChanged = viewModel::onAttendeeEmailChanged,
                                 onAddClick = { viewModel.onAddAttendeeButtonClicked(it) },
                                 onRemoveClick = { viewModel.onAttendeeRemoveItemClicked(it) },
-                                onSaveClick = { viewModel.onOKButtonClicked() }
-                            )
+                                onSaveClick = { viewModel.onOKButtonClicked() })
                         }
                     }
                 }
@@ -166,11 +164,10 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
     @Preview(showBackground = true, device = "id:Nexus One")
     fun AddAttendeeScreenWithComposePreview() {
         AddAttendeeScreenWithCompose(
-            email = "animansoubi@gamil.com",
+            attendeeEmail = "animansoubi@gamil.com",
             errorMessage = "",
             attendees = listOf(
-                "idaoskooei@gmail.com",
-                "esii_pisces@yahoo.com"
+                "idaoskooei@gmail.com", "esii_pisces@yahoo.com"
             ),
             onAttendeeEmailChanged = {},
             onAddClick = {},
@@ -181,7 +178,7 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
 
     @Composable
     fun AddAttendeeScreenWithCompose(
-        email: String?,
+        attendeeEmail: String?,
         errorMessage: String? = null,
         attendees: List<String>,
         onAttendeeEmailChanged: (String) -> Unit,
@@ -195,14 +192,12 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                 .fillMaxSize()
                 .padding(16.dp),
         ) {
-            AttendeeInputSection(
-                email = email ?: "",
+            AttendeeInputSection(attendeeEmail = attendeeEmail ?: "",
                 onAddClick = { attendeeEmail ->
                     onAddClick(attendeeEmail)
                 },
-                onEmailChange = { onAttendeeEmailChanged(it) }
-            )
-            AttendeeList(attendees, onRemoveClick, email ?: "")
+                onEmailChange = { onAttendeeEmailChanged(it) })
+            AttendeeList(attendees = attendees, onRemoveClick = onRemoveClick)
 
             if (errorMessage != null) {
                 AlertTextView(errorMessage)
@@ -216,9 +211,9 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
 
     @Composable
     fun AttendeeInputSection(
-        email: String,
-        onAddClick: (String) -> Unit,
-        onEmailChange: (String) -> Unit
+        attendeeEmail: String,
+        onAddClick: (attendeeEmail: String) -> Unit,
+        onEmailChange: (attendeeEmail: String) -> Unit
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -228,17 +223,16 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp),
-            )
-            {
+            ) {
                 CustomTextField(
-                    value = email,
+                    value = attendeeEmail,
                     label = "Add attendee email",
                     onValueChange = { onEmailChange(it) },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
             }
-            IconButtonAdd { onAddClick(email) }
+            IconButtonAdd { onAddClick(attendeeEmail) }
         }
     }
 
@@ -246,14 +240,13 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
     private fun AttendeeList(
         attendees: List<String>,
         onRemoveClick: (attendeeEmail: String) -> Unit,
-        email: String
     ) {
         Box(modifier = Modifier.padding(bottom = 60.dp)) {
             LazyColumn {
                 items(attendees) { attendeeEmail ->
                     AttendeeItem(
                         attendeeEmail = attendeeEmail,
-                        onRemoveClick = { onRemoveClick(email) }
+                        onRemoveClick = { onRemoveClick(attendeeEmail) }
                     )
                 }
             }
@@ -262,8 +255,7 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
 
     @Composable
     fun AttendeeItem(
-        attendeeEmail: String,
-        onRemoveClick: () -> Unit
+        attendeeEmail: String, onRemoveClick: (attendeeEmail: String) -> Unit
     ) {
         Card(
             modifier = Modifier.padding(7.dp),
@@ -280,7 +272,7 @@ class AddAttendeeScreen : FullScreenBottomSheet(), AddAttendeeNavigator {
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start
                 )
-                IconButtonRemove(onRemoveClick = onRemoveClick)
+                IconButtonRemove { onRemoveClick(attendeeEmail) }
             }
         }
     }

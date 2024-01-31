@@ -1,5 +1,6 @@
 package com.gathering.android.event.putevent.invitation
 
+import android.util.Log
 import android.util.Patterns
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
@@ -78,6 +79,10 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onAttendeeRemoveItemClicked(attendeeEmail: String) {
+        if (attendeeEmail.isEmpty()) {
+            Log.e("WTF", "attendee email is empty")
+            return
+        }
         val emails = mutableSetOf<String>()
         emails.addAll(viewModelState.value.attendeesEmailList)
         emails.remove(attendeeEmail)
@@ -101,6 +106,6 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     )
 
     companion object {
-        const val EMAIL_IS_NOT_VALID = "Email type is empty or valid"
+        const val EMAIL_IS_NOT_VALID = "Email is empty or invalid. please try again."
     }
 }
