@@ -1,5 +1,6 @@
 package com.gathering.android.home
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.auth.repo.AuthRepository
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
@@ -25,7 +27,8 @@ class HomeViewModel @Inject constructor(
     private val eventRepository: EventRepository,
 ) : ViewModel() {
 
-    private var homeNavigator: HomeNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var homeNavigator: HomeNavigator? = null
     private var page = 1
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -85,6 +88,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onNextPageRequested() {
+        page++
+        getEvents(page)
+    }
+
     private fun getEvents(page: Int) {
         viewModelState.update { currentViewState ->
             currentViewState.copy(showProgress = true)
@@ -102,20 +110,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onNextPageRequested() {
-        page++
-        getEvents(page)
-    }
-
     fun onEventItemClicked(eventId: Long) {
         homeNavigator?.navigateToEventDetail(eventId)
     }
 
     fun onEventLikeClicked(event: Event) {
+        viewModelState.update { currentViewState ->
+            currentViewState.copy(showProgress = true)
+        }
         viewModelScope.launch(exceptionHandler) {
-            viewModelState.update { currentViewState ->
-                currentViewState.copy(showProgress = true)
-            }
             val liked = !event.liked
             val eventId = event.eventId
 
