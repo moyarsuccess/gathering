@@ -122,9 +122,9 @@ class InputNewPasswordScreen : FullScreenBottomSheet(), InputNewPasswordNavigato
         }?.data?.getQueryParameter(VerificationScreen.TOKEN_PARAM)
     }
 
-    override fun navigateToHomeFragment() {
+    override fun navigateToIntroFragment() {
         findNavController().navigate(
-            R.id.action_newPasswordInputScreen_to_navigation_homeScreen
+            R.id.action_newPasswordInputScreen_to_navigation_IntroScreen
         )
     }
 
