@@ -1,8 +1,7 @@
 package com.gathering.android.event.putevent.invitation
 
-import android.util.Log
-import android.util.Patterns
 import androidx.annotation.VisibleForTesting
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.inject.Inject
+
 
 class AddAttendeesViewModel @Inject constructor() : ViewModel() {
 
@@ -79,10 +81,6 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onAttendeeRemoveItemClicked(attendeeEmail: String) {
-        if (attendeeEmail.isEmpty()) {
-            Log.e("WTF", "attendee email is empty")
-            return
-        }
         val emails = mutableSetOf<String>()
         emails.addAll(viewModelState.value.attendeesEmailList)
         emails.remove(attendeeEmail)
@@ -95,7 +93,9 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun isAttendeeEmailValid(email: String): Boolean {
-        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        val pattern: Pattern = PatternsCompat.EMAIL_ADDRESS
+        val matcher: Matcher = pattern.matcher(email)
+        return email.isNotEmpty() && matcher.matches()
     }
 
     data class AddAttendeesViewModelState(
