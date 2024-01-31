@@ -1,6 +1,7 @@
 package com.gathering.android.profile.favoriteEvent
 
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.common.toImageUrl
@@ -24,7 +25,9 @@ class FavoriteEventScreenViewModel @Inject constructor(
     private val eventRepository: EventRepository
 ) : ViewModel() {
 
-    private var favoriteEventNavigator: FavoriteEventScreen? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var favoriteEventNavigator: FavoriteEventNavigator? = null
+
     private var page = 1
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -73,7 +76,7 @@ class FavoriteEventScreenViewModel @Inject constructor(
         val showProgress: Boolean = false,
     )
 
-    fun onViewCreated(favoriteEventNavigator: FavoriteEventScreen) {
+    fun onViewCreated(favoriteEventNavigator: FavoriteEventNavigator) {
         this.favoriteEventNavigator = favoriteEventNavigator
         page = 1
         loadFavoriteEvents(page)
