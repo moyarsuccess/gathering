@@ -1,6 +1,7 @@
 package com.gathering.android.event.putevent.invitation
 
-import android.util.Patterns
+import androidx.annotation.VisibleForTesting
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,11 +10,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.inject.Inject
+
 
 class AddAttendeesViewModel @Inject constructor() : ViewModel() {
 
-    private var addAttendeeNavigator: AddAttendeeNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var addAttendeeNavigator: AddAttendeeNavigator? = null
 
     private val viewModelState = MutableStateFlow(AddAttendeesViewModelState())
     val uiState: StateFlow<AddAttendeeUiState> = viewModelState.map { viewModelState ->
@@ -88,7 +93,9 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun isAttendeeEmailValid(email: String): Boolean {
-        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        val pattern: Pattern = PatternsCompat.EMAIL_ADDRESS
+        val matcher: Matcher = pattern.matcher(email)
+        return email.isNotEmpty() && matcher.matches()
     }
 
     data class AddAttendeesViewModelState(
@@ -99,6 +106,6 @@ class AddAttendeesViewModel @Inject constructor() : ViewModel() {
     )
 
     companion object {
-        const val EMAIL_IS_NOT_VALID = "Email type is empty or valid"
+        const val EMAIL_IS_NOT_VALID = "Email is empty or invalid. please try again."
     }
 }
