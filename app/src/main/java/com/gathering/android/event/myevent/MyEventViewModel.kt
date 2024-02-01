@@ -1,5 +1,6 @@
 package com.gathering.android.event.myevent
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathering.android.event.DELETE_EVENT_REQUEST_FAILED
@@ -25,7 +26,9 @@ class MyEventViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var page = 1
-    private var myEventNavigator: MyEventNavigator? = null
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var myEventNavigator: MyEventNavigator? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val errorMessage = when (throwable) {
