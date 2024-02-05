@@ -12,5 +12,6 @@ const val FILE_NOT_FOUND_EXCEPTION = "File can not made from URL"
 const val SERVER_DID_NOT_CATCH_ATTENDANCE_RESPONSE =
     "we did not catch your response. try RSVPing again!"
 const val LOCATION_IS_NULL_OR_INVALID = "location is null or invalid"
+const val IMAGE_IS_NULL_OR_INVALID = "image is null or invalid"
 
 
