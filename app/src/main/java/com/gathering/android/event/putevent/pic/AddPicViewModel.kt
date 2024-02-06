@@ -1,24 +1,47 @@
 package com.gathering.android.event.putevent.pic
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.net.Uri
-import android.provider.MediaStore
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
-import java.io.ByteArrayOutputStream
-import java.io.IOException
+import com.gathering.android.event.GENERAL_ERROR
+import com.gathering.android.event.IMAGE_IS_NULL_OR_INVALID
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AddPicViewModel @Inject constructor(@ApplicationContext private val context: Context) :
-    ViewModel() {
+class AddPicViewModel @Inject constructor(
+    private val bitmapUtility: BitmapUtility
+) : ViewModel() {
 
-    private var addPicNavigator: AddPicNavigator? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var addPicNavigator: AddPicNavigator? = null
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is AddPicException -> {
+                when (throwable) {
+                    AddPicException.InvalidImageException -> IMAGE_IS_NULL_OR_INVALID
+                    is AddPicException.GeneralException -> GENERAL_ERROR
+                }
+            }
+
+            else -> {
+                GENERAL_ERROR
+            }
+        }
+        viewModelState.update { currentState ->
+            currentState.copy(
+                errorMessage = errorMessage,
+            )
+        }
+    }
 
     private val viewModelState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = viewModelState.stateIn(
@@ -26,13 +49,6 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
         started = SharingStarted.Eagerly,
         initialValue = UiState()
     )
-
-    data class UiState(
-        var errorMessage: String? = null,
-        var showImage: Bitmap? = null,
-        var rotatedImage: Bitmap? = null
-    )
-
 
     fun onViewCreated(addPicNavigator: AddPicNavigator) {
         this.addPicNavigator = addPicNavigator
@@ -43,8 +59,10 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
     }
 
     fun onImageSelectedFromCamera(bitmap: Bitmap) {
-        viewModelState.update { currentViewState ->
-            currentViewState.copy(showImage = bitmap)
+        viewModelScope.launch(exceptionHandler) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(showImage = bitmap)
+            }
         }
     }
 
@@ -53,15 +71,17 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
     }
 
     fun onImageSelectedFromGallery(data: Intent?) {
-        data?.data?.let { uri ->
-            val image = loadBitmap(uri)
-            if (image != null) {
+        viewModelScope.launch(exceptionHandler) {
+            if (data == null) return@launch
+            val uri = data.data ?: return@launch
+            val image = bitmapUtility.loadBitmap(uri)
+            if (image == null) {
                 viewModelState.update { currentViewState ->
-                    currentViewState.copy(showImage = image)
+                    currentViewState.copy(errorMessage = FAILED_TO_LOAD_IMAGE)
                 }
             } else {
                 viewModelState.update { currentViewState ->
-                    currentViewState.copy(errorMessage = FAILED_TO_LOAD_IMAGE)
+                    currentViewState.copy(showImage = image)
                 }
             }
         }
@@ -69,37 +89,24 @@ class AddPicViewModel @Inject constructor(@ApplicationContext private val contex
 
 
     fun onRotateClicked(bitmap: Bitmap, degree: Float) {
-        val matrix = Matrix()
-        matrix.postRotate(degree)
-        val rotatedBitmap =
-            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        viewModelState.update { currentViewState ->
-            currentViewState.copy(showImage = rotatedBitmap)
+        val rotatedBitmap = bitmapUtility.rotateBitmap(bitmap, degree)
+        viewModelScope.launch(exceptionHandler) {
+            viewModelState.update { currentViewState ->
+                currentViewState.copy(showImage = rotatedBitmap)
+            }
         }
     }
 
     fun onSaveButtonClicked(bitmap: Bitmap) {
-        val imagePath = storeBitmapAndGetPath(bitmap)
+        val imagePath = bitmapUtility.storeBitmapAndGetPath(bitmap)
         addPicNavigator?.navigateToAddEvent(imagePath)
     }
 
-
-    private fun loadBitmap(imageUri: Uri): Bitmap? {
-        return try {
-            val contentResolver = context.contentResolver
-            MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-        } catch (e: IOException) {
-            null
-        }
-    }
-
-    private fun storeBitmapAndGetPath(inImage: Bitmap): String {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        return MediaStore.Images.Media.insertImage(
-            context.contentResolver, inImage, "gathering_" + System.currentTimeMillis(), null
-        )
-    }
+    data class UiState(
+        var errorMessage: String? = null,
+        var showImage: Bitmap? = null,
+        var rotatedImage: Bitmap? = null
+    )
 
     companion object {
         const val FAILED_TO_LOAD_IMAGE = "FAILED TO LOAD THE IMAGE"
