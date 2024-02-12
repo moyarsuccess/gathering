@@ -1,11 +1,13 @@
 package com.gathering.android.event.rsvpDetails
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gathering.android.event.GENERAL_ERROR
+import com.gathering.android.event.SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
 import com.gathering.android.event.model.AttendeeModel
 import com.gathering.android.event.repo.EventRepository
 import com.gathering.android.event.toEvent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +18,27 @@ import javax.inject.Inject
 
 class RsvpListViewModel @Inject constructor(private val eventRepository: EventRepository) :
     ViewModel() {
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = when (throwable) {
+            is RsvpListException -> {
+                when (throwable) {
+                    RsvpListException.ServerNotRespondingException -> SERVER_NOT_RESPONDING_TO_SHOW_EVENTS
+                    is RsvpListException.GeneralException -> GENERAL_ERROR
+                }
+            }
+
+            else -> {
+                GENERAL_ERROR
+            }
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                errorMessage = errorMessage,
+                showNoData = currentState.attendeeModels.isEmpty()
+            )
+        }
+    }
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState
@@ -33,44 +56,26 @@ class RsvpListViewModel @Inject constructor(private val eventRepository: EventRe
         val attendeeModels: List<AttendeeModel> = emptyList()
     )
 
-    private fun updateShowNoData() {
-        _uiState.update { currentViewState ->
-            currentViewState.copy(
-                showNoData = currentViewState.attendeeModels.isEmpty()
-            )
-        }
-    }
-
     fun onViewCreated(eventId: Long) {
-        viewModelScope.launch {
-            val event = try {
-                eventRepository.getEventById(eventId).toEvent()
-            } catch (e: Exception) {
-                _uiState.update { currentState ->
-                    currentState.copy(errorMessage = SERVER_ERROR)
-                }
-                Log.d("XXX:", e.toString())
-                return@launch
-            }
-
+        _uiState.update { currentState ->
+            currentState.copy(showNoData = true)
+        }
+        viewModelScope.launch(exceptionHandler) {
+            val event = eventRepository.getEventById(eventId).toEvent()
             val sortedAttendees = sortAttendeesByAccepted(event.attendeeModels)
-
             _uiState.update { currentViewState ->
                 currentViewState.copy(
                     imageUri = event.photoUrl,
                     eventName = event.eventName,
-                    attendeeModels = sortedAttendees
+                    attendeeModels = sortedAttendees,
+                    showNoData = false,
                 )
             }
-            updateShowNoData()
+
         }
     }
 
     private fun sortAttendeesByAccepted(attendeeModels: List<AttendeeModel>): List<AttendeeModel> {
         return attendeeModels.sortedBy { it.accepted }
-    }
-
-    companion object {
-        private const val SERVER_ERROR = "Can not catch the server at this time"
     }
 }
